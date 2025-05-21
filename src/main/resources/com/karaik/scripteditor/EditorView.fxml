@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
-<SplitPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml"
-           fx:controller="com.karaik.scripteditor.controller.EditorController"
-           orientation="HORIZONTAL" dividerPositions="0.5">
-
-    <!-- 原文（左侧） -->
-    <VBox prefWidth="600.0" spacing="8">
-        <Label text="原文" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-        <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS">
-            <VBox fx:id="originalContainer" spacing="8" padding="10">
-                <!-- 自动填充原文TextArea -->
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.karaik.scripteditor.controller.EditorController">
+    <top>
+        <HBox spacing="10.0">
+            <padding>
+                <Insets top="10.0" right="10.0" bottom="10.0" left="10.0" />
+            </padding>
+            <Button text="打开文件" onAction="#handleOpenFile" />
+        </HBox>
+    </top>
+    <center>
+        <SplitPane>
+            <VBox spacing="5.0" fx:id="originalContainer">
+                <padding>
+                    <Insets top="10.0" right="10.0" bottom="10.0" left="10.0" />
+                </padding>
+                <Label text="原文" />
+                <TextArea fx:id="originalTextArea" editable="false" wrapText="true" prefWidth="400.0" />
             </VBox>
-        </ScrollPane>
-    </VBox>
-
-    <!-- 译文（右侧） -->
-    <VBox prefWidth="600.0" spacing="8">
-        <Label text="译文" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-        <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS">
-            <VBox fx:id="translatedContainer" spacing="8" padding="10">
-                <!-- 自动填充译文TextArea -->
+            <VBox spacing="5.0" fx:id="translatedContainer">
+                <padding>
+                    <Insets top="10.0" right="10.0" bottom="10.0" left="10.0" />
+                </padding>
+                <Label text="译文" />
+                <TextArea fx:id="translatedTextArea" wrapText="true" prefWidth="400.0" />
             </VBox>
-        </ScrollPane>
-    </VBox>
-
-</SplitPane>
+        </SplitPane>
+    </center>
+</BorderPane>
