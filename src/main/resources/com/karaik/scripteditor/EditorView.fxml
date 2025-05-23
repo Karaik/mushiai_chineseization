@@ -2,15 +2,21 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.Integer?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.karaik.scripteditor.controller.EditorController">
     <top>
-        <HBox spacing="10.0">
+        <HBox spacing="10.0" alignment="CENTER_LEFT">
             <padding>
                 <Insets top="10.0" right="10.0" bottom="10.0" left="10.0" />
             </padding>
             <Button text="打开文件" onAction="#handleOpenFile" />
             <Button text="保存译文" onAction="#handleSaveFile" />
+            <Label text="每页显示:"/>
+            <ComboBox fx:id="itemsPerPageComboBox" prefWidth="80"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <CheckBox fx:id="alwaysOnTopCheckBox" text="总在最前" onAction="#handleAlwaysOnTopToggle"/>
             <Pagination fx:id="pagination" />
             <TextField fx:id="pageInputField" promptText="页码" prefWidth="60" />
             <Button text="跳转" onAction="#handleJumpToPage" />
