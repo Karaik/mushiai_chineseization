@@ -12,6 +12,8 @@
             <Button text="打开文件" onAction="#handleOpenFile" />
             <Button text="保存译文" onAction="#handleSaveFile" />
             <Pagination fx:id="pagination" />
+            <TextField fx:id="pageInputField" promptText="页码" prefWidth="60" />
+            <Button text="跳转" onAction="#handleJumpToPage" />
         </HBox>
     </top>
 

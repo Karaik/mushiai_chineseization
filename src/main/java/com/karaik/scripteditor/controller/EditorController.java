@@ -21,6 +21,7 @@ public class EditorController {
 
     @FXML @Getter private VBox entryContainer;
     @FXML @Getter private Pagination pagination;
+    @FXML private TextField pageInputField;
 
     @Getter private File currentFile;
     @Getter private List<SptEntry> entries = new ArrayList<>();
@@ -40,20 +41,37 @@ public class EditorController {
         this.fileHandlerController = new FileHandlerController(this);
         this.paginationUIController = new PaginationUIController(this);
 
+        if (pageInputField != null) {
+            pageInputField.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ENTER) {
+                    handleJumpToPage();
+                }
+            });
+        }
+
         Platform.runLater(() -> {
-            Scene scene = pagination.getScene();
+            Scene scene = (pagination != null && pagination.getScene() != null) ? pagination.getScene() :
+                    (entryContainer != null && entryContainer.getScene() != null) ? entryContainer.getScene() : null;
+
             if (scene != null && scene.getWindow() instanceof Stage) {
                 primaryStage = (Stage) scene.getWindow();
                 setupPrimaryStageEventHandlers();
                 updateTitle();
 
+                if (paginationUIController != null) {
+                    paginationUIController.setupPagination(); // Initialize pagination view
+                }
+
                 File lastFile = getLastOpenedFile();
                 if (lastFile != null && lastFile.exists()) {
                     fileHandlerController.openSpecificFile(lastFile);
+                } else {
+                    if (paginationUIController != null && entries.isEmpty()) {
+                        paginationUIController.updatePaginationView();
+                    }
                 }
-
             } else {
-                System.err.println("错误: 初始化时场景或舞台不可用。");
+                System.err.println("Error: Scene or Stage not available during initialization.");
             }
         });
     }
@@ -67,9 +85,10 @@ public class EditorController {
         });
 
         primaryStage.setOnCloseRequest(event -> {
+            rememberFile(currentFile); // Remember file before checking modification
             if (modified) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "当前文件有未保存的更改，确定要退出吗？");
-                alert.initOwner(primaryStage);
+                if (primaryStage != null) alert.initOwner(primaryStage);
                 Optional<ButtonType> result = alert.showAndWait();
                 if (!result.isPresent() || (result.get() != ButtonType.OK && result.get() != ButtonType.YES)) {
                     event.consume();
@@ -81,14 +100,35 @@ public class EditorController {
     @FXML private void handleOpenFile() { fileHandlerController.openFile(); }
     @FXML private void handleSaveFile() { fileHandlerController.saveFile(); }
 
+    @FXML
+    private void handleJumpToPage() { // Jump button action / TextField Enter action
+        if (pageInputField == null || pagination == null || pageInputField.getText().isEmpty()) {
+            return;
+        }
+        try {
+            int pageTarget = Integer.parseInt(pageInputField.getText()) - 1;
+            if (pageTarget >= 0 && pageTarget < pagination.getPageCount()) {
+                pagination.setCurrentPageIndex(pageTarget);
+            } else {
+                new Alert(Alert.AlertType.WARNING, "页码超出范围。").showAndWait();
+            }
+        } catch (NumberFormatException e) {
+            new Alert(Alert.AlertType.ERROR, "敢乱输就敢出bug。").showAndWait();
+        }
+        pageInputField.clear();
+    }
+
     public void setEntries(List<SptEntry> newEntries) {
         this.entries = newEntries != null ? newEntries : new ArrayList<>();
-        paginationUIController.updatePaginationView();
+        if (paginationUIController != null) {
+            paginationUIController.updatePaginationView();
+        }
     }
 
     public void setCurrentFile(File file) {
         this.currentFile = file;
         updateTitle();
+        rememberFile(file);
     }
 
     public void markModified(boolean modifiedState) {
@@ -101,13 +141,15 @@ public class EditorController {
     private void updateTitle() {
         if (primaryStage != null) {
             String fileName = (currentFile != null) ? currentFile.getName() : "请选择文件";
-            primaryStage.setTitle((modified ? "*" : "") + fileName + " - 虫爱少女汉化文本编辑器（仅供内部使用，严禁外传）");
+            primaryStage.setTitle((modified ? "*" : "") + fileName + " - 虫爱少女汉化文本编辑器");
         }
     }
 
     public void rememberFile(File file) {
         if (file != null) {
             preferences.put(PREF_KEY_LAST_FILE, file.getAbsolutePath());
+        } else {
+            preferences.remove(PREF_KEY_LAST_FILE);
         }
     }
 
