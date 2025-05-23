@@ -1,5 +1,6 @@
 package com.karaik.scripteditor.util;
 
+import com.karaik.scripteditor.controller.consts.EditorConst; // Keep for reference, though not directly used in replace
 import com.karaik.scripteditor.entry.SptEntry;
 
 import java.io.BufferedWriter;
@@ -17,12 +18,16 @@ public class SptWriter {
                 String address = entry.getAddress();
                 String length = entry.getLength();
 
-                String original = entry.getOriginal().replace("\n", "[\\r][\\n]");
-                String translated = entry.getTranslated().replace("\n", "[\\r][\\n]");
+                // SptEntry.getFullOriginalText() and getFullTranslatedText()
+                // now return strings with segments already joined by EditorConst.SWAP_FLAG.
+                String originalForFile = entry.getFullOriginalText();
+                String translatedForFile = entry.getFullTranslatedText();
 
-                writer.write("○" + index + "|" + address + "|" + length + "○ " + original + "\n");
-                writer.write("●" + index + "|" + address + "|" + length + "● " + translated + "\n");
-                writer.write("\n");
+                // The .replace("\n", EditorConst.SWAP_FLAG) calls are NO LONGER NEEDED here.
+
+                writer.write("○" + index + "|" + address + "|" + length + "○ " + originalForFile + "\n");
+                writer.write("●" + index + "|" + address + "|" + length + "● " + translatedForFile + "\n");
+                writer.write("\n"); // Blank line separator between entries
             }
         }
     }
