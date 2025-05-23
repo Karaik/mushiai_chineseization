@@ -10,6 +10,7 @@ public class EditorApplication extends Application {
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/karaik/scripteditor/EditorView.fxml"));
         Scene scene = new Scene(loader.load(), 800, 600);
+        scene.getStylesheets().add(getClass().getResource("/com/karaik/scripteditor/css.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("虫爱少女汉化文本编辑器");
         stage.show();
