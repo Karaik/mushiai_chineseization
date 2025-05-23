@@ -10,24 +10,21 @@
                 <Insets top="10.0" right="10.0" bottom="10.0" left="10.0" />
             </padding>
             <Button text="打开文件" onAction="#handleOpenFile" />
+            <Button text="保存译文" onAction="#handleSaveFile" />
+            <Pagination fx:id="pagination" />
         </HBox>
     </top>
+
     <center>
-        <SplitPane>
-            <VBox spacing="5.0" fx:id="originalContainer">
-                <padding>
-                    <Insets top="10.0" right="10.0" bottom="10.0" left="10.0" />
-                </padding>
-                <Label text="原文" />
-                <TextArea fx:id="originalTextArea" editable="false" wrapText="true" prefWidth="400.0" />
-            </VBox>
-            <VBox spacing="5.0" fx:id="translatedContainer">
-                <padding>
-                    <Insets top="10.0" right="10.0" bottom="10.0" left="10.0" />
-                </padding>
-                <Label text="译文" />
-                <TextArea fx:id="translatedTextArea" wrapText="true" prefWidth="400.0" />
-            </VBox>
-        </SplitPane>
+        <ScrollPane fitToWidth="true" fitToHeight="true" vbarPolicy="ALWAYS">
+            <content>
+                <VBox fx:id="entryContainer" spacing="10.0" fillWidth="true">
+                    <padding>
+                        <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
+                    </padding>
+                </VBox>
+            </content>
+        </ScrollPane>
     </center>
+
 </BorderPane>
