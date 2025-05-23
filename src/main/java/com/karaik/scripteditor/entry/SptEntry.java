@@ -11,7 +11,6 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Getter
 public class SptEntry {
@@ -33,11 +32,13 @@ public class SptEntry {
 
         this.originalSegmentsList = new ArrayList<>();
         for (String segment : rawOriginals) {
+            if (segment.isEmpty()) continue;
             this.originalSegmentsList.add(new ReadOnlyStringWrapper(segment));
         }
 
         this.translatedSegmentsList = FXCollections.observableArrayList();
         for (String segment : rawTranslateds) {
+            if (segment.isEmpty()) continue;
             this.translatedSegmentsList.add(new SimpleStringProperty(segment));
         }
     }
@@ -51,15 +52,31 @@ public class SptEntry {
     }
 
     public String getFullOriginalText() {
-        return originalSegmentsList.stream()
-                .map(ReadOnlyStringWrapper::get)
-                .collect(Collectors.joining(EditorConst.SWAP_FLAG));
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < originalSegmentsList.size(); i++) {
+            ReadOnlyStringWrapper wrapper = originalSegmentsList.get(i);
+            String segment = wrapper.get();
+            builder.append(segment);
+            if (i < originalSegmentsList.size() - 1) {
+                builder.append(EditorConst.SWAP_FLAG);
+            }
+        }
+        builder.append(EditorConst.SWAP_FLAG);
+        return builder.toString();
     }
 
     public String getFullTranslatedText() {
-        return translatedSegmentsList.stream()
-                .map(StringProperty::get)
-                .collect(Collectors.joining(EditorConst.SWAP_FLAG));
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < translatedSegmentsList.size(); i++) {
+            StringProperty property = translatedSegmentsList.get(i);
+            String segment = property.get();
+            builder.append(segment);
+            if (i < translatedSegmentsList.size() - 1) {
+                builder.append(EditorConst.SWAP_FLAG);
+            }
+        }
+        builder.append(EditorConst.SWAP_FLAG);
+        return builder.toString();
     }
 
     public void addTranslatedSegment(String initialText) {

@@ -2,6 +2,7 @@ module com.karaik.scripteditor {
     requires javafx.controls;
     requires javafx.fxml;
     requires static lombok;
+    requires java.prefs;
 
 
     opens com.karaik.scripteditor to javafx.fxml;
