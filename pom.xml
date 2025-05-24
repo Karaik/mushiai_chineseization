@@ -65,7 +65,7 @@
                 <version>3.4.2</version>
                 <configuration>
                     <descriptorRefs>
-                        <descriptorRef>-fat</descriptorRef>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <archive>
                         <manifest>

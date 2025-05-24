@@ -6,21 +6,22 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lombok.Data;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-@Getter
+@Data
 public class SptEntry {
 
-    private final String index;
-    private final String address;
-    private final String length;
+    private String index;
+    private String address;
+    private String length;
 
-    private final List<ReadOnlyStringWrapper> originalSegmentsList;
-    private final ObservableList<StringProperty> translatedSegmentsList;
+    private List<ReadOnlyStringWrapper> originalSegmentsList;
+    private ObservableList<StringProperty> translatedSegmentsList;
 
     public SptEntry(String index, String address, String length, String rawOriginalWithSwapFlags, String rawTranslatedWithSwapFlags) {
         this.index = index;

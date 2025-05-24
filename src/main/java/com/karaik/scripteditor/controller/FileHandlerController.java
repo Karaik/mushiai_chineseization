@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
@@ -15,22 +16,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Data
 public class FileHandlerController {
 
-    private final EditorController mainController;
+    private final EditorController editorController;
 
     public void openFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("选择文本文件");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("文本文件", "*.txt"));
 
-        File current = mainController.getCurrentFile();
+        File current = editorController.getCurrentFile();
         if (current != null && current.getParentFile().exists()) {
             fileChooser.setInitialDirectory(current.getParentFile());
         }
 
-        if (mainController.getPrimaryStage() == null) return;
-        File file = fileChooser.showOpenDialog(mainController.getPrimaryStage());
+        if (editorController.getPrimaryStage() == null) return;
+        File file = fileChooser.showOpenDialog(editorController.getPrimaryStage());
 
         if (file != null) {
             openSpecificFile(file);
@@ -38,50 +40,51 @@ public class FileHandlerController {
     }
 
     public void openSpecificFile(File file) {
-
         new Thread(() -> {
+            Platform.runLater(() -> editorController.markModified(false));
             try {
-                String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
-                List<SptEntry> entries = parseSptContent(content);
+                String content = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+                List<SptEntry> sptEntries = parseSptContent(content);
 
                 Platform.runLater(() -> {
-                    mainController.setCurrentFile(file);
-                    mainController.setEntries(entries);
-                    mainController.markModified(false);
-                    mainController.rememberFile(file);
+                    editorController.setEntries(sptEntries);
+                    editorController.setCurrentFile(file);
+                    // 在文件加载并设置entries后，调用restoreLastPage来处理页码恢复
+                    editorController.restoreLastPage();
                 });
-
             } catch (Exception e) {
-                e.printStackTrace();
                 Platform.runLater(() -> {
-                    mainController.getEntryContainer().getChildren().setAll(new Label("文件读取失败: " + e.getMessage()));
-                    mainController.setEntries(new ArrayList<>());
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "无法打开文件: " + e.getMessage());
+                    editorController.configureAlertOnTop(alert);
+                    alert.showAndWait();
+                    editorController.getEntries().clear(); // 清空内容，确保界面显示空
+                    editorController.setEntries(new ArrayList<>()); // 刷新分页显示
+                    editorController.setCurrentFile(null); // 清空当前文件
                 });
             }
         }).start();
     }
 
     public void saveFile() {
-        File fileToSave = mainController.getCurrentFile();
-        if (fileToSave == null && mainController.getEntries().isEmpty()) {
-            new Alert(Alert.AlertType.WARNING, "无内容或未指定文件，无法保存。").showAndWait();
-            return;
-        }
-
+        File fileToSave = editorController.getCurrentFile();
         if (fileToSave == null) {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("保存译文文件");
+            fileChooser.setTitle("保存文件");
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("文本文件", "*.txt"));
-            if (mainController.getPrimaryStage() == null) return;
-            fileToSave = fileChooser.showSaveDialog(mainController.getPrimaryStage());
+
+            File current = editorController.getCurrentFile();
+            if (current != null && current.getParentFile().exists()) {
+                fileChooser.setInitialDirectory(current.getParentFile());
+            }
+
+            fileToSave = fileChooser.showSaveDialog(editorController.getPrimaryStage());
             if (fileToSave == null) return;
-            mainController.setCurrentFile(fileToSave);
+            editorController.setCurrentFile(fileToSave);
         }
 
         try {
-            SptWriter.saveToFile(mainController.getEntries(), fileToSave);
-            mainController.markModified(false);
-            new Alert(Alert.AlertType.INFORMATION, "文件已保存！").showAndWait();
+            SptWriter.saveToFile(editorController.getEntries(), fileToSave);
+            editorController.markModified(false);
         } catch (Exception e) {
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "保存失败: " + e.getMessage()).showAndWait();
@@ -104,7 +107,6 @@ public class FileHandlerController {
                         result.add(new SptEntry(meta[0], meta[1], meta[2],
                                 (op.length > 2 ? op[2].trim() : ""),
                                 (tp.length > 2 ? tp[2].trim() : "")));
-                        i++;
                     }
                 }
             }

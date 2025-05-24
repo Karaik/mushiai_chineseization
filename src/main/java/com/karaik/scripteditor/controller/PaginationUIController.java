@@ -1,40 +1,43 @@
 package com.karaik.scripteditor.controller;
 
 import com.karaik.scripteditor.entry.SptEntry;
+import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
 public class PaginationUIController {
 
-    private final EditorController mainController;
+    private final EditorController editorController;
 
     public void setupPagination() {
-        Pagination pagination = mainController.getPagination();
+        Pagination pagination = editorController.getPagination();
         if (pagination == null) {
             System.err.println("错误: Pagination控件在EditorController中未正确注入。");
             return;
         }
+        pagination.setPageFactory(this::createPageForEntries);
         updatePaginationView();
     }
 
     public void updatePaginationView() {
-        Pagination pagination = mainController.getPagination();
-        VBox entryContainer = mainController.getEntryContainer();
+        Pagination pagination = editorController.getPagination();
+        VBox entryContainer = editorController.getEntryContainer();
         if (pagination == null || entryContainer == null) return;
 
-        List<SptEntry> entries = mainController.getEntries();
-        int itemsPerPage = mainController.getItemsPerPage();
+        List<SptEntry> entries = editorController.getEntries();
+        int itemsPerPage = editorController.getItemsPerPage();
 
         if (entries.isEmpty()) {
             pagination.setPageCount(1);
@@ -64,37 +67,40 @@ public class PaginationUIController {
     }
 
     public VBox createPageForEntries(int pageIndex) {
-        VBox entryContainer = mainController.getEntryContainer();
+        VBox entryContainer = editorController.getEntryContainer();
         if (entryContainer == null) return new VBox();
 
+        editorController.setRendering(true);
+
         entryContainer.getChildren().clear();
-        List<SptEntry> entries = mainController.getEntries();
-        int itemsPerPage = mainController.getItemsPerPage();
+        List<SptEntry> entries = editorController.getEntries();
+        int itemsPerPage = editorController.getItemsPerPage();
 
         int start = pageIndex * itemsPerPage;
         int end = Math.min(start + itemsPerPage, entries.size());
 
-        if (start >= entries.size()) {
-            entryContainer.getChildren().setAll(new Label("无更多条目。"));
-            return new VBox();
-        }
-        if (entries.isEmpty()) {
-            entryContainer.getChildren().setAll(new Label("无内容可显示。"));
+        if (start >= entries.size() && !entries.isEmpty()) {
+            entryContainer.getChildren().add(new Label("无更多条目。"));
+            Platform.runLater(() -> {
+                editorController.setRendering(false);
+            });
             return new VBox();
         }
 
-        new Thread(() -> {
-            List<javafx.scene.Node> nodes = new java.util.ArrayList<>();
-            for (int i = start; i < end; i++) {
-                nodes.add(createUIForSptEntry(entries.get(i)));
-                if (i < end - 1) {
-                    Separator sep = new Separator();
-                    sep.setPadding(new Insets(5, 0, 5, 0));
-                    nodes.add(sep);
-                }
+        List<Node> nodesToAdd = new ArrayList<>();
+        for (int i = start; i < end; i++) {
+            nodesToAdd.add(createUIForSptEntry(entries.get(i)));
+            if (i < end - 1) {
+                Separator sep = new Separator();
+                sep.setPadding(new Insets(5, 0, 5, 0));
+                nodesToAdd.add(sep);
             }
-            javafx.application.Platform.runLater(() -> entryContainer.getChildren().setAll(nodes));
-        }).start();
+        }
+
+        Platform.runLater(() -> {
+            entryContainer.getChildren().setAll(nodesToAdd);
+            editorController.setRendering(false);
+        });
 
         return new VBox();
     }
@@ -118,7 +124,7 @@ public class PaginationUIController {
                 TextArea ta = new TextArea(segment.get());
                 ta.setEditable(false);
                 ta.setWrapText(true);
-                ta.setPrefHeight(30);
+                ta.setPrefHeight(10);
                 originalCol.getChildren().add(ta);
             });
         }
@@ -131,16 +137,16 @@ public class PaginationUIController {
             TextArea ta = new TextArea();
             ta.setWrapText(true);
             ta.textProperty().bindBidirectional(segProp);
-            ta.setPrefHeight(30);
-            ta.textProperty().addListener((obs, o, n) -> mainController.markModified(true));
+            ta.setPrefHeight(10);
+            ta.textProperty().addListener((obs, o, n) -> editorController.markModified(true));
 
             Button removeBtn = new Button("-");
-            final int idx = i;
+            int idx = i;
             removeBtn.setOnAction(evt -> {
                 entry.removeTranslatedSegment(idx);
-                mainController.markModified(true);
-                if (mainController.getPagination() != null) {
-                    createPageForEntries(mainController.getPagination().getCurrentPageIndex());
+                editorController.markModified(true);
+                if (editorController.getPagination() != null) {
+                    createPageForEntries(editorController.getPagination().getCurrentPageIndex());
                 }
             });
 
@@ -152,9 +158,9 @@ public class PaginationUIController {
         Button addBtn = new Button("(+)");
         addBtn.setOnAction(evt -> {
             entry.addTranslatedSegment("");
-            mainController.markModified(true);
-            if (mainController.getPagination() != null) {
-                createPageForEntries(mainController.getPagination().getCurrentPageIndex());
+            editorController.markModified(true);
+            if (editorController.getPagination() != null) {
+                createPageForEntries(editorController.getPagination().getCurrentPageIndex());
             }
         });
         HBox addBtnBox = new HBox(addBtn);
