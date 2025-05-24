@@ -51,6 +51,7 @@ public class EditorController {
     private boolean initializing = true;
     private final AtomicBoolean warningShown = new AtomicBoolean(false);
     private static final double KEYBOARD_SCROLL_AMOUNT = 200; // 控制每次按键滚动的像素量
+    private static final double MOUSE_WHEEL_SCROLL_MULTIPLIER = 2.0; // 控制滚轮幅度
 
     @FXML
     public void initialize() {
@@ -72,7 +73,7 @@ public class EditorController {
                     return;
                 }
                 double originalDeltaY = event.getDeltaY();
-                double adjustedDeltaY = originalDeltaY * 10;
+                double adjustedDeltaY = originalDeltaY * MOUSE_WHEEL_SCROLL_MULTIPLIER;
                 if (mainContentScrollPane.getContent() != null && mainContentScrollPane.getContent().getBoundsInLocal().getHeight() > 0) {
                     double newVValue = mainContentScrollPane.getVvalue() - (adjustedDeltaY / mainContentScrollPane.getContent().getBoundsInLocal().getHeight());
                     mainContentScrollPane.setVvalue(Math.max(0, Math.min(1, newVValue)));
@@ -244,69 +245,54 @@ public class EditorController {
     private void setupPrimaryStageEventHandlers() {
         if (primaryStage == null || primaryStage.getScene() == null) return;
 
-        primaryStage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.isControlDown() && event.getCode() == KeyCode.S) {
-                fileHandlerController.saveFile();
+        // 监听窗口关闭事件
+        primaryStage.setOnCloseRequest(event -> {
+            if (modified) { // 如果文件有修改
+                // 阻止默认的关闭行为，等待用户确认
                 event.consume();
-            }
-        });
 
-        primaryStage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.isControlDown() && event.getCode() == KeyCode.S) {
-                fileHandlerController.saveFile();
-                event.consume();
-                return;
-            }
+                // 弹出确认保存的对话框
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("保存文件");
+                alert.setHeaderText("文件已被修改");
+                alert.setContentText("文件尚未保存，是否保存后关闭？");
 
-            if (event.getTarget() instanceof TextArea) return;
+                ButtonType saveButton = new ButtonType("保存");
+                ButtonType discardButton = new ButtonType("不保存");
+                ButtonType cancelButton = new ButtonType("取消");
 
-            if (!canChangePage()) {
-                if (warningShown.compareAndSet(false, true)) {
-                    Platform.runLater(() -> {
-                        Alert alert = new Alert(Alert.AlertType.WARNING, "别翻页太快，会崩的(～￣(OO)￣)ブ");
-                        configureAlertOnTop(alert);
-                        alert.setOnCloseRequest(e -> warningShown.set(false));
-                        alert.show();
+                alert.getButtonTypes().setAll(saveButton, discardButton, cancelButton);
+
+                // 根据主窗口是否设置为保持最前决定是否将弹窗设置为最前
+                if (primaryStage.isAlwaysOnTop()) {
+                    alert.setOnShown(e -> {
+                        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+                        if (alertStage != null) {
+                            alertStage.setAlwaysOnTop(true); // 弹窗保持最前
+                        }
+                    });
+                } else {
+                    alert.setOnShown(e -> {
+                        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+                        if (alertStage != null) {
+                            alertStage.setAlwaysOnTop(false); // 弹窗不保持最前
+                        }
                     });
                 }
-                event.consume();
-                return;
-            }
 
-            Pagination currentPagination = this.pagination;
-            if (currentPagination == null) return;
-
-            int currentPage = currentPagination.getCurrentPageIndex();
-            int maxPage = currentPagination.getPageCount() - 1;
-            boolean pageChanged = false;
-
-            if (event.getCode() == KeyCode.LEFT && currentPage > 0) {
-                currentPagination.setCurrentPageIndex(currentPage - 1);
-                pageChanged = true;
-            } else if (event.getCode() == KeyCode.RIGHT && currentPage < maxPage) {
-                currentPagination.setCurrentPageIndex(currentPage + 1);
-                pageChanged = true;
-            } else if (event.getCode() == KeyCode.DOWN) {
-                if (mainContentScrollPane != null && mainContentScrollPane.getContent() != null) {
-                    double contentHeight = mainContentScrollPane.getContent().getBoundsInLocal().getHeight();
-                    double viewportHeight = mainContentScrollPane.getViewportBounds().getHeight();
-
-                    if (contentHeight <= viewportHeight && currentPage < maxPage) {
-                        currentPagination.setCurrentPageIndex(currentPage + 1);
-                        pageChanged = true;
-                    } else if (contentHeight > viewportHeight) {
-                        double currentVValue = mainContentScrollPane.getVvalue();
-                        double vValueChange = KEYBOARD_SCROLL_AMOUNT / (contentHeight - viewportHeight);
-                        double newVValue = currentVValue + vValueChange;
-                        mainContentScrollPane.setVvalue(Math.min(newVValue, 1.0));
+                // 显示对话框并获取结果
+                alert.showAndWait().ifPresent(response -> {
+                    if (response == saveButton) {
+                        fileHandlerController.saveFile(); // 保存文件
+                        primaryStage.close(); // 保存后关闭应用
+                    } else if (response == discardButton) {
+                        primaryStage.close(); // 直接关闭应用
                     }
-                }
-                event.consume();
-            }
-
-
-            if (pageChanged) {
-                event.consume();
+                    // 如果是取消，什么都不做，保持应用打开
+                });
+            } else {
+                // 如果没有修改，直接关闭
+                primaryStage.close();
             }
         });
     }
