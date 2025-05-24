@@ -1,7 +1,9 @@
-.copyable-field {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-padding: 0;
-    -fx-font-size: 12px;
-    -fx-text-fill: black;
+/* 超长文本样式 */
+.text-area-red-overflow .text {
+    -fx-fill: red;
+}
+
+/* 兼容 .text-area 自身的高度和颜色 */
+.text-area-red-overflow {
+    -fx-text-fill: red; /* 确保TextAre自身文本也变色 */
 }

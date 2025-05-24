@@ -8,6 +8,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -20,11 +22,12 @@ import java.util.List;
 public class PaginationUIController {
 
     private final EditorController editorController;
+    private static final int MAX_TEXT_LENGTH = 24; // 定义最大字符数常量
 
     public void setupPagination() {
         Pagination pagination = editorController.getPagination();
         if (pagination == null) {
-            System.err.println("错误: Pagination控件在EditorController中未正确注入。");
+            System.err.println("\u9519\u8bef: Pagination\u63a7\u4ef6\u5728EditorController\u4e2d\u672a\u6b63\u786e\u6ce8\u5165\u3002");
             return;
         }
         pagination.setPageFactory(this::createPageForEntries);
@@ -42,7 +45,7 @@ public class PaginationUIController {
         if (entries.isEmpty()) {
             pagination.setPageCount(1);
             pagination.setPageFactory(idx -> {
-                entryContainer.getChildren().setAll(new Label("无内容可显示。"));
+                entryContainer.getChildren().setAll(new Label("\u65e0\u5185\u5bb9\u53ef\u663e\u793a\u3002"));
                 return new VBox();
             });
         } else {
@@ -71,6 +74,10 @@ public class PaginationUIController {
         if (entryContainer == null) return new VBox();
 
         editorController.setRendering(true);
+        Pagination pagination = editorController.getPagination();
+        if (pagination != null) {
+            pagination.setDisable(true);
+        }
 
         entryContainer.getChildren().clear();
         List<SptEntry> entries = editorController.getEntries();
@@ -80,9 +87,12 @@ public class PaginationUIController {
         int end = Math.min(start + itemsPerPage, entries.size());
 
         if (start >= entries.size() && !entries.isEmpty()) {
-            entryContainer.getChildren().add(new Label("无更多条目。"));
+            entryContainer.getChildren().add(new Label("\u65e0\u66f4\u591a\u6761\u76ee\u3002"));
             Platform.runLater(() -> {
                 editorController.setRendering(false);
+                if (pagination != null) {
+                    pagination.setDisable(false);
+                }
             });
             return new VBox();
         }
@@ -100,6 +110,9 @@ public class PaginationUIController {
         Platform.runLater(() -> {
             entryContainer.getChildren().setAll(nodesToAdd);
             editorController.setRendering(false);
+            if (pagination != null) {
+                pagination.setDisable(false);
+            }
         });
 
         return new VBox();
@@ -109,16 +122,39 @@ public class PaginationUIController {
         VBox entryUIRoot = new VBox(5);
         entryUIRoot.setPadding(new Insets(5));
 
+        HBox metaRow = new HBox(5);
+        metaRow.setAlignment(Pos.CENTER_LEFT);
+
         Label metaLabel = new Label(entry.getIndex() + " | " + entry.getAddress() + " | " + entry.getLength());
         metaLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 0.9em;");
-        entryUIRoot.getChildren().add(metaLabel);
+
+        Button copyEntryBtn = new Button("\u590d\u5236\u672c\u6761");
+        copyEntryBtn.setOnAction(evt -> {
+            StringBuilder entryClipboardContent = new StringBuilder();
+            entryClipboardContent
+                    .append("\u25cb").append(entry.getIndex()).append("|").append(entry.getAddress()).append("|").append(entry.getLength()).append("\u25cb ")
+                    .append(entry.getFullOriginalText()).append("\n");
+            entryClipboardContent
+                    .append("\u25cf").append(entry.getIndex()).append("|").append(entry.getAddress()).append("|").append(entry.getLength()).append("\u25cf ")
+                    .append(entry.getFullTranslatedText());
+
+            ClipboardContent content = new ClipboardContent();
+            content.putString(entryClipboardContent.toString());
+            Clipboard.getSystemClipboard().setContent(content);
+            System.out.println("\u5355\u6761\u5185\u5bb9\u5df2\u590d\u5236\u5230\u526a\u8d34\u677f\u3002");
+        });
+
+        metaRow.getChildren().addAll(metaLabel, copyEntryBtn);
+        HBox.setHgrow(metaLabel, Priority.ALWAYS);
+
+        entryUIRoot.getChildren().add(metaRow);
 
         HBox contentBox = new HBox(10);
 
-        VBox originalCol = new VBox(3, new Label("原文:"));
+        VBox originalCol = new VBox(3, new Label("\u539f\u6587:"));
         HBox.setHgrow(originalCol, Priority.ALWAYS);
         if (entry.getOriginalSegments().isEmpty() || (entry.getOriginalSegments().size() == 1 && entry.getOriginalSegments().get(0).get().isEmpty())) {
-            originalCol.getChildren().add(new Label("(原文为空)"));
+            originalCol.getChildren().add(new Label("(\u539f\u6587\u4e3a\u7a7a)"));
         } else {
             entry.getOriginalSegments().forEach(segment -> {
                 TextArea ta = new TextArea(segment.get());
@@ -129,7 +165,7 @@ public class PaginationUIController {
             });
         }
 
-        VBox translatedCol = new VBox(3, new Label("译文:"));
+        VBox translatedCol = new VBox(3, new Label("\u8bd1\u6587:"));
         HBox.setHgrow(translatedCol, Priority.ALWAYS);
         ObservableList<StringProperty> translatedSegments = entry.getTranslatedSegments();
         for (int i = 0; i < translatedSegments.size(); i++) {
@@ -138,30 +174,55 @@ public class PaginationUIController {
             ta.setWrapText(true);
             ta.textProperty().bindBidirectional(segProp);
             ta.setPrefHeight(10);
-            ta.textProperty().addListener((obs, o, n) -> editorController.markModified(true));
+
+            Label charCountLabel = new Label();
+            charCountLabel.setStyle("-fx-font-size: 0.8em; -fx-text-fill: grey;");
+
+            ta.textProperty().addListener((obs, oldValue, newValue) -> {
+                String currentText = (newValue != null) ? newValue : "";
+                int currentLength = currentText.length();
+                charCountLabel.setText(currentLength + "/" + MAX_TEXT_LENGTH);
+
+                if (currentLength > MAX_TEXT_LENGTH) {
+                    Platform.runLater(() -> {
+                        ta.setText(oldValue != null ? oldValue : "");
+                        charCountLabel.setText((oldValue != null ? oldValue.length() : 0) + "/" + MAX_TEXT_LENGTH);
+                    });
+                    return;
+                }
+
+                applyLengthStyle(ta);
+                editorController.markModified(true);
+            });
+
+            String initialText = segProp.get();
+            charCountLabel.setText((initialText != null ? initialText.length() : 0) + "/" + MAX_TEXT_LENGTH);
+            applyLengthStyle(ta);
 
             Button removeBtn = new Button("-");
             int idx = i;
             removeBtn.setOnAction(evt -> {
                 entry.removeTranslatedSegment(idx);
                 editorController.markModified(true);
-                if (editorController.getPagination() != null) {
-                    createPageForEntries(editorController.getPagination().getCurrentPageIndex());
-                }
+                editorController.getPaginationUIController().createPageForEntries(editorController.getPagination().getCurrentPageIndex());
             });
 
-            HBox row = new HBox(3, ta, removeBtn);
-            HBox.setHgrow(ta, Priority.ALWAYS);
+            VBox textAreaWithCount = new VBox(3, ta, charCountLabel);
+            HBox.setHgrow(textAreaWithCount, Priority.ALWAYS);
+            HBox row = new HBox(3, textAreaWithCount, removeBtn);
+            HBox.setHgrow(textAreaWithCount, Priority.ALWAYS);
             translatedCol.getChildren().add(row);
         }
 
         Button addBtn = new Button("(+)");
+        if (translatedSegments.size() >= 4) {
+            addBtn.setDisable(true);
+            addBtn.setTooltip(new Tooltip("\u6700\u591a\u53ea\u80fd\u67094\u4e2a\u8bd1\u6587\u6bb5\u843d"));
+        }
         addBtn.setOnAction(evt -> {
             entry.addTranslatedSegment("");
             editorController.markModified(true);
-            if (editorController.getPagination() != null) {
-                createPageForEntries(editorController.getPagination().getCurrentPageIndex());
-            }
+            editorController.getPaginationUIController().createPageForEntries(editorController.getPagination().getCurrentPageIndex());
         });
         HBox addBtnBox = new HBox(addBtn);
         addBtnBox.setAlignment(Pos.CENTER_RIGHT);
@@ -171,5 +232,15 @@ public class PaginationUIController {
         contentBox.getChildren().addAll(originalCol, translatedCol);
         entryUIRoot.getChildren().add(contentBox);
         return entryUIRoot;
+    }
+
+    private void applyLengthStyle(TextArea ta) {
+        if (ta.getText() != null && ta.getText().length() > MAX_TEXT_LENGTH) {
+            if (!ta.getStyleClass().contains("text-area-red-overflow")) {
+                ta.getStyleClass().add("text-area-red-overflow");
+            }
+        } else {
+            ta.getStyleClass().remove("text-area-red-overflow");
+        }
     }
 }

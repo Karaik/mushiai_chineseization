@@ -13,6 +13,7 @@
             </padding>
             <Button text="打开文件" onAction="#handleOpenFile" />
             <Button text="保存译文" onAction="#handleSaveFile" />
+            <Button text="复制当前页" onAction="#handleCopyCurrentPage" />
             <Label text="每页显示:"/>
             <ComboBox fx:id="itemsPerPageComboBox" prefWidth="80"/>
             <Region HBox.hgrow="ALWAYS"/>

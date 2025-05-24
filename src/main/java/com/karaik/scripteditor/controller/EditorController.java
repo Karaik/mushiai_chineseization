@@ -6,6 +6,8 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
@@ -66,35 +68,40 @@ public class EditorController {
             });
         }
 
+        // 监听页码变化以自动保存文件
         if (pagination != null) {
             pagination.currentPageIndexProperty().addListener((obs, oldVal, newVal) -> {
                 if (oldVal != null && newVal != null && oldVal.intValue() != newVal.intValue()) {
+                    // 如果是初始化阶段，不触发冷却和警告
                     if (initializing) {
-                        lastPageChangeTime = System.currentTimeMillis();
-                        preferences.putInt(PREF_KEY_LAST_PAGE_INDEX, newVal.intValue());
+                        lastPageChangeTime = System.currentTimeMillis(); // 更新时间戳，确保后续操作不受初始化的影响
+                        preferences.putInt(PREF_KEY_LAST_PAGE_INDEX, newVal.intValue()); // 保存当前页码
                         if (modified) {
-                            fileHandlerController.saveFile();
+                            fileHandlerController.saveFile(); // 如果有修改则保存
                         }
-                        return;
+                        return; // 初始化期间直接返回
                     }
 
-                    if (!canChangePage()) {
-                        if (warningShown.compareAndSet(false, true)) {
+                    if (!canChangePage()) { // 检查是否可以翻页
+                        if (warningShown.compareAndSet(false, true)) { // 避免重复弹出警告
                             Platform.runLater(() -> {
-                                pagination.setCurrentPageIndex(oldVal.intValue());
-                                Alert alert = new Alert(Alert.AlertType.WARNING, "页面正在渲染中或操作过于频繁，请稍后再尝试翻页。");
+                                pagination.setCurrentPageIndex(oldVal.intValue()); // 翻回旧页面
+                                Alert alert = new Alert(Alert.AlertType.WARNING, "别翻页太快，会崩的(～￣(OO)￣)ブ");
                                 configureAlertOnTop(alert);
-                                alert.setOnCloseRequest(event -> warningShown.set(false));
+                                alert.setOnCloseRequest(event -> warningShown.set(false)); // 弹窗关闭后重置警告标志
                                 alert.show();
                             });
                         }
-                        return;
+                        return; // 阻止翻页
                     }
 
+                    // 在翻页前保存文件（如果有修改）
                     if (modified) {
                         fileHandlerController.saveFile();
                     }
+                    // 更新偏好设置中的页码
                     preferences.putInt(PREF_KEY_LAST_PAGE_INDEX, newVal.intValue());
+                    // 更新上次翻页时间
                     lastPageChangeTime = System.currentTimeMillis();
                 }
             });
@@ -106,6 +113,8 @@ public class EditorController {
 
             if (scene != null && scene.getWindow() instanceof Stage) {
                 primaryStage = (Stage) scene.getWindow();
+                // 新增：加载CSS文件
+                scene.getStylesheets().add(getClass().getResource("/com/karaik/scripteditor/css.css").toExternalForm());
                 setupPrimaryStageEventHandlers();
                 updateTitle();
 
@@ -122,30 +131,28 @@ public class EditorController {
                 File lastFile = getLastOpenedFile();
                 if (lastFile != null && lastFile.exists()) {
                     fileHandlerController.openSpecificFile(lastFile);
-                    // restoreLastPage 和 initializing = false 将在 openSpecificFile 的回调中处理
                 } else {
-                    // 如果没有上次打开的文件，也需要确保初始化完成
                     if (paginationUIController != null && entries.isEmpty()) {
                         paginationUIController.updatePaginationView();
                     } else if (paginationUIController != null) {
                         restoreLastPage();
                     }
-                    // 如果没有文件打开，直接设置 initializing 为 false
-                    initializing = false;
+                    initializing = false; // 文件打开或恢复完成后，设置为非初始化状态
                 }
             } else {
                 System.err.println("Error: Scene or Stage not available during initialization.");
-                // 如果Stage都不可用，直接设为false，否则可能一直处于initializing状态
-                initializing = false;
+                initializing = false; // 确保即使出错也能退出初始化状态
             }
         });
     }
 
+    // 检查是否可以翻页
     public boolean canChangePage() {
         long currentTime = System.currentTimeMillis();
         return !isRendering.get() && (currentTime - lastPageChangeTime) >= PAGE_CHANGE_COOLDOWN;
     }
 
+    // 设置渲染状态
     public void setRendering(boolean rendering) {
         this.isRendering.set(rendering);
     }
@@ -156,16 +163,16 @@ public class EditorController {
 
     private void setupItemsPerPageComboBox() {
         if (itemsPerPageComboBox != null) {
-            itemsPerPageComboBox.setItems(FXCollections.observableArrayList(20, 30, 50));
+            itemsPerPageComboBox.setItems(FXCollections.observableArrayList(20, 30, 50)); //
             if (!itemsPerPageComboBox.getItems().contains(this.itemsPerPage)) {
-                this.itemsPerPage = 20;
+                this.itemsPerPage = 20; //
             }
             itemsPerPageComboBox.setValue(this.itemsPerPage);
 
             itemsPerPageComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null && newVal != this.itemsPerPage) {
                     this.itemsPerPage = newVal;
-                    preferences.putInt(PREF_KEY_ITEMS_PER_PAGE, this.itemsPerPage);
+                    preferences.putInt(PREF_KEY_ITEMS_PER_PAGE, this.itemsPerPage); // 保存到偏好设置
                     if (paginationUIController != null) {
                         paginationUIController.updatePaginationView();
                     }
@@ -183,20 +190,17 @@ public class EditorController {
                 if (paginationUIController != null) {
                     paginationUIController.createPageForEntries(lastPageIndex);
                 }
-                lastPageChangeTime = System.currentTimeMillis();
+                lastPageChangeTime = System.currentTimeMillis(); // 恢复页码后更新时间戳
             } else {
+                // 如果页码超出范围，重置为第一页
                 pagination.setCurrentPageIndex(0);
                 if (paginationUIController != null) {
                     paginationUIController.createPageForEntries(0);
                 }
-                lastPageChangeTime = System.currentTimeMillis();
+                lastPageChangeTime = System.currentTimeMillis(); // 恢复页码后更新时间戳
             }
         }
-        // 在页面恢复和渲染逻辑完成后，才将 initializing 设置为 false
-        // 这需要确保 createPageForEntries 内部的 Platform.runLater 也执行完毕
-        // 实际上，createPageForEntries 已经是 Platform.runLater 调用的，
-        // 所以这里可以放心地设置。
-        Platform.runLater(() -> initializing = false);
+        Platform.runLater(() -> initializing = false); // 恢复完成后，设置为非初始化状态
     }
 
     private void setupPrimaryStageEventHandlers() {
@@ -264,7 +268,7 @@ public class EditorController {
         }
         if (!initializing && !canChangePage()) {
             if (warningShown.compareAndSet(false, true)) {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "页面正在渲染中或操作过于频繁，请稍后再尝试跳转。");
+                Alert alert = new Alert(Alert.AlertType.WARNING, "别翻页太快，会崩的(～￣(OO)￣)ブ");
                 configureAlertOnTop(alert);
                 alert.setOnCloseRequest(event -> warningShown.set(false));
                 alert.show();
@@ -287,6 +291,40 @@ public class EditorController {
             alert.showAndWait();
         }
         pageInputField.clear();
+    }
+
+    // 复制处理
+    @FXML
+    private void handleCopyCurrentPage() {
+        if (entries.isEmpty() || pagination == null) {
+            new Alert(Alert.AlertType.INFORMATION, "没有内容可以复制。").showAndWait();
+            return;
+        }
+
+        int currentPageIndex = pagination.getCurrentPageIndex();
+        int start = currentPageIndex * itemsPerPage;
+        int end = Math.min(start + itemsPerPage, entries.size());
+
+        StringBuilder clipboardContentBuilder = new StringBuilder();
+        for (int i = start; i < end; i++) {
+            SptEntry entry = entries.get(i);
+            clipboardContentBuilder
+                    .append("○").append(entry.getIndex()).append("|").append(entry.getAddress()).append("|").append(entry.getLength()).append("○ ")
+                    .append(entry.getFullOriginalText()).append("\n");
+            clipboardContentBuilder
+                    .append("●").append(entry.getIndex()).append("|").append(entry.getAddress()).append("|").append(entry.getLength()).append("● ")
+                    .append(entry.getFullTranslatedText()).append("\n");
+            clipboardContentBuilder.append("\n");
+        }
+
+        if (clipboardContentBuilder.length() > 0) {
+            ClipboardContent content = new ClipboardContent();
+            content.putString(clipboardContentBuilder.toString().trim());
+            Clipboard.getSystemClipboard().setContent(content);
+            System.out.println("当前页内容已复制到剪贴板。");
+        } else {
+            new Alert(Alert.AlertType.INFORMATION, "当前页没有可复制的文本内容。").showAndWait();
+        }
     }
 
     public void setEntries(List<SptEntry> newEntries) {
