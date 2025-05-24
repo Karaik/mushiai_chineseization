@@ -44,12 +44,11 @@ public class EditorController {
     private static final String PREF_KEY_LAST_PAGE_INDEX = "lastPageIndex";
     private static final String PREF_KEY_ALWAYS_ON_TOP = "alwaysOnTop";
 
-    private int itemsPerPage = 20;
+    private int itemsPerPage = 3;
     private AtomicBoolean isRendering = new AtomicBoolean(false);
     private long lastPageChangeTime = 0;
     private static final long PAGE_CHANGE_COOLDOWN = 500;
     private boolean initializing = true;
-    private final AtomicBoolean isChangePageItemQuantity = new AtomicBoolean(false);;
     private final AtomicBoolean warningShown = new AtomicBoolean(false);
     private static final double KEYBOARD_SCROLL_AMOUNT = 200; // 控制每次按键滚动的像素量
 
@@ -179,10 +178,6 @@ public class EditorController {
 
     // 检查是否可以翻页
     public boolean canChangePage() {
-        System.out.println(111);
-        if (isChangePageItemQuantity.getAndSet(false)) {
-            return true;
-        }
         long currentTime = System.currentTimeMillis();
         return !isRendering.get() && (currentTime - lastPageChangeTime) >= PAGE_CHANGE_COOLDOWN;
     }
@@ -198,61 +193,21 @@ public class EditorController {
 
     private void setupItemsPerPageComboBox() {
         if (itemsPerPageComboBox != null) {
-            itemsPerPageComboBox.setItems(FXCollections.observableArrayList(3, 20, 30, 50));
+            itemsPerPageComboBox.setItems(FXCollections.observableArrayList(1, 2, 3, 20, 30, 50));
             if (!itemsPerPageComboBox.getItems().contains(this.itemsPerPage)) {
-                this.itemsPerPage = 20;
+                this.itemsPerPage = 3;
             }
             itemsPerPageComboBox.setValue(this.itemsPerPage);
 
             itemsPerPageComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null && newVal != this.itemsPerPage) {
-                    // 获取当前页面最上面的 index
-                    int currentTopIndex = 0;
-                    if (!entryContainer.getChildren().isEmpty()) {
-                        for (Node node : entryContainer.getChildren()) {
-                            if (node instanceof VBox vbox) {
-                                for (Node child : vbox.getChildren()) {
-                                    if (child instanceof HBox hbox) {
-                                        for (Node labelNode : hbox.getChildren()) {
-                                            if (labelNode instanceof Label label) {
-                                                String text = label.getText(); // 例如 "12 | 0xABC | 44"
-                                                String[] parts = text.split(" \\| ");
-                                                if (parts.length >= 1) {
-                                                    try {
-                                                        currentTopIndex = Integer.parseInt(parts[0].trim());
-                                                    } catch (NumberFormatException ignored) {
-                                                    }
-                                                }
-                                                break;
-                                            }
-                                        }
-                                        break;
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                    }
-
-                    // 计算新页码并保存每页数设置
                     this.itemsPerPage = newVal;
-                    preferences.putInt(PREF_KEY_ITEMS_PER_PAGE, this.itemsPerPage);
-
-                    int newPage = currentTopIndex / this.itemsPerPage;
-
-                    isChangePageItemQuantity.set(true);
-
-                    if (pagination != null) {
-                        pagination.setCurrentPageIndex(newPage);
-                    }
-
-                    // 最后更新页面内容
+                    preferences.putInt(PREF_KEY_ITEMS_PER_PAGE, this.itemsPerPage); // 保存到偏好设置
                     if (paginationUIController != null) {
                         paginationUIController.updatePaginationView();
                     }
                 }
             });
-
         }
     }
 
@@ -380,7 +335,7 @@ public class EditorController {
 
     @FXML
     private void handleJumpToPage() {
-        if (pageInputField == null || pagination == null || pageInputField.getText().isEmpty()|| isChangePageItemQuantity.getAndSet(false)) {
+        if (pageInputField == null || pagination == null || pageInputField.getText().isEmpty()) {
             return;
         }
         if (!initializing && !canChangePage()) {

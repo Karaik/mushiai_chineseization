@@ -39,6 +39,8 @@ public class PaginationUIController {
 
         List<SptEntry> entries = editorController.getEntries();
         int itemsPerPage = editorController.getItemsPerPage();
+        
+        pagination.setPageFactory(this::createPageForEntries);
 
         if (entries.isEmpty()) {
             pagination.setPageCount(1);
@@ -49,7 +51,6 @@ public class PaginationUIController {
         } else {
             int pageCount = (int) Math.ceil((double) entries.size() / itemsPerPage);
             pagination.setPageCount(Math.max(1, pageCount));
-            pagination.setPageFactory(this::createPageForEntries);
         }
 
         int currentIdx = pagination.getCurrentPageIndex();
