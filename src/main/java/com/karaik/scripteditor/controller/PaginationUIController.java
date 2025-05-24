@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class PaginationUIController {
@@ -29,7 +29,6 @@ public class PaginationUIController {
         Pagination pagination = editorController.getPagination();
         if (pagination == null) return;
         pagination.setPageFactory(this::createPageForEntries);
-        updatePaginationView();
     }
 
     public void updatePaginationView() {
@@ -39,69 +38,65 @@ public class PaginationUIController {
 
         List<SptEntry> entries = editorController.getEntries();
         int itemsPerPage = editorController.getItemsPerPage();
-        
-        pagination.setPageFactory(this::createPageForEntries);
 
+        int newPageCount;
         if (entries.isEmpty()) {
-            pagination.setPageCount(1);
-            pagination.setPageFactory(idx -> {
-                entryContainer.getChildren().setAll(new Label("无内容可显示。"));
-                return new VBox();
-            });
+            newPageCount = 1;
         } else {
-            int pageCount = (int) Math.ceil((double) entries.size() / itemsPerPage);
-            pagination.setPageCount(Math.max(1, pageCount));
+            newPageCount = (int) Math.ceil((double) entries.size() / itemsPerPage);
+            newPageCount = Math.max(1, newPageCount);
         }
 
-        int currentIdx = pagination.getCurrentPageIndex();
-        int newPageCount = pagination.getPageCount();
+        int currentPageBeforeUpdate = pagination.getCurrentPageIndex();
+        pagination.setPageCount(newPageCount);
+        int currentPageAfterUpdate = pagination.getCurrentPageIndex();
 
-        if (newPageCount > 0) {
-            if (currentIdx < 0 || currentIdx >= newPageCount) {
-                currentIdx = 0;
-                pagination.setCurrentPageIndex(currentIdx);
-            } else {
-                createPageForEntries(currentIdx);
-            }
-        } else {
-            entryContainer.getChildren().clear();
+        if (currentPageBeforeUpdate != currentPageAfterUpdate || newPageCount == 1 || entries.size() > 0) {
+            createPageForEntries(currentPageAfterUpdate);
+        } else if (entries.isEmpty() && currentPageAfterUpdate == 0) {
+            createPageForEntries(0);
         }
     }
 
     public VBox createPageForEntries(int pageIndex) {
-        VBox entryContainer = editorController.getEntryContainer();
-        if (entryContainer == null) return new VBox();
+        VBox sharedEntryContainer = editorController.getEntryContainer();
+        if (sharedEntryContainer == null) {
+            return new VBox(new Label("Error: UI container not found."));
+        }
 
         editorController.setRendering(true);
         Pagination pagination = editorController.getPagination();
         if (pagination != null) pagination.setDisable(true);
 
-        entryContainer.getChildren().clear();
         List<SptEntry> entries = editorController.getEntries();
         int itemsPerPage = editorController.getItemsPerPage();
-
         int start = pageIndex * itemsPerPage;
         int end = Math.min(start + itemsPerPage, entries.size());
 
-        if (start >= entries.size() && !entries.isEmpty()) {
-            entryContainer.getChildren().add(new Label("无更多条目。"));
-            Platform.runLater(() -> {
-                editorController.setRendering(false);
-                if (pagination != null) pagination.setDisable(false);
-            });
-            return new VBox();
-        }
-
         List<Node> nodesToAdd = new ArrayList<>();
-        for (int i = start; i < end; i++) {
-            nodesToAdd.add(createUIForSptEntry(entries.get(i)));
-            if (i < end - 1) nodesToAdd.add(new Separator());
+        if (entries.isEmpty() && pageIndex == 0) {
+            Label noContentLabel = new Label("无内容可显示。");
+            noContentLabel.setPadding(new Insets(10));
+            nodesToAdd.add(noContentLabel);
+        } else if (start >= entries.size() && !entries.isEmpty()) {
+            Label errorLabel = new Label("页码超出范围或无条目。");
+            errorLabel.setPadding(new Insets(10));
+            nodesToAdd.add(errorLabel);
+        }
+        else {
+            for (int i = start; i < end; i++) {
+                nodesToAdd.add(createUIForSptEntry(entries.get(i)));
+                if (i < end - 1) nodesToAdd.add(new Separator());
+            }
         }
 
         Platform.runLater(() -> {
-            entryContainer.getChildren().setAll(nodesToAdd);
+            sharedEntryContainer.getChildren().setAll(nodesToAdd);
             editorController.setRendering(false);
-            if (pagination != null) pagination.setDisable(false);
+            if (editorController.getPagination() != null) editorController.getPagination().setDisable(false);
+            if (editorController.getMainContentScrollPane() != null) {
+                editorController.getMainContentScrollPane().setVvalue(0.0);
+            }
         });
 
         return new VBox();
@@ -140,7 +135,9 @@ public class PaginationUIController {
         HBox.setHgrow(translatedCol, Priority.ALWAYS);
 
         if (entry.getOriginalSegments().isEmpty() || (entry.getOriginalSegments().size() == 1 && entry.getOriginalSegments().get(0).get().isEmpty())) {
-            originalCol.getChildren().add(new Label("(原文为空)"));
+            Label emptyOriginal = new Label("(原文为空)");
+            emptyOriginal.setPadding(new Insets(2));
+            originalCol.getChildren().add(emptyOriginal);
         } else {
             entry.getOriginalSegments().forEach(segment -> {
                 TextArea ta = new TextArea(segment.get());
@@ -166,9 +163,15 @@ public class PaginationUIController {
             StringProperty newProp = entry.addTranslatedSegment("");
             editorController.markModified(true);
             Node ui = createTranslatedSegmentUI(entry, translatedSegments.size() - 1, newProp, translatedCol);
-            int insertIndex = IntStream.range(0, translatedCol.getChildren().size())
-                    .filter(i -> "addBtnBox".equals(translatedCol.getChildren().get(i).getId()))
-                    .findFirst().orElse(translatedCol.getChildren().size());
+
+            int insertIndex = translatedCol.getChildren().size() -1;
+            Optional<Node> foundAddBtnBox = translatedCol.getChildren().stream().filter(node -> "addBtnBox".equals(node.getId())).findFirst();
+            if (foundAddBtnBox.isPresent()) {
+                insertIndex = translatedCol.getChildren().indexOf(foundAddBtnBox.get());
+            } else {
+                if (translatedCol.getChildren().size() > 0) insertIndex = translatedCol.getChildren().size() -1;
+                else insertIndex = 0;
+            }
             translatedCol.getChildren().add(insertIndex, ui);
             updateAddBtnState(addBtn, translatedSegments);
         });
@@ -201,17 +204,25 @@ public class PaginationUIController {
         Button removeBtn = new Button("-");
         removeBtn.setOnAction(evt -> {
             int realIndex = entry.getTranslatedSegments().indexOf(segProp);
-            entry.removeTranslatedSegment(realIndex);
-            editorController.markModified(true);
-            parentTranslatedCol.getChildren().remove(removeBtn.getParent());
-            Button addBtn = (Button)((HBox) parentTranslatedCol.lookup("#addBtnBox")).getChildren().get(0);
-            updateAddBtnState(addBtn, entry.getTranslatedSegments());
+            if (realIndex != -1) {
+                entry.removeTranslatedSegment(realIndex);
+                editorController.markModified(true);
+                parentTranslatedCol.getChildren().remove(removeBtn.getParent());
+
+                Node addBtnBoxNode = parentTranslatedCol.lookup("#addBtnBox");
+                if (addBtnBoxNode instanceof HBox && !((HBox) addBtnBoxNode).getChildren().isEmpty()) {
+                    Node firstChild = ((HBox) addBtnBoxNode).getChildren().get(0);
+                    if (firstChild instanceof Button) {
+                        updateAddBtnState((Button)firstChild, entry.getTranslatedSegments());
+                    }
+                }
+            }
         });
 
         VBox textAreaWithCount = new VBox(3, ta, charCountLabel);
         HBox.setHgrow(textAreaWithCount, Priority.ALWAYS);
         HBox row = new HBox(3, textAreaWithCount, removeBtn);
-        HBox.setHgrow(textAreaWithCount, Priority.ALWAYS);
+        row.setAlignment(Pos.CENTER_LEFT);
         return row;
     }
 
@@ -219,7 +230,7 @@ public class PaginationUIController {
         if (ta.getText() != null && ta.getText().length() > MAX_TEXT_LENGTH) {
             ta.setStyle("-fx-text-fill: red;");
         } else {
-            ta.setStyle("-fx-text-fill: black;");
+            ta.setStyle("");
         }
     }
 
