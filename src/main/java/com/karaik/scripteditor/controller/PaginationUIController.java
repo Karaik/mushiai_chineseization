@@ -17,18 +17,17 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 public class PaginationUIController {
 
     private final EditorController editorController;
-    private static final int MAX_TEXT_LENGTH = 24; // 定义最大字符数常量
+    private static final int MAX_TEXT_LENGTH = 24;
 
     public void setupPagination() {
         Pagination pagination = editorController.getPagination();
-        if (pagination == null) {
-            return;
-        }
+        if (pagination == null) return;
         pagination.setPageFactory(this::createPageForEntries);
         updatePaginationView();
     }
@@ -74,9 +73,7 @@ public class PaginationUIController {
 
         editorController.setRendering(true);
         Pagination pagination = editorController.getPagination();
-        if (pagination != null) {
-            pagination.setDisable(true); // 禁用分页，防止同时翻页
-        }
+        if (pagination != null) pagination.setDisable(true);
 
         entryContainer.getChildren().clear();
         List<SptEntry> entries = editorController.getEntries();
@@ -89,9 +86,7 @@ public class PaginationUIController {
             entryContainer.getChildren().add(new Label("无更多条目。"));
             Platform.runLater(() -> {
                 editorController.setRendering(false);
-                if (pagination != null) {
-                    pagination.setDisable(false);
-                }
+                if (pagination != null) pagination.setDisable(false);
             });
             return new VBox();
         }
@@ -99,19 +94,13 @@ public class PaginationUIController {
         List<Node> nodesToAdd = new ArrayList<>();
         for (int i = start; i < end; i++) {
             nodesToAdd.add(createUIForSptEntry(entries.get(i)));
-            if (i < end - 1) {
-                Separator sep = new Separator();
-                sep.setPadding(new Insets(5, 0, 5, 0));
-                nodesToAdd.add(sep);
-            }
+            if (i < end - 1) nodesToAdd.add(new Separator());
         }
 
         Platform.runLater(() -> {
             entryContainer.getChildren().setAll(nodesToAdd);
             editorController.setRendering(false);
-            if (pagination != null) {
-                pagination.setDisable(false);
-            }
+            if (pagination != null) pagination.setDisable(false);
         });
 
         return new VBox();
@@ -129,28 +118,26 @@ public class PaginationUIController {
 
         Button copyEntryBtn = new Button("复制本条");
         copyEntryBtn.setOnAction(evt -> {
-            StringBuilder entryClipboardContent = new StringBuilder();
-            entryClipboardContent
-                    .append("○").append(entry.getIndex()).append("|").append(entry.getAddress()).append("|").append(entry.getLength()).append("○ ")
-                    .append(entry.getFullOriginalText()).append("\n");
-            entryClipboardContent
+            StringBuilder content = new StringBuilder();
+            content.append("○").append(entry.getIndex()).append("|").append(entry.getAddress()).append("|").append(entry.getLength()).append("○ ")
+                    .append(entry.getFullOriginalText()).append("\n")
                     .append("●").append(entry.getIndex()).append("|").append(entry.getAddress()).append("|").append(entry.getLength()).append("● ")
                     .append(entry.getFullTranslatedText());
-
-            ClipboardContent content = new ClipboardContent();
-            content.putString(entryClipboardContent.toString());
-            Clipboard.getSystemClipboard().setContent(content);
+            ClipboardContent clipboardContent = new ClipboardContent();
+            clipboardContent.putString(content.toString());
+            Clipboard.getSystemClipboard().setContent(clipboardContent);
         });
 
         metaRow.getChildren().addAll(metaLabel, copyEntryBtn);
         HBox.setHgrow(metaLabel, Priority.ALWAYS);
-
         entryUIRoot.getChildren().add(metaRow);
 
         HBox contentBox = new HBox(10);
-
         VBox originalCol = new VBox(3, new Label("原文:"));
+        VBox translatedCol = new VBox(3, new Label("译文:"));
         HBox.setHgrow(originalCol, Priority.ALWAYS);
+        HBox.setHgrow(translatedCol, Priority.ALWAYS);
+
         if (entry.getOriginalSegments().isEmpty() || (entry.getOriginalSegments().size() == 1 && entry.getOriginalSegments().get(0).get().isEmpty())) {
             originalCol.getChildren().add(new Label("(原文为空)"));
         } else {
@@ -163,50 +150,34 @@ public class PaginationUIController {
             });
         }
 
-        VBox translatedCol = new VBox(3, new Label("译文:"));
-        HBox.setHgrow(translatedCol, Priority.ALWAYS);
         ObservableList<StringProperty> translatedSegments = entry.getTranslatedSegments();
-
-        // 为每个现有的翻译片段创建 UI
         for (int i = 0; i < translatedSegments.size(); i++) {
             translatedCol.getChildren().add(createTranslatedSegmentUI(entry, i, translatedSegments.get(i), translatedCol));
         }
 
         Button addBtn = new Button("(+)");
-        // 这里的 disable 逻辑可以直接基于 translatedSegments 的当前大小
-        if (translatedSegments.size() >= 4) {
-            addBtn.setDisable(true);
-            addBtn.setTooltip(new Tooltip("最多只能有4个译文段落"));
-        }
-        addBtn.setOnAction(evt -> {
-            // 添加新的翻译片段到 SptEntry
-            StringProperty newSegmentProp = entry.addTranslatedSegment("");
-            editorController.markModified(true);
-
-            // 为新添加的片段创建 UI 元素
-            Node newSegmentNode = createTranslatedSegmentUI(entry, translatedSegments.size() - 1, newSegmentProp, translatedCol);
-
-            // 在 addBtnBox 之前插入新的片段 UI
-            // addBtnBox 是 translatedCol 的最后一个子节点
-            translatedCol.getChildren().add(translatedCol.getChildren().size() - 1, newSegmentNode);
-
-            // 更新 addBtn 的禁用状态
-            if (translatedSegments.size() >= 4) {
-                addBtn.setDisable(true);
-                addBtn.setTooltip(new Tooltip("最多只能有4个译文段落"));
-            }
-        });
         HBox addBtnBox = new HBox(addBtn);
+        addBtnBox.setId("addBtnBox");
         addBtnBox.setAlignment(Pos.CENTER_RIGHT);
         addBtnBox.setPadding(new Insets(3, 0, 0, 0));
-        translatedCol.getChildren().add(addBtnBox); // 将 addBtnBox 添加到 translatedCol 的末尾
+        updateAddBtnState(addBtn, translatedSegments);
+        addBtn.setOnAction(evt -> {
+            StringProperty newProp = entry.addTranslatedSegment("");
+            editorController.markModified(true);
+            Node ui = createTranslatedSegmentUI(entry, translatedSegments.size() - 1, newProp, translatedCol);
+            int insertIndex = IntStream.range(0, translatedCol.getChildren().size())
+                    .filter(i -> "addBtnBox".equals(translatedCol.getChildren().get(i).getId()))
+                    .findFirst().orElse(translatedCol.getChildren().size());
+            translatedCol.getChildren().add(insertIndex, ui);
+            updateAddBtnState(addBtn, translatedSegments);
+        });
+        translatedCol.getChildren().add(addBtnBox);
 
         contentBox.getChildren().addAll(originalCol, translatedCol);
         entryUIRoot.getChildren().add(contentBox);
         return entryUIRoot;
     }
 
-    // 提取的用于创建单个翻译片段 UI 的方法
     private HBox createTranslatedSegmentUI(SptEntry entry, int index, StringProperty segProp, VBox parentTranslatedCol) {
         TextArea ta = new TextArea();
         ta.setWrapText(true);
@@ -216,48 +187,24 @@ public class PaginationUIController {
         Label charCountLabel = new Label();
         charCountLabel.setStyle("-fx-font-size: 0.8em; -fx-text-fill: grey;");
 
-        ta.textProperty().addListener((obs, oldValue, newValue) -> {
-            String currentText = (newValue != null) ? newValue : "";
-            int currentLength = currentText.length();
-            charCountLabel.setText(currentLength + "/" + MAX_TEXT_LENGTH);
-
-            if (currentLength > MAX_TEXT_LENGTH) {
-                ta.setStyle("-fx-text-fill: red;");
-            } else {
-                ta.setStyle("-fx-text-fill: black;");
-            }
-
+        ta.textProperty().addListener((obs, oldVal, newVal) -> {
+            String text = (newVal != null) ? newVal : "";
+            charCountLabel.setText(text.length() + "/" + MAX_TEXT_LENGTH);
             applyLengthStyle(ta);
             editorController.markModified(true);
         });
 
-        String initialText = segProp.get();
-        charCountLabel.setText((initialText != null ? initialText.length() : 0) + "/" + MAX_TEXT_LENGTH);
+        charCountLabel.setText((segProp.get() != null ? segProp.get().length() : 0) + "/" + MAX_TEXT_LENGTH);
         applyLengthStyle(ta);
 
         Button removeBtn = new Button("-");
-        // 使用 final int 确保 lambda 表达式可以捕获
-        final int segmentIndex = index;
         removeBtn.setOnAction(evt -> {
-            // 从 SptEntry 中移除翻译片段
-            entry.removeTranslatedSegment(segmentIndex);
+            int realIndex = entry.getTranslatedSegments().indexOf(segProp);
+            entry.removeTranslatedSegment(realIndex);
             editorController.markModified(true);
-
-            // 从 UI 中移除对应的 HBox 节点
-            // removeBtn.getParent() 就是 HBox (newRow)
             parentTranslatedCol.getChildren().remove(removeBtn.getParent());
-
-            // 重新调整索引，因为 SptEntry 中的片段数量和顺序可能改变
-            // 这是一个更复杂的场景，如果需要，可以考虑重新遍历并设置所有 removeBtn 的 action
-            // 但对于移除单个元素，通常直接移除节点就足够了，除非你需要依赖精确的索引
-            // 简单起见，这里假设 removeTranslatedSegment 会正确处理列表内部的移除
-            // 如果后续出现索引错乱问题，可能需要更复杂的 UI 刷新逻辑，但不是整个分页刷新
-            // 这里我们更新一下 (+) 按钮的禁用状态
-            Button addBtn = (Button)((HBox)parentTranslatedCol.getChildren().get(parentTranslatedCol.getChildren().size()-1)).getChildren().get(0);
-            if (entry.getTranslatedSegments().size() < 4) {
-                addBtn.setDisable(false);
-                addBtn.setTooltip(null);
-            }
+            Button addBtn = (Button)((HBox) parentTranslatedCol.lookup("#addBtnBox")).getChildren().get(0);
+            updateAddBtnState(addBtn, entry.getTranslatedSegments());
         });
 
         VBox textAreaWithCount = new VBox(3, ta, charCountLabel);
@@ -269,11 +216,19 @@ public class PaginationUIController {
 
     private void applyLengthStyle(TextArea ta) {
         if (ta.getText() != null && ta.getText().length() > MAX_TEXT_LENGTH) {
-            if (!ta.getStyleClass().contains("text-area-red-overflow")) {
-                ta.getStyleClass().add("text-area-red-overflow");
-            }
+            ta.setStyle("-fx-text-fill: red;");
         } else {
-            ta.getStyleClass().remove("text-area-red-overflow");
+            ta.setStyle("-fx-text-fill: black;");
+        }
+    }
+
+    private void updateAddBtnState(Button addBtn, ObservableList<StringProperty> segments) {
+        if (segments.size() >= 4) {
+            addBtn.setDisable(true);
+            addBtn.setTooltip(new Tooltip("最多只能有4个译文段落"));
+        } else {
+            addBtn.setDisable(false);
+            addBtn.setTooltip(null);
         }
     }
 }

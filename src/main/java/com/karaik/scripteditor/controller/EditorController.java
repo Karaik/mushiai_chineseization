@@ -4,12 +4,10 @@ import com.karaik.scripteditor.entry.SptEntry;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Data;
@@ -24,6 +22,7 @@ import java.util.prefs.Preferences;
 @Data
 public class EditorController {
 
+    @FXML private ScrollPane mainContentScrollPane;
     @FXML private VBox entryContainer;
     @FXML private Pagination pagination;
     @FXML private TextField pageInputField;
@@ -54,6 +53,35 @@ public class EditorController {
     @FXML
     public void initialize() {
         loadPreferencesForStartup();
+
+        if (mainContentScrollPane != null) {
+            mainContentScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+                // 检查事件是否发生在 TextArea 或其内部，如果是，则不消费事件，让 TextArea 正常滚动
+                Node target = event.getTarget() instanceof Node ? (Node) event.getTarget() : null;
+                Node currentNode = target;
+                boolean isInsideTextArea = false;
+                while(currentNode != null) {
+                    if (currentNode instanceof TextArea) {
+                        isInsideTextArea = true;
+                        break;
+                    }
+                    currentNode = currentNode.getParent();
+                }
+
+                if (isInsideTextArea) {
+                    return; // 不消费事件，让 TextArea 自己处理滚轮，保持其默认行为
+                }
+
+                // 只有当事件目标不是 TextArea 时，才应用主滚动区域的速率调整
+                double originalDeltaY = event.getDeltaY();
+                double adjustedDeltaY = originalDeltaY * 10;
+
+                double newVValue = mainContentScrollPane.getVvalue() - (adjustedDeltaY / mainContentScrollPane.getContent().getBoundsInLocal().getHeight());
+                mainContentScrollPane.setVvalue(Math.max(0, Math.min(1, newVValue)));
+
+                event.consume();
+            });
+        }
 
         this.fileHandlerController = new FileHandlerController(this);
         this.paginationUIController = new PaginationUIController(this);
@@ -211,25 +239,36 @@ public class EditorController {
             }
         });
 
-        primaryStage.setOnCloseRequest(event -> {
-            rememberFile(currentFile);
-            preferences.putInt(PREF_KEY_ITEMS_PER_PAGE, this.itemsPerPage);
-            if (pagination != null && !entries.isEmpty() && pagination.getPageCount() > 0) {
-                preferences.putInt(PREF_KEY_LAST_PAGE_INDEX, pagination.getCurrentPageIndex());
-            } else {
-                preferences.remove(PREF_KEY_LAST_PAGE_INDEX);
-            }
-            if (alwaysOnTopCheckBox != null) {
-                preferences.putBoolean(PREF_KEY_ALWAYS_ON_TOP, alwaysOnTopCheckBox.isSelected());
+        primaryStage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.S) {
+                fileHandlerController.saveFile();
+                event.consume();
+                return;
             }
 
-            if (modified) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "当前文件有未保存的更改，确定要退出吗？");
-                configureAlertOnTop(alert);
-                Optional<ButtonType> result = alert.showAndWait();
-                if (!result.isPresent() || (result.get() != ButtonType.OK && result.get() != ButtonType.YES)) {
-                    event.consume();
+            // 仅当当前焦点不在 TextArea 上时，处理翻页键
+            if (event.getTarget() instanceof TextArea) return;
+
+            Pagination pagination = this.pagination;
+            if (pagination == null || !canChangePage()) return;
+
+            int currentPage = pagination.getCurrentPageIndex();
+            int maxPage = pagination.getPageCount() - 1;
+
+            if (event.getCode() == KeyCode.LEFT && currentPage > 0) {
+                pagination.setCurrentPageIndex(currentPage - 1);
+                // 翻页后将主滚动条滚到顶部
+                if (mainContentScrollPane != null) {
+                    Platform.runLater(() -> mainContentScrollPane.setVvalue(0.0));
                 }
+                event.consume();
+            } else if (event.getCode() == KeyCode.RIGHT && currentPage < maxPage) {
+                pagination.setCurrentPageIndex(currentPage + 1);
+                // 翻页后将主滚动条滚到顶部
+                if (mainContentScrollPane != null) {
+                    Platform.runLater(() -> mainContentScrollPane.setVvalue(0.0));
+                }
+                event.consume();
             }
         });
     }
@@ -349,7 +388,7 @@ public class EditorController {
     private void updateTitle() {
         if (primaryStage != null) {
             String fileName = (currentFile != null) ? currentFile.getName() : "请选择文件";
-            primaryStage.setTitle((modified ? "*" : "") + fileName + " - 虫爱少女汉化文本编辑器");
+            primaryStage.setTitle((modified ? "*" : "") + fileName + " - 虫爱少女汉化文本编辑器(仅内部使用，禁止外传)");
         }
     }
 

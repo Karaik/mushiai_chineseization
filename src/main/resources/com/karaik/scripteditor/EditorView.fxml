@@ -25,7 +25,7 @@
     </top>
 
     <center>
-        <ScrollPane fitToWidth="true" fitToHeight="true" vbarPolicy="ALWAYS">
+        <ScrollPane fx:id="mainContentScrollPane" fitToWidth="true" fitToHeight="true" vbarPolicy="ALWAYS">
             <content>
                 <VBox fx:id="entryContainer" spacing="10.0" fillWidth="true">
                     <padding>
