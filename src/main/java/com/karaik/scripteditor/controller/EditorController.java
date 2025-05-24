@@ -321,7 +321,6 @@ public class EditorController {
             ClipboardContent content = new ClipboardContent();
             content.putString(clipboardContentBuilder.toString().trim());
             Clipboard.getSystemClipboard().setContent(content);
-            System.out.println("当前页内容已复制到剪贴板。");
         } else {
             new Alert(Alert.AlertType.INFORMATION, "当前页没有可复制的文本内容。").showAndWait();
         }

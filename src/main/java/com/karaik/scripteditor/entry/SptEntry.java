@@ -80,8 +80,10 @@ public class SptEntry {
         return builder.toString();
     }
 
-    public void addTranslatedSegment(String initialText) {
-        this.translatedSegmentsList.add(new SimpleStringProperty(initialText));
+    public StringProperty addTranslatedSegment(String initialText) {
+        SimpleStringProperty newSegment = new SimpleStringProperty(initialText);
+        this.translatedSegmentsList.add(newSegment);
+        return newSegment;
     }
 
     public void removeTranslatedSegment(int index) {
