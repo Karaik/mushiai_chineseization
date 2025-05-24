@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Data;
@@ -43,12 +44,14 @@ public class EditorController {
     private static final String PREF_KEY_LAST_PAGE_INDEX = "lastPageIndex";
     private static final String PREF_KEY_ALWAYS_ON_TOP = "alwaysOnTop";
 
-    private int itemsPerPage = 50;
+    private int itemsPerPage = 20;
     private AtomicBoolean isRendering = new AtomicBoolean(false);
     private long lastPageChangeTime = 0;
     private static final long PAGE_CHANGE_COOLDOWN = 500;
     private boolean initializing = true;
+    private final AtomicBoolean isChangePageItemQuantity = new AtomicBoolean(false);;
     private final AtomicBoolean warningShown = new AtomicBoolean(false);
+    private static final double KEYBOARD_SCROLL_AMOUNT = 200; // 控制每次按键滚动的像素量
 
     @FXML
     public void initialize() {
@@ -141,7 +144,7 @@ public class EditorController {
 
             if (scene != null && scene.getWindow() instanceof Stage) {
                 primaryStage = (Stage) scene.getWindow();
-                // 新增：加载CSS文件
+                // 加载CSS文件
                 scene.getStylesheets().add(getClass().getResource("/com/karaik/scripteditor/css.css").toExternalForm());
                 setupPrimaryStageEventHandlers();
                 updateTitle();
@@ -176,6 +179,10 @@ public class EditorController {
 
     // 检查是否可以翻页
     public boolean canChangePage() {
+        System.out.println(111);
+        if (isChangePageItemQuantity.getAndSet(false)) {
+            return true;
+        }
         long currentTime = System.currentTimeMillis();
         return !isRendering.get() && (currentTime - lastPageChangeTime) >= PAGE_CHANGE_COOLDOWN;
     }
@@ -191,21 +198,61 @@ public class EditorController {
 
     private void setupItemsPerPageComboBox() {
         if (itemsPerPageComboBox != null) {
-            itemsPerPageComboBox.setItems(FXCollections.observableArrayList(20, 30, 50)); //
+            itemsPerPageComboBox.setItems(FXCollections.observableArrayList(3, 20, 30, 50));
             if (!itemsPerPageComboBox.getItems().contains(this.itemsPerPage)) {
-                this.itemsPerPage = 20; //
+                this.itemsPerPage = 20;
             }
             itemsPerPageComboBox.setValue(this.itemsPerPage);
 
             itemsPerPageComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null && newVal != this.itemsPerPage) {
+                    // 获取当前页面最上面的 index
+                    int currentTopIndex = 0;
+                    if (!entryContainer.getChildren().isEmpty()) {
+                        for (Node node : entryContainer.getChildren()) {
+                            if (node instanceof VBox vbox) {
+                                for (Node child : vbox.getChildren()) {
+                                    if (child instanceof HBox hbox) {
+                                        for (Node labelNode : hbox.getChildren()) {
+                                            if (labelNode instanceof Label label) {
+                                                String text = label.getText(); // 例如 "12 | 0xABC | 44"
+                                                String[] parts = text.split(" \\| ");
+                                                if (parts.length >= 1) {
+                                                    try {
+                                                        currentTopIndex = Integer.parseInt(parts[0].trim());
+                                                    } catch (NumberFormatException ignored) {
+                                                    }
+                                                }
+                                                break;
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    // 计算新页码并保存每页数设置
                     this.itemsPerPage = newVal;
-                    preferences.putInt(PREF_KEY_ITEMS_PER_PAGE, this.itemsPerPage); // 保存到偏好设置
+                    preferences.putInt(PREF_KEY_ITEMS_PER_PAGE, this.itemsPerPage);
+
+                    int newPage = currentTopIndex / this.itemsPerPage;
+
+                    isChangePageItemQuantity.set(true);
+
+                    if (pagination != null) {
+                        pagination.setCurrentPageIndex(newPage);
+                    }
+
+                    // 最后更新页面内容
                     if (paginationUIController != null) {
                         paginationUIController.updatePaginationView();
                     }
                 }
             });
+
         }
     }
 
@@ -246,25 +293,56 @@ public class EditorController {
                 return;
             }
 
-            // 仅当当前焦点不在 TextArea 上时，处理翻页键
             if (event.getTarget() instanceof TextArea) return;
 
+            // 检查是否可以翻页，如果不可以则直接返回并显示警告
+            if (!canChangePage()) {
+                if (warningShown.compareAndSet(false, true)) {
+                    Platform.runLater(() -> {
+                        Alert alert = new Alert(Alert.AlertType.WARNING, "别翻页太快，会崩的(～￣(OO)￣)ブ");
+                        configureAlertOnTop(alert);
+                        alert.setOnCloseRequest(e -> warningShown.set(false));
+                        alert.show();
+                    });
+                }
+                event.consume();
+                return;
+            }
+
             Pagination pagination = this.pagination;
-            if (pagination == null || !canChangePage()) return;
+            if (pagination == null) return;
 
             int currentPage = pagination.getCurrentPageIndex();
             int maxPage = pagination.getPageCount() - 1;
+            boolean pageChanged = false;
 
             if (event.getCode() == KeyCode.LEFT && currentPage > 0) {
                 pagination.setCurrentPageIndex(currentPage - 1);
-                // 翻页后将主滚动条滚到顶部
-                if (mainContentScrollPane != null) {
-                    Platform.runLater(() -> mainContentScrollPane.setVvalue(0.0));
-                }
-                event.consume();
+                pageChanged = true;
             } else if (event.getCode() == KeyCode.RIGHT && currentPage < maxPage) {
                 pagination.setCurrentPageIndex(currentPage + 1);
-                // 翻页后将主滚动条滚到顶部
+                pageChanged = true;
+            } else if (event.getCode() == KeyCode.DOWN) { // 处理向下滚动
+                if (mainContentScrollPane != null) {
+                    double currentVValue = mainContentScrollPane.getVvalue();
+                    double contentHeight = mainContentScrollPane.getContent().getBoundsInLocal().getHeight();
+                    double viewportHeight = mainContentScrollPane.getViewportBounds().getHeight();
+
+                    if (contentHeight <= viewportHeight && currentPage < maxPage) {
+                        // 内容没有超出视图，且有下一页，则触发翻页
+                        pagination.setCurrentPageIndex(currentPage + 1);
+                        pageChanged = true;
+                    } else if (contentHeight > viewportHeight) {
+                        // 内容超出视图，进行增量滚动
+                        double vValueChange = KEYBOARD_SCROLL_AMOUNT / (contentHeight - viewportHeight);
+                        double newVValue = currentVValue + vValueChange;
+                        mainContentScrollPane.setVvalue(Math.min(newVValue, 1.0));
+                    }
+                }
+                event.consume();
+            }
+
+            if (pageChanged) {
                 if (mainContentScrollPane != null) {
                     Platform.runLater(() -> mainContentScrollPane.setVvalue(0.0));
                 }
@@ -302,7 +380,7 @@ public class EditorController {
 
     @FXML
     private void handleJumpToPage() {
-        if (pageInputField == null || pagination == null || pageInputField.getText().isEmpty()) {
+        if (pageInputField == null || pagination == null || pageInputField.getText().isEmpty()|| isChangePageItemQuantity.getAndSet(false)) {
             return;
         }
         if (!initializing && !canChangePage()) {
@@ -388,7 +466,7 @@ public class EditorController {
     private void updateTitle() {
         if (primaryStage != null) {
             String fileName = (currentFile != null) ? currentFile.getName() : "请选择文件";
-            primaryStage.setTitle((modified ? "*" : "") + fileName + " - 虫爱少女汉化文本编辑器(仅内部使用，禁止外传)");
+            primaryStage.setTitle((modified ? "*" : "") + fileName + " - 虫爱少女汉化文本编辑器(仅汉化组内部使用，禁止外传)");
         }
     }
 
