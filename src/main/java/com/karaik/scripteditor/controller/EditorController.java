@@ -1,6 +1,7 @@
 package com.karaik.scripteditor.controller;
 
 import com.karaik.scripteditor.entry.SptEntry;
+import com.karaik.scripteditor.util.AppPreferenceHelper;
 import com.karaik.scripteditor.util.ClipboardHelper;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -8,7 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Data;
@@ -18,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.prefs.Preferences;
 
 @Data
 public class EditorController {
@@ -37,12 +38,6 @@ public class EditorController {
 
     private FileHandlerController fileHandlerController;
     private PaginationUIController paginationUIController;
-
-    private Preferences preferences = Preferences.userNodeForPackage(EditorController.class);
-    private static final String PREF_KEY_LAST_FILE = "lastOpenedFile";
-    private static final String PREF_KEY_ITEMS_PER_PAGE = "itemsPerPage";
-    private static final String PREF_KEY_LAST_PAGE_INDEX = "lastPageIndex";
-    private static final String PREF_KEY_ALWAYS_ON_TOP = "alwaysOnTop";
 
     private int itemsPerPage = 3;
     private AtomicBoolean isRendering = new AtomicBoolean(false);
@@ -99,7 +94,7 @@ public class EditorController {
             pagination.currentPageIndexProperty().addListener((obs, oldVal, newVal) -> {
                 if (oldVal != null && newVal != null && oldVal.intValue() != newVal.intValue()) {
                     if (initializing) {
-                        preferences.putInt(PREF_KEY_LAST_PAGE_INDEX, newVal.intValue());
+                        AppPreferenceHelper.saveLastPageIndex(newVal.intValue());
                         if (modified) {
                             fileHandlerController.saveFile();
                         }
@@ -123,7 +118,7 @@ public class EditorController {
                     if (modified) {
                         fileHandlerController.saveFile();
                     }
-                    preferences.putInt(PREF_KEY_LAST_PAGE_INDEX, newVal.intValue());
+                    AppPreferenceHelper.saveLastPageIndex(newVal.intValue());
                     lastPageChangeTime = System.currentTimeMillis();
                 }
             });
@@ -140,7 +135,7 @@ public class EditorController {
                 updateTitle();
 
                 if (alwaysOnTopCheckBox != null) {
-                    boolean wasOnTop = preferences.getBoolean(PREF_KEY_ALWAYS_ON_TOP, false);
+                    boolean wasOnTop = AppPreferenceHelper.loadAlwaysOnTop();
                     alwaysOnTopCheckBox.setSelected(wasOnTop);
                     primaryStage.setAlwaysOnTop(wasOnTop);
                 }
@@ -183,7 +178,7 @@ public class EditorController {
     }
 
     private void loadPreferencesForStartup() {
-        this.itemsPerPage = preferences.getInt(PREF_KEY_ITEMS_PER_PAGE, itemsPerPage);
+        this.itemsPerPage = AppPreferenceHelper.loadItemsPerPage(itemsPerPage);
     }
 
     private void setupItemsPerPageComboBox() {
@@ -197,7 +192,7 @@ public class EditorController {
             itemsPerPageComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null && newVal.intValue() != this.itemsPerPage) {
                     this.itemsPerPage = newVal;
-                    preferences.putInt(PREF_KEY_ITEMS_PER_PAGE, this.itemsPerPage);
+                    AppPreferenceHelper.saveItemsPerPage(this.itemsPerPage);
                     if (paginationUIController != null) {
                         paginationUIController.updatePaginationView();
                     }
@@ -208,7 +203,7 @@ public class EditorController {
 
     public void restoreLastPage() {
         if (pagination != null && !entries.isEmpty()) {
-            int lastPageIndexFromPrefs = preferences.getInt(PREF_KEY_LAST_PAGE_INDEX, 0);
+            int lastPageIndexFromPrefs = AppPreferenceHelper.loadLastPageIndex();
             int pageCount = (int) Math.ceil((double) entries.size() / itemsPerPage);
             int targetPage = 0;
 
@@ -220,7 +215,7 @@ public class EditorController {
                 pagination.setCurrentPageIndex(targetPage);
             } else {
                 if (initializing) {
-                    preferences.putInt(PREF_KEY_LAST_PAGE_INDEX, targetPage);
+                    AppPreferenceHelper.saveLastPageIndex(targetPage);
                     if (modified) {
                         fileHandlerController.saveFile();
                     }
@@ -232,7 +227,7 @@ public class EditorController {
                 pagination.setCurrentPageIndex(0);
             } else {
                 if (initializing) {
-                    preferences.putInt(PREF_KEY_LAST_PAGE_INDEX, 0);
+                    AppPreferenceHelper.saveLastPageIndex(0);
                 }
                 if (paginationUIController != null) {
                     paginationUIController.createPageForEntries(0);
@@ -302,7 +297,7 @@ public class EditorController {
         if (primaryStage != null && alwaysOnTopCheckBox != null) {
             boolean selected = alwaysOnTopCheckBox.isSelected();
             primaryStage.setAlwaysOnTop(selected);
-            preferences.putBoolean(PREF_KEY_ALWAYS_ON_TOP, selected);
+            AppPreferenceHelper.saveAlwaysOnTop(selected);
         }
     }
 
@@ -395,15 +390,10 @@ public class EditorController {
     }
 
     public void rememberFile(File file) {
-        if (file != null) {
-            preferences.put(PREF_KEY_LAST_FILE, file.getAbsolutePath());
-        } else {
-            preferences.remove(PREF_KEY_LAST_FILE);
-        }
+        AppPreferenceHelper.saveLastFile(file);
     }
 
     public File getLastOpenedFile() {
-        String path = preferences.get(PREF_KEY_LAST_FILE, null);
-        return path != null ? new File(path) : null;
+        return AppPreferenceHelper.loadLastFile();
     }
 }
