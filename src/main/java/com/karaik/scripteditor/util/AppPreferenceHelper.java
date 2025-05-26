@@ -1,11 +1,13 @@
 package com.karaik.scripteditor.util;
 
+import com.karaik.scripteditor.controller.EditorController;
+
 import java.io.File;
 import java.util.prefs.Preferences;
 
 public class AppPreferenceHelper {
 
-    private static final Preferences preferences = Preferences.userNodeForPackage(AppPreferenceHelper.class);
+    private static final Preferences preferences = Preferences.userNodeForPackage(EditorController.class);
 
     private static final String PREF_KEY_LAST_FILE = "lastOpenedFile";
     private static final String PREF_KEY_ITEMS_PER_PAGE = "itemsPerPage";
