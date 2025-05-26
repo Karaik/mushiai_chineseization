@@ -4,6 +4,7 @@ import com.karaik.scripteditor.entry.SptEntry;
 import com.karaik.scripteditor.helper.AppPreferenceHelper;
 import com.karaik.scripteditor.helper.ClipboardHelper;
 import com.karaik.scripteditor.helper.ScrollEventHandler;
+import com.karaik.scripteditor.helper.StageCloseHandler;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -114,7 +115,12 @@ public class EditorController {
             if (scene != null && scene.getWindow() instanceof Stage) {
                 primaryStage = (Stage) scene.getWindow();
                 scene.getStylesheets().add(getClass().getResource("/com/karaik/scripteditor/css.css").toExternalForm());
-                setupPrimaryStageEventHandlers();
+                StageCloseHandler.attach(
+                        primaryStage,
+                        () -> this.modified,
+                        () -> fileHandlerController.saveFile(),
+                        () -> primaryStage.close()
+                );
                 updateTitle();
 
                 if (alwaysOnTopCheckBox != null) {
@@ -218,61 +224,6 @@ public class EditorController {
             }
             lastPageChangeTime = System.currentTimeMillis();
         }
-    }
-
-    private void setupPrimaryStageEventHandlers() {
-        if (primaryStage == null || primaryStage.getScene() == null) return;
-
-        // 监听窗口关闭事件
-        primaryStage.setOnCloseRequest(event -> {
-            if (modified) { // 如果文件有修改
-                // 阻止默认的关闭行为，等待用户确认
-                event.consume();
-
-                // 弹出确认保存的对话框
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("保存文件");
-                alert.setHeaderText("文件已被修改");
-                alert.setContentText("文件尚未保存，是否保存后关闭？");
-
-                ButtonType saveButton = new ButtonType("保存");
-                ButtonType discardButton = new ButtonType("不保存");
-                ButtonType cancelButton = new ButtonType("取消");
-
-                alert.getButtonTypes().setAll(saveButton, discardButton, cancelButton);
-
-                // 根据主窗口是否设置为保持最前决定是否将弹窗设置为最前
-                if (primaryStage.isAlwaysOnTop()) {
-                    alert.setOnShown(e -> {
-                        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-                        if (alertStage != null) {
-                            alertStage.setAlwaysOnTop(true); // 弹窗保持最前
-                        }
-                    });
-                } else {
-                    alert.setOnShown(e -> {
-                        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-                        if (alertStage != null) {
-                            alertStage.setAlwaysOnTop(false); // 弹窗不保持最前
-                        }
-                    });
-                }
-
-                // 显示对话框并获取结果
-                alert.showAndWait().ifPresent(response -> {
-                    if (response == saveButton) {
-                        fileHandlerController.saveFile(); // 保存文件
-                        primaryStage.close(); // 保存后关闭应用
-                    } else if (response == discardButton) {
-                        primaryStage.close(); // 直接关闭应用
-                    }
-                    // 如果是取消，什么都不做，保持应用打开
-                });
-            } else {
-                // 如果没有修改，直接关闭
-                primaryStage.close();
-            }
-        });
     }
 
     @FXML
