@@ -1,6 +1,7 @@
 package com.karaik.scripteditor.controller;
 
 import com.karaik.scripteditor.entry.SptEntry;
+import com.karaik.scripteditor.util.ClipboardHelper;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -8,7 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Data;
@@ -357,39 +357,13 @@ public class EditorController {
     @FXML
     private void handleCopyCurrentPage() {
         if (entries.isEmpty() || pagination == null) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "没有内容可以复制。");
-            configureAlertOnTop(alert);
-            alert.showAndWait();
+            ClipboardHelper.copyEntriesToClipboard(List.of(), 0, 0, primaryStage);
             return;
         }
-
         int currentPageIndex = pagination.getCurrentPageIndex();
         int start = currentPageIndex * itemsPerPage;
         int end = Math.min(start + itemsPerPage, entries.size());
-
-        StringBuilder clipboardContentBuilder = new StringBuilder();
-        for (int i = start; i < end; i++) {
-            SptEntry entry = entries.get(i);
-            clipboardContentBuilder
-                    .append("○").append(entry.getIndex()).append("|").append(entry.getAddress()).append("|").append(entry.getLength()).append("○ ")
-                    .append(entry.getFullOriginalText()).append("\n");
-            clipboardContentBuilder
-                    .append("●").append(entry.getIndex()).append("|").append(entry.getAddress()).append("|").append(entry.getLength()).append("● ")
-                    .append(entry.getFullTranslatedText()).append("\n");
-            if (i < end - 1) {
-                clipboardContentBuilder.append("\n");
-            }
-        }
-
-        if (clipboardContentBuilder.length() > 0) {
-            ClipboardContent content = new ClipboardContent();
-            content.putString(clipboardContentBuilder.toString().trim());
-            Clipboard.getSystemClipboard().setContent(content);
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "当前页没有可复制的文本内容。");
-            configureAlertOnTop(alert);
-            alert.showAndWait();
-        }
+        ClipboardHelper.copyEntriesToClipboard(entries, start, end, primaryStage);
     }
 
     public void setEntries(List<SptEntry> newEntries) {
