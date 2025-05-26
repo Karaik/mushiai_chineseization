@@ -1,10 +1,7 @@
 package com.karaik.scripteditor.controller;
 
 import com.karaik.scripteditor.entry.SptEntry;
-import com.karaik.scripteditor.helper.AppPreferenceHelper;
-import com.karaik.scripteditor.helper.ClipboardHelper;
-import com.karaik.scripteditor.helper.ScrollEventHandler;
-import com.karaik.scripteditor.helper.StageCloseHandler;
+import com.karaik.scripteditor.helper.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -254,33 +251,12 @@ public class EditorController {
 
     @FXML
     private void handleJumpToPage() {
-        if (pageInputField == null || pagination == null || pageInputField.getText().isEmpty()) {
-            return;
-        }
-        if (!initializing && !canChangePage()) {
-            if (warningShown.compareAndSet(false, true)) {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "别翻页太快，会崩的(～￣(OO)￣)ブ");
-                configureAlertOnTop(alert);
-                alert.setOnCloseRequest(event -> warningShown.set(false));
-                alert.show();
-            }
-            return;
-        }
-        try {
-            int pageTarget = Integer.parseInt(pageInputField.getText()) - 1;
-            if (pageTarget >= 0 && pageTarget < pagination.getPageCount()) {
-                pagination.setCurrentPageIndex(pageTarget);
-            } else {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "页码超出范围。");
-                configureAlertOnTop(alert);
-                alert.showAndWait();
-            }
-        } catch (NumberFormatException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "输入无效，请输入有效的页码。");
-            configureAlertOnTop(alert);
-            alert.showAndWait();
-        }
-        pageInputField.clear();
+        PageJumpHandler.handle(
+                pageInputField,
+                pagination,
+                primaryStage,
+                this::canChangePage
+        );
     }
 
     @FXML
