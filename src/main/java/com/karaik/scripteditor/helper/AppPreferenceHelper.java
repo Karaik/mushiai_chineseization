@@ -1,4 +1,4 @@
-package com.karaik.scripteditor.util;
+package com.karaik.scripteditor.helper;
 
 import com.karaik.scripteditor.controller.EditorController;
 

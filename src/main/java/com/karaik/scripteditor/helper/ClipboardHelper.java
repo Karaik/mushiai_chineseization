@@ -1,4 +1,4 @@
-package com.karaik.scripteditor.util;
+package com.karaik.scripteditor.helper;
 
 import com.karaik.scripteditor.entry.SptEntry;
 import javafx.scene.control.Alert;

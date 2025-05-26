@@ -1,8 +1,8 @@
 package com.karaik.scripteditor.controller;
 
 import com.karaik.scripteditor.entry.SptEntry;
-import com.karaik.scripteditor.util.AppPreferenceHelper;
-import com.karaik.scripteditor.util.ClipboardHelper;
+import com.karaik.scripteditor.helper.AppPreferenceHelper;
+import com.karaik.scripteditor.helper.ClipboardHelper;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
