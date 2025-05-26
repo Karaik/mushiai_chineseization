@@ -3,6 +3,7 @@ package com.karaik.scripteditor.controller;
 import com.karaik.scripteditor.entry.SptEntry;
 import com.karaik.scripteditor.helper.AppPreferenceHelper;
 import com.karaik.scripteditor.helper.ClipboardHelper;
+import com.karaik.scripteditor.helper.ScrollEventHandler;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -50,31 +51,13 @@ public class EditorController {
 
     @FXML
     public void initialize() {
+
+        // 加载偏好设置
         loadPreferencesForStartup();
 
+        // 滚轮相关设置
         if (mainContentScrollPane != null) {
-            mainContentScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
-                Node target = event.getTarget() instanceof Node ? (Node) event.getTarget() : null;
-                Node currentNode = target;
-                boolean isInsideTextArea = false;
-                while(currentNode != null) {
-                    if (currentNode instanceof TextArea) {
-                        isInsideTextArea = true;
-                        break;
-                    }
-                    currentNode = currentNode.getParent();
-                }
-                if (isInsideTextArea) {
-                    return;
-                }
-                double originalDeltaY = event.getDeltaY();
-                double adjustedDeltaY = originalDeltaY * MOUSE_WHEEL_SCROLL_MULTIPLIER;
-                if (mainContentScrollPane.getContent() != null && mainContentScrollPane.getContent().getBoundsInLocal().getHeight() > 0) {
-                    double newVValue = mainContentScrollPane.getVvalue() - (adjustedDeltaY / mainContentScrollPane.getContent().getBoundsInLocal().getHeight());
-                    mainContentScrollPane.setVvalue(Math.max(0, Math.min(1, newVValue)));
-                }
-                event.consume();
-            });
+            ScrollEventHandler.installSmartScroll(mainContentScrollPane, MOUSE_WHEEL_SCROLL_MULTIPLIER);
         }
 
         this.fileHandlerController = new FileHandlerController(this);
