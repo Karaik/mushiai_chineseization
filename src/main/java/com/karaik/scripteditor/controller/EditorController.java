@@ -43,28 +43,65 @@ public class EditorController {
     private static final long PAGE_CHANGE_COOLDOWN = 500;
     private boolean initializing = true;
     private final AtomicBoolean warningShown = new AtomicBoolean(false);
-    public static final double KEYBOARD_SCROLL_AMOUNT = 200; // 控制每次按键滚动的像素量
-    public static final double MOUSE_WHEEL_SCROLL_MULTIPLIER = 2.0; // 控制滚轮幅度
+    public static final double KEYBOARD_SCROLL_AMOUNT = 200;
+    public static final double MOUSE_WHEEL_SCROLL_MULTIPLIER = 2.0;
 
     @FXML
     public void initialize() {
-
-        // 加载偏好设置
+        // 加载分页设置
         loadPreferencesForStartup();
 
-        // 滚轮相关设置
+        // 设置滚动行为
+        setupScrollBehavior();
+
+        // 初始化子控制器
+        setupControllers();
+
+        // 配置每页条数下拉框
+        setupItemsPerPageComboBox();
+
+        // 页码跳转输入框行为
+        setupPageJumpField();
+
+        // 设置分页切换监听器
+        setupPaginationListener();
+
+        // 完成 UI 初始化后再执行窗口相关设置
+        setupUIAfterLoad();
+    }
+
+    private void setupScrollBehavior() {
         if (mainContentScrollPane != null) {
             ScrollEventHandler.installSmartScroll(mainContentScrollPane, MOUSE_WHEEL_SCROLL_MULTIPLIER);
         }
+    }
 
-        // 加载子控制器
+    private void setupControllers() {
         this.fileHandlerController = new FileHandlerController(this);
         this.paginationUIController = new PaginationUIController(this);
+    }
 
-        // 加载下拉框
-        setupItemsPerPageComboBox();
+    private void setupItemsPerPageComboBox() {
+        if (itemsPerPageComboBox != null) {
+            itemsPerPageComboBox.setItems(FXCollections.observableArrayList(1, 2, 3, 20, 30, 50));
+            if (!itemsPerPageComboBox.getItems().contains(this.itemsPerPage)) {
+                this.itemsPerPage = 3;
+            }
+            itemsPerPageComboBox.setValue(this.itemsPerPage);
 
-        // 加载页面跳转
+            itemsPerPageComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null && newVal.intValue() != this.itemsPerPage) {
+                    this.itemsPerPage = newVal;
+                    AppPreferenceHelper.saveItemsPerPage(this.itemsPerPage);
+                    if (paginationUIController != null) {
+                        paginationUIController.updatePaginationView();
+                    }
+                }
+            });
+        }
+    }
+
+    private void setupPageJumpField() {
         if (pageInputField != null) {
             pageInputField.setOnKeyPressed(event -> {
                 if (event.getCode() == KeyCode.ENTER) {
@@ -72,7 +109,9 @@ public class EditorController {
                 }
             });
         }
+    }
 
+    private void setupPaginationListener() {
         PageChangeListener.attach(
                 pagination,
                 () -> initializing,
@@ -82,7 +121,9 @@ public class EditorController {
                 this::canChangePage,
                 warningShown
         );
+    }
 
+    private void setupUIAfterLoad() {
         Platform.runLater(() -> {
             Scene scene = Optional.ofNullable(pagination).map(Control::getScene)
                     .orElse(Optional.ofNullable(entryContainer).map(Node::getScene).orElse(null));
@@ -91,9 +132,10 @@ public class EditorController {
                 primaryStage = (Stage) scene.getWindow();
                 scene.getStylesheets().add(getClass().getResource("/com/karaik/scripteditor/css.css").toExternalForm());
 
-                // 键盘行为映射
+                // 设置快捷键
                 KeyboardNavigationHelper.setupKeyboardShortcuts(primaryStage, this);
 
+                // 设置窗口关闭确认
                 StageCloseHandler.attach(
                         primaryStage,
                         () -> this.modified,
@@ -102,16 +144,19 @@ public class EditorController {
                 );
                 updateTitle();
 
+                // 设置窗口置顶
                 if (alwaysOnTopCheckBox != null) {
                     boolean wasOnTop = AppPreferenceHelper.loadAlwaysOnTop();
                     alwaysOnTopCheckBox.setSelected(wasOnTop);
                     primaryStage.setAlwaysOnTop(wasOnTop);
                 }
 
+                // 设置分页内容
                 if (paginationUIController != null) {
                     paginationUIController.setupPagination();
                 }
 
+                // 恢复上次打开的文件
                 File lastFile = getLastOpenedFile();
                 if (lastFile != null && lastFile.exists()) {
                     fileHandlerController.openSpecificFile(lastFile);
@@ -149,62 +194,6 @@ public class EditorController {
         this.itemsPerPage = AppPreferenceHelper.loadItemsPerPage(itemsPerPage);
     }
 
-    private void setupItemsPerPageComboBox() {
-        if (itemsPerPageComboBox != null) {
-            itemsPerPageComboBox.setItems(FXCollections.observableArrayList(1, 2, 3, 20, 30, 50));
-            if (!itemsPerPageComboBox.getItems().contains(this.itemsPerPage)) {
-                this.itemsPerPage = 3;
-            }
-            itemsPerPageComboBox.setValue(this.itemsPerPage);
-
-            itemsPerPageComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-                if (newVal != null && newVal.intValue() != this.itemsPerPage) {
-                    this.itemsPerPage = newVal;
-                    AppPreferenceHelper.saveItemsPerPage(this.itemsPerPage);
-                    if (paginationUIController != null) {
-                        paginationUIController.updatePaginationView();
-                    }
-                }
-            });
-        }
-    }
-
-    public void restoreLastPage() {
-        if (pagination != null && !entries.isEmpty()) {
-            int lastPageIndexFromPrefs = AppPreferenceHelper.loadLastPageIndex();
-            int pageCount = (int) Math.ceil((double) entries.size() / itemsPerPage);
-            int targetPage = 0;
-
-            if (lastPageIndexFromPrefs >= 0 && lastPageIndexFromPrefs < pageCount) {
-                targetPage = lastPageIndexFromPrefs;
-            }
-
-            if (pagination.getCurrentPageIndex() != targetPage) {
-                pagination.setCurrentPageIndex(targetPage);
-            } else {
-                if (initializing) {
-                    AppPreferenceHelper.saveLastPageIndex(targetPage);
-                    if (modified) {
-                        fileHandlerController.saveFile();
-                    }
-                }
-            }
-            lastPageChangeTime = System.currentTimeMillis();
-        } else if (pagination != null && entries.isEmpty()) {
-            if (pagination.getCurrentPageIndex() != 0) {
-                pagination.setCurrentPageIndex(0);
-            } else {
-                if (initializing) {
-                    AppPreferenceHelper.saveLastPageIndex(0);
-                }
-                if (paginationUIController != null) {
-                    paginationUIController.createPageForEntries(0);
-                }
-            }
-            lastPageChangeTime = System.currentTimeMillis();
-        }
-    }
-
     @FXML
     private void handleAlwaysOnTopToggle() {
         if (primaryStage != null && alwaysOnTopCheckBox != null) {
@@ -228,8 +217,15 @@ public class EditorController {
         }
     }
 
-    @FXML private void handleOpenFile() { fileHandlerController.openFile(); }
-    @FXML private void handleSaveFile() { fileHandlerController.saveFile(); }
+    @FXML
+    private void handleOpenFile() {
+        fileHandlerController.openFile();
+    }
+
+    @FXML
+    private void handleSaveFile() {
+        fileHandlerController.saveFile();
+    }
 
     @FXML
     private void handleJumpToPage() {
@@ -287,5 +283,41 @@ public class EditorController {
 
     public File getLastOpenedFile() {
         return AppPreferenceHelper.loadLastFile();
+    }
+
+    public void restoreLastPage() {
+        if (pagination != null && !entries.isEmpty()) {
+            int lastPageIndexFromPrefs = AppPreferenceHelper.loadLastPageIndex();
+            int pageCount = (int) Math.ceil((double) entries.size() / itemsPerPage);
+            int targetPage = 0;
+
+            if (lastPageIndexFromPrefs >= 0 && lastPageIndexFromPrefs < pageCount) {
+                targetPage = lastPageIndexFromPrefs;
+            }
+
+            if (pagination.getCurrentPageIndex() != targetPage) {
+                pagination.setCurrentPageIndex(targetPage);
+            } else {
+                if (initializing) {
+                    AppPreferenceHelper.saveLastPageIndex(targetPage);
+                    if (modified) {
+                        fileHandlerController.saveFile();
+                    }
+                }
+            }
+            lastPageChangeTime = System.currentTimeMillis();
+        } else if (pagination != null && entries.isEmpty()) {
+            if (pagination.getCurrentPageIndex() != 0) {
+                pagination.setCurrentPageIndex(0);
+            } else {
+                if (initializing) {
+                    AppPreferenceHelper.saveLastPageIndex(0);
+                }
+                if (paginationUIController != null) {
+                    paginationUIController.createPageForEntries(0);
+                }
+            }
+            lastPageChangeTime = System.currentTimeMillis();
+        }
     }
 }
