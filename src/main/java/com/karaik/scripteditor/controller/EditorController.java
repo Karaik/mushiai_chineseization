@@ -9,7 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Data;
@@ -44,8 +43,8 @@ public class EditorController {
     private static final long PAGE_CHANGE_COOLDOWN = 500;
     private boolean initializing = true;
     private final AtomicBoolean warningShown = new AtomicBoolean(false);
-    private static final double KEYBOARD_SCROLL_AMOUNT = 200; // 控制每次按键滚动的像素量
-    private static final double MOUSE_WHEEL_SCROLL_MULTIPLIER = 2.0; // 控制滚轮幅度
+    public static final double KEYBOARD_SCROLL_AMOUNT = 200; // 控制每次按键滚动的像素量
+    public static final double MOUSE_WHEEL_SCROLL_MULTIPLIER = 2.0; // 控制滚轮幅度
 
     @FXML
     public void initialize() {
@@ -58,11 +57,14 @@ public class EditorController {
             ScrollEventHandler.installSmartScroll(mainContentScrollPane, MOUSE_WHEEL_SCROLL_MULTIPLIER);
         }
 
+        // 加载子控制器
         this.fileHandlerController = new FileHandlerController(this);
         this.paginationUIController = new PaginationUIController(this);
 
+        // 加载下拉框
         setupItemsPerPageComboBox();
 
+        // 加载页面跳转
         if (pageInputField != null) {
             pageInputField.setOnKeyPressed(event -> {
                 if (event.getCode() == KeyCode.ENTER) {
@@ -71,39 +73,15 @@ public class EditorController {
             });
         }
 
-        if (pagination != null) {
-            pagination.currentPageIndexProperty().addListener((obs, oldVal, newVal) -> {
-                if (oldVal != null && newVal != null && oldVal.intValue() != newVal.intValue()) {
-                    if (initializing) {
-                        AppPreferenceHelper.saveLastPageIndex(newVal.intValue());
-                        if (modified) {
-                            fileHandlerController.saveFile();
-                        }
-                        lastPageChangeTime = System.currentTimeMillis();
-                        return;
-                    }
-
-                    if (!canChangePage()) {
-                        if (warningShown.compareAndSet(false, true)) {
-                            Platform.runLater(() -> {
-                                pagination.setCurrentPageIndex(oldVal.intValue());
-                                Alert alert = new Alert(Alert.AlertType.WARNING, "别翻页太快，会崩的(～￣(OO)￣)ブ");
-                                configureAlertOnTop(alert);
-                                alert.setOnCloseRequest(alertEvent -> warningShown.set(false));
-                                alert.show();
-                            });
-                        }
-                        return;
-                    }
-
-                    if (modified) {
-                        fileHandlerController.saveFile();
-                    }
-                    AppPreferenceHelper.saveLastPageIndex(newVal.intValue());
-                    lastPageChangeTime = System.currentTimeMillis();
-                }
-            });
-        }
+        PageChangeListener.attach(
+                pagination,
+                () -> initializing,
+                () -> modified,
+                () -> fileHandlerController.saveFile(),
+                AppPreferenceHelper::saveLastPageIndex,
+                this::canChangePage,
+                warningShown
+        );
 
         Platform.runLater(() -> {
             Scene scene = Optional.ofNullable(pagination).map(Control::getScene)
@@ -112,6 +90,10 @@ public class EditorController {
             if (scene != null && scene.getWindow() instanceof Stage) {
                 primaryStage = (Stage) scene.getWindow();
                 scene.getStylesheets().add(getClass().getResource("/com/karaik/scripteditor/css.css").toExternalForm());
+
+                // 键盘行为映射
+                KeyboardNavigationHelper.setupKeyboardShortcuts(primaryStage, this);
+
                 StageCloseHandler.attach(
                         primaryStage,
                         () -> this.modified,

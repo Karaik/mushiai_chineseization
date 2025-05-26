@@ -41,25 +41,27 @@ public class FileHandlerController {
 
     public void openSpecificFile(File file) {
         new Thread(() -> {
-            Platform.runLater(() -> editorController.markModified(false));
+
             try {
                 String content = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
                 List<SptEntry> sptEntries = parseSptContent(content);
 
                 Platform.runLater(() -> {
+                    editorController.markModified(false);
                     editorController.setEntries(sptEntries);
                     editorController.setCurrentFile(file);
-                    // 在文件加载并设置entries后，调用restoreLastPage来处理页码恢复
                     editorController.restoreLastPage();
+                    editorController.setInitializing(false);
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "无法打开文件: " + e.getMessage());
                     editorController.configureAlertOnTop(alert);
                     alert.showAndWait();
-                    editorController.getEntries().clear(); // 清空内容，确保界面显示空
-                    editorController.setEntries(new ArrayList<>()); // 刷新分页显示
-                    editorController.setCurrentFile(null); // 清空当前文件
+                    editorController.getEntries().clear();
+                    editorController.setEntries(new ArrayList<>());
+                    editorController.setCurrentFile(null);
+                    editorController.setInitializing(false);
                 });
             }
         }).start();
