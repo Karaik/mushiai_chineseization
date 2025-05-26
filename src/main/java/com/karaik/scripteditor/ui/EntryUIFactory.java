@@ -1,6 +1,7 @@
 package com.karaik.scripteditor.ui;
 
 import com.karaik.scripteditor.entry.SptEntry;
+import com.karaik.scripteditor.util.SptChecker;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -11,6 +12,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class EntryUIFactory {
@@ -127,16 +129,40 @@ public class EntryUIFactory {
         Label counter = new Label();
         counter.setStyle("-fx-font-size: 0.8em; -fx-text-fill: grey;");
 
+        // 创建非法字符提示
+        Label illegal = new Label();
+        illegal.setStyle("-fx-font-size: 0.8em; -fx-text-fill: red;");
+
+        // 更新样式与提示
+        Runnable refresh = () -> {
+            String text = prop.get() == null ? "" : prop.get();
+            counter.setText(text.length() + "/" + MAX_TEXT_LENGTH);
+
+            // 收集非法字符
+            StringBuilder bad = new StringBuilder();
+            for (char c : text.toCharArray()) {
+                if (!SptChecker.checkChar(c) && bad.indexOf(String.valueOf(c)) < 0) {
+                    bad.append(c);
+                }
+            }
+
+            // 整行变红
+            boolean tooLong = text.length() > MAX_TEXT_LENGTH;
+            boolean hasBad  = bad.length() > 0;
+            ta.setStyle((tooLong || hasBad) ? "-fx-text-fill: red;" : "");
+
+            // 更新非法字符提示
+            illegal.setText(hasBad ? "非法字符: " + bad : "");
+        };
+
         // 文本变化监听
         ta.textProperty().addListener((o, ov, nv) -> {
-            String text = nv != null ? nv : "";
-            counter.setText(text.length() + "/" + MAX_TEXT_LENGTH);
-            ta.setStyle(text.length() > MAX_TEXT_LENGTH ? "-fx-text-fill: red;" : "");
+            refresh.run();
             onModified.run();
         });
 
-        // 初始化计数
-        counter.setText((prop.get() != null ? prop.get().length() : 0) + "/" + MAX_TEXT_LENGTH);
+        // 初始化计数与提示
+        refresh.run();
 
         // 删除按钮
         Button rm = new Button("-");
@@ -146,20 +172,25 @@ public class EntryUIFactory {
                 entry.removeTranslatedSegment(idx);
                 onModified.run();
                 parentCol.getChildren().remove(rm.getParent());
-                // 更新添加按钮状态
                 Node addBox = parentCol.getChildren().get(parentCol.getChildren().size() - 1);
                 if (addBox instanceof HBox h && !h.getChildren().isEmpty()) {
                     Node btn = h.getChildren().get(0);
-                    if (btn instanceof Button b) {
-                        updateAddBtnState(b, entry.getTranslatedSegments());
-                    }
+                    if (btn instanceof Button b) updateAddBtnState(b, entry.getTranslatedSegments());
                 }
             }
         });
 
-        // 布局
-        VBox taBox = new VBox(3, ta, counter);
+        // 行内放置计数与非法字符提示（非法字符在最右）
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox infoLine = new HBox(5, counter, spacer, illegal);
+        infoLine.setAlignment(Pos.CENTER_LEFT);
+
+        // 竖向布局：文本域 + 行内提示
+        VBox taBox = new VBox(3, ta, infoLine);
         HBox.setHgrow(taBox, Priority.ALWAYS);
+
+        // 整行布局
         HBox row = new HBox(3, taBox, rm);
         row.setAlignment(Pos.CENTER_LEFT);
         return row;
