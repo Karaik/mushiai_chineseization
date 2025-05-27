@@ -164,7 +164,7 @@ public class PaginationUIController {
             editorController.markModified(true);
             Node ui = createTranslatedSegmentUI(entry, translatedSegments.size() - 1, newProp, translatedCol);
 
-            int insertIndex = translatedCol.getChildren().size() -1;
+            int insertIndex;
             Optional<Node> foundAddBtnBox = translatedCol.getChildren().stream().filter(node -> "addBtnBox".equals(node.getId())).findFirst();
             if (foundAddBtnBox.isPresent()) {
                 insertIndex = translatedCol.getChildren().indexOf(foundAddBtnBox.get());

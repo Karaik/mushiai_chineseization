@@ -26,7 +26,7 @@ public class SptChecker {
     }
 
     private static Set<Character> loadSet() {
-        Set<Character> set = new HashSet<>(7445);
+        Set<Character> set = new HashSet<>(7445, 1);
         try (InputStream in = SptChecker.class.getResourceAsStream("/com/karaik/scripteditor/gb2312_valid_characters.txt");
              BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
             String line;
