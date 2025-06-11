@@ -39,6 +39,7 @@ public class SptEntryListCell extends ListCell<SptEntry> {
         }
         if (!allowEventThrough) {
             event.consume();
+            this.requestFocus();
         }
     };
 
