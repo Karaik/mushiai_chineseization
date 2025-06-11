@@ -9,10 +9,11 @@ import javafx.stage.Stage;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 
+import static com.karaik.scripteditor.controller.EditorController.PAGE_CHANGE_COOLDOWN;
+
 public class PageChangeListener {
 
     private static long lastChangeTime = 0;
-    private static final long COOLDOWN = 300;
     private static boolean rollbackInProgress = false;
 
     public static void attach(
@@ -42,7 +43,7 @@ public class PageChangeListener {
             }
 
             long now = System.currentTimeMillis();
-            boolean tooFast = (now - lastChangeTime) < COOLDOWN;
+            boolean tooFast = (now - lastChangeTime) < PAGE_CHANGE_COOLDOWN;
 
             if (!canChangePage.getAsBoolean() || tooFast) {
                 rollbackInProgress = true;

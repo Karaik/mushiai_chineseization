@@ -1,13 +1,12 @@
 package com.karaik.scripteditor.controller;
 
 import com.karaik.scripteditor.entry.SptEntry;
-import com.karaik.scripteditor.ui.EntryUIFactory;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 import lombok.RequiredArgsConstructor;
 
@@ -20,90 +19,106 @@ public class PaginationUIController {
     private final EditorController editorController;
 
     public void setupPagination() {
-        // 将分页控件的工厂函数设为当前类的方法
         Pagination pagination = editorController.getPagination();
-        if (pagination != null) {
-            pagination.setPageFactory(this::createPageForEntries);
+        if (pagination == null) {
+            System.err.println("Pagination control is null in setupPagination.");
+            return;
         }
+        if (editorController.getEntryListView() == null) {
+            System.err.println("ListView is null when setting up pagination. PageFactory might not work correctly.");
+        }
+        pagination.setPageFactory(this::pageFactoryCallback);
     }
 
     public void updatePaginationView() {
         Pagination pagination = editorController.getPagination();
-        VBox container = editorController.getEntryContainer();
-        if (pagination == null || container == null) return;
+        ListView<SptEntry> listView = editorController.getEntryListView();
 
-        List<SptEntry> entries = editorController.getEntries();
+        if (pagination == null || listView == null) {
+            System.err.println("Pagination or ListView is null in updatePaginationView. Skipping update.");
+            return;
+        }
+
+        List<SptEntry> allEntries = editorController.getEntries();
         int itemsPerPage = editorController.getItemsPerPage();
+        if (itemsPerPage <= 0) {
+            itemsPerPage = 1;
+        }
 
-        // 计算新的总页数
-        int newPageCount = entries.isEmpty() ? 1
-                : Math.max(1, (int) Math.ceil((double) entries.size() / itemsPerPage));
+        int newPageCount = allEntries.isEmpty() ? 1 : Math.max(1, (int) Math.ceil((double) allEntries.size() / itemsPerPage));
 
-        int oldIndex = pagination.getCurrentPageIndex();
-        pagination.setPageCount(newPageCount);
-        int newIndex = pagination.getCurrentPageIndex();
+        if (pagination.getPageCount() != newPageCount) {
+            pagination.setPageCount(newPageCount);
+        }
 
-        // 当页码或数据变化时刷新当前页
-        if (oldIndex != newIndex || newPageCount == 1 || !entries.isEmpty()) {
-            createPageForEntries(newIndex);
-        } else if (entries.isEmpty() && newIndex == 0) {
-            createPageForEntries(0);
+        int currentValidPageIndex = pagination.getCurrentPageIndex();
+        if (currentValidPageIndex >= newPageCount && newPageCount > 0) {
+            currentValidPageIndex = newPageCount - 1;
+        }
+        currentValidPageIndex = Math.max(0, currentValidPageIndex);
+
+        if (pagination.getCurrentPageIndex() != currentValidPageIndex) {
+            pagination.setCurrentPageIndex(currentValidPageIndex);
+        } else {
+            loadDataForPage(currentValidPageIndex);
         }
     }
 
-    public VBox createPageForEntries(int pageIndex) {
-        VBox container = editorController.getEntryContainer();
-        if (container == null) {
-            return new VBox(new Label("Error: UI container not found."));
+
+    private Node pageFactoryCallback(int pageIndex) {
+        loadDataForPage(pageIndex);
+        return new VBox(); // 返回占位符
+    }
+
+    public void loadDataForPage(int pageIndex) {
+        ListView<SptEntry> listView = editorController.getEntryListView();
+        if (listView == null) {
+            System.err.println("ListView is null in loadDataForPage for page " + pageIndex);
+            return;
         }
 
-        // 渲染过程中禁止用户操作分页
         editorController.setRendering(true);
-        Pagination pagination = editorController.getPagination();
-        if (pagination != null) pagination.setDisable(true);
 
-        List<SptEntry> entries = editorController.getEntries();
+        List<SptEntry> allEntries = editorController.getEntries();
         int itemsPerPage = editorController.getItemsPerPage();
+        if (itemsPerPage <= 0) itemsPerPage = 1;
+
         int start = pageIndex * itemsPerPage;
-        int end = Math.min(start + itemsPerPage, entries.size());
+        int end = Math.min(start + itemsPerPage, allEntries.size());
 
-        List<Node> nodes = new ArrayList<>();
-
-        if (entries.isEmpty() && pageIndex == 0) {
-            // 没有数据时的提示
-            Label lbl = new Label("无内容可显示。");
-            lbl.setPadding(new Insets(10));
-            nodes.add(lbl);
-        } else if (start >= entries.size() && !entries.isEmpty()) {
-            // 页码越界时的提示
-            Label lbl = new Label("页码超出范围或无条目。");
-            lbl.setPadding(new Insets(10));
-            nodes.add(lbl);
-        } else {
-            // 正常加载条目
+        List<SptEntry> entriesForThisPage = new ArrayList<>();
+        if (start >= 0 && start < allEntries.size()) {
             for (int i = start; i < end; i++) {
-                nodes.add(
-                        EntryUIFactory.createEntryNode(
-                                entries.get(i),
-                                () -> editorController.markModified(true)
-                        )
-                );
-                if (i < end - 1) nodes.add(new Separator());
+                entriesForThisPage.add(allEntries.get(i));
             }
         }
 
-        // 更新 UI 并恢复控件状态
         Platform.runLater(() -> {
-            container.getChildren().setAll(nodes);
-            editorController.setRendering(false);
-            Pagination pg = editorController.getPagination();
-            if (pg != null) pg.setDisable(false);
-            if (editorController.getMainContentScrollPane() != null) {
-                editorController.getMainContentScrollPane().setVvalue(0.0);
-            }
-        });
+            listView.setPlaceholder(null);
 
-        // 返回一个空 VBox 作为占位符
-        return new VBox();
+            if (allEntries.isEmpty()) {
+                listView.setPlaceholder(createPlaceholderLabel("无内容可显示。"));
+                listView.getItems().clear();
+            } else if (entriesForThisPage.isEmpty()) {
+                listView.setPlaceholder(createPlaceholderLabel("当前页无条目。"));
+                listView.getItems().clear();
+            } else {
+                listView.getItems().setAll(entriesForThisPage); // 更新 ListView 的数据
+            }
+
+            // 在数据加载完成后，将 ListView 滚动到顶部
+            if (!entriesForThisPage.isEmpty()) { // 只有在有条目时才滚动
+                listView.scrollTo(0); // 滚动到当前页的第一个条目 (索引为0)
+            }
+
+            editorController.setRendering(false);
+        });
+    }
+
+    private Label createPlaceholderLabel(String text) {
+        Label placeholder = new Label(text);
+        placeholder.setPadding(new Insets(10));
+        placeholder.setStyle("-fx-font-style: italic; -fx-text-fill: grey;");
+        return placeholder;
     }
 }
