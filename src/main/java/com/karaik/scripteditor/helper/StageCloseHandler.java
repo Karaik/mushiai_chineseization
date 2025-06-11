@@ -1,5 +1,6 @@
 package com.karaik.scripteditor.helper;
 
+import com.karaik.scripteditor.controller.EditorController;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
@@ -7,7 +8,8 @@ import java.util.function.Supplier;
 
 public class StageCloseHandler {
 
-    public static void attach(Stage stage, Supplier<Boolean> isModifiedSupplier, Runnable onSave, Runnable onClose)
+    public static void attach(Stage stage, Supplier<Boolean> isModifiedSupplier, Runnable onSave, Runnable onClose,
+                              EditorController controller)
     {
         stage.setOnCloseRequest(event -> {
             if (!isModifiedSupplier.get()) {
@@ -15,7 +17,7 @@ public class StageCloseHandler {
                 return;
             }
 
-            event.consume(); // 拦截默认关闭行为
+            event.consume();
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("保存文件");
@@ -27,12 +29,19 @@ public class StageCloseHandler {
             ButtonType cancel = new ButtonType("取消");
             alert.getButtonTypes().setAll(save, discard, cancel);
 
-            alert.setOnShown(e -> {
-                Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-                if (alertStage != null) {
-                    alertStage.setAlwaysOnTop(stage.isAlwaysOnTop());
+            if (controller != null) {
+                controller.configureAlertOnTop(alert);
+            } else if (stage != null) {
+                alert.initOwner(stage);
+                if (stage.isAlwaysOnTop()) {
+                    alert.setOnShown(e -> {
+                        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+                        if (alertStage != null) {
+                            alertStage.setAlwaysOnTop(true);
+                        }
+                    });
                 }
-            });
+            }
 
             alert.showAndWait().ifPresent(response -> {
                 if (response == save) {

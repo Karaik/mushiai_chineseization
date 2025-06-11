@@ -6,7 +6,7 @@
 
     <groupId>com.karaik</groupId>
     <artifactId>scriptEditor</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>虫爱少女文本编辑器</name>
 
     <properties>

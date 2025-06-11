@@ -1,5 +1,6 @@
 package com.karaik.scripteditor.helper;
 
+import com.karaik.scripteditor.controller.EditorController;
 import com.karaik.scripteditor.entry.SptEntry;
 import javafx.scene.control.Alert;
 import javafx.scene.input.Clipboard;
@@ -10,9 +11,10 @@ import java.util.List;
 
 public class ClipboardHelper {
 
-    public static void copyEntriesToClipboard(List<SptEntry> entries, int start, int end, Stage owner) {
+    public static void copyEntriesToClipboard(List<SptEntry> entries, int start, int end, Stage owner,
+                                              EditorController controller) {
         if (entries == null || entries.isEmpty() || start >= end) {
-            showAlert("没有内容可以复制。", owner);
+            showAlert("没有内容可以复制。", owner, controller);
             return;
         }
 
@@ -33,14 +35,19 @@ public class ClipboardHelper {
         Clipboard.getSystemClipboard().setContent(clipboard);
     }
 
-    private static void showAlert(String message, Stage owner) {
+    private static void showAlert(String message, Stage owner, EditorController controller) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, message);
-        if (owner != null) {
+
+        if (controller != null) {
+            controller.configureAlertOnTop(alert);
+        } else if (owner != null) {
             alert.initOwner(owner);
-            alert.setOnShown(e -> {
-                Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-                if (alertStage != null) alertStage.setAlwaysOnTop(owner.isAlwaysOnTop());
-            });
+            if (owner.isAlwaysOnTop()) {
+                alert.setOnShown(e -> {
+                    Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    if (alertStage != null) alertStage.setAlwaysOnTop(true);
+                });
+            }
         }
         alert.showAndWait();
     }

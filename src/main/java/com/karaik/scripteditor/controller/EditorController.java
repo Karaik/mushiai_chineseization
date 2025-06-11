@@ -119,7 +119,8 @@ public class EditorController {
                 () -> fileHandlerController.saveFile(),
                 AppPreferenceHelper::saveLastPageIndex,
                 this::canChangePage,
-                warningShown
+                warningShown,
+                this
         );
     }
 
@@ -140,7 +141,8 @@ public class EditorController {
                         primaryStage,
                         () -> this.modified,
                         () -> fileHandlerController.saveFile(),
-                        () -> primaryStage.close()
+                        () -> primaryStage.close(),
+                        this // <--- 确保这里传递了 this
                 );
                 updateTitle();
 
@@ -233,20 +235,21 @@ public class EditorController {
                 pageInputField,
                 pagination,
                 primaryStage,
-                this::canChangePage
+                this::canChangePage,
+                this
         );
     }
 
     @FXML
     private void handleCopyCurrentPage() {
         if (entries.isEmpty() || pagination == null) {
-            ClipboardHelper.copyEntriesToClipboard(List.of(), 0, 0, primaryStage);
+            ClipboardHelper.copyEntriesToClipboard(List.of(), 0, 0, primaryStage, this);
             return;
         }
         int currentPageIndex = pagination.getCurrentPageIndex();
         int start = currentPageIndex * itemsPerPage;
         int end = Math.min(start + itemsPerPage, entries.size());
-        ClipboardHelper.copyEntriesToClipboard(entries, start, end, primaryStage);
+        ClipboardHelper.copyEntriesToClipboard(entries, start, end, primaryStage, this);
     }
 
     public void setEntries(List<SptEntry> newEntries) {
