@@ -7,7 +7,7 @@
     <groupId>com.karaik</groupId>
     <artifactId>scriptEditor</artifactId>
     <version>1.0.3</version>
-    <name>虫爱少女文本编辑器</name>
+    <name>scriptEditor</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
