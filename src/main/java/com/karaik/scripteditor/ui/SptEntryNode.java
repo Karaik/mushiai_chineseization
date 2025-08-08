@@ -1,6 +1,5 @@
 package com.karaik.scripteditor.ui;
 
-import com.karaik.scripteditor.controller.consts.EditorConst;
 import com.karaik.scripteditor.entry.SptEntry;
 import com.karaik.scripteditor.util.SptChecker;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -12,7 +11,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -21,7 +19,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +33,7 @@ public class SptEntryNode extends VBox {
     private Runnable onModified;
 
     private Label metaLabel;
+    private Button copyBtn;
     private VBox originalColContainer;
     private VBox translatedColContainer;
     private Button addBtnInstance;
@@ -43,21 +41,129 @@ public class SptEntryNode extends VBox {
     private List<Runnable> disposables = new ArrayList<>();
     private ListChangeListener<StringProperty> translatedSegmentsListener;
 
-    public SptEntryNode(SptEntry entry, Runnable onModified) {
+    private final List<HBox> translatedSegmentRows = new ArrayList<>();
+
+    public SptEntryNode() {
         super(5);
         this.setPadding(new Insets(5));
-        updateData(entry, onModified);
+
+        // 2. 在构造函数中构建一次UI骨架
+        metaLabel = new Label();
+        metaLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 0.9em;");
+
+        copyBtn = new Button("复制本条");
+
+        HBox metaRow = new HBox(5, metaLabel, copyBtn);
+        metaRow.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(metaLabel, Priority.ALWAYS);
+
+        originalColContainer = new VBox(3);
+        originalColContainer.getChildren().add(new Label("原文:"));
+
+        translatedColContainer = new VBox(3);
+        translatedColContainer.getChildren().add(new Label("译文:"));
+
+        addBtnInstance = new Button("(+)");
+        HBox addBox = new HBox(addBtnInstance);
+        addBox.setAlignment(Pos.CENTER_RIGHT);
+        addBox.setPadding(new Insets(3, 0, 0, 0));
+        // 将 addBox 添加到 translatedColContainer 的末尾，之后动态行会插在它前面
+        translatedColContainer.getChildren().add(addBox);
+
+        HBox body = new HBox(10, originalColContainer, translatedColContainer);
+        HBox.setHgrow(originalColContainer, Priority.ALWAYS);
+        HBox.setHgrow(translatedColContainer, Priority.ALWAYS);
+
+        this.getChildren().addAll(metaRow, body);
     }
 
     public void updateData(SptEntry newEntry, Runnable newOnModified) {
+        // 清理上一个条目的监听器和绑定
         dispose();
+
         this.entry = newEntry;
         this.onModified = newOnModified;
-        if (this.entry != null) {
-            buildAndConfigureUI();
-        } else {
-            this.getChildren().clear();
+
+        if (this.entry == null) {
+            this.setVisible(false); // 如果没有数据，直接隐藏节点
+            return;
         }
+
+        this.setVisible(true);
+
+        // 3. 只更新UI组件的内容，而不是重建它们
+        // 更新元数据
+        metaLabel.setText(this.entry.getIndex() + " | " + this.entry.getAddress() + " | " + this.entry.getLength());
+        EventHandler<ActionEvent> copyAction = e -> copyWholeEntryInternal(this.entry);
+        copyBtn.setOnAction(copyAction);
+        addDisposable(() -> copyBtn.setOnAction(null));
+
+        // 更新原文列
+        updateOriginalColumn();
+
+        // 更新译文列
+        updateTranslatedColumn();
+
+        // 绑定译文段落列表的增删变化
+        ListChangeListener<StringProperty> translatedSegmentsListener = c -> {
+            // 当列表变化时，只需重新更新译文列即可
+            updateTranslatedColumn();
+            if (this.onModified != null) this.onModified.run();
+        };
+        this.entry.getTranslatedSegments().addListener(translatedSegmentsListener);
+        addDisposable(() -> this.entry.getTranslatedSegments().removeListener(translatedSegmentsListener));
+
+        // 绑定添加按钮事件
+        EventHandler<ActionEvent> addAction = e -> {
+            if (this.entry.getTranslatedSegments().size() < 4) {
+                this.entry.addTranslatedSegment("");
+            }
+        };
+        addBtnInstance.setOnAction(addAction);
+        addDisposable(() -> addBtnInstance.setOnAction(null));
+    }
+
+    private void updateOriginalColumn() {
+        // 从索引1开始，保留"原文:"标签
+        originalColContainer.getChildren().remove(1, originalColContainer.getChildren().size());
+
+        List<ReadOnlyStringWrapper> originalSegs = entry.getOriginalSegments();
+        if (originalSegs.isEmpty() || (originalSegs.size() == 1 && (originalSegs.get(0).get() == null || originalSegs.get(0).get().isEmpty()))) {
+            Label empty = new Label("(原文为空)");
+            empty.setPadding(new Insets(2));
+            originalColContainer.getChildren().add(empty);
+        } else {
+            originalSegs.forEach(segWrapper -> {
+                TextArea ta = new TextArea(segWrapper.get());
+                ta.setEditable(false);
+                ta.setWrapText(true);
+                ta.setPrefWidth(ORIGINAL_TEXT_AREA_PREF_WIDTH);
+                ta.setPrefHeight(calculateTextAreaHeightBasedOnContent(segWrapper.get(), ta.getFont()));
+                originalColContainer.getChildren().add(ta);
+
+                // 监听原文变化（如果可能的话）
+                ChangeListener<String> listener = (obs, oldV, newV) -> ta.setText(newV);
+                segWrapper.addListener(listener);
+                addDisposable(() -> segWrapper.removeListener(listener));
+            });
+        }
+    }
+
+    private void updateTranslatedColumn() {
+        // 从索引1开始，保留"译文:"标签，并保留末尾的addBox
+        int childCount = translatedColContainer.getChildren().size();
+        if (childCount > 2) {
+            translatedColContainer.getChildren().remove(1, childCount - 1);
+        }
+
+        ObservableList<StringProperty> segs = this.entry.getTranslatedSegments();
+        for (StringProperty segProp : segs) {
+            HBox row = buildSegRowInternal(segProp);
+            // 插入到addBox之前
+            translatedColContainer.getChildren().add(translatedColContainer.getChildren().size() - 1, row);
+        }
+
+        updateAddBtnState(addBtnInstance, segs);
     }
 
     private void buildAndConfigureUI() {

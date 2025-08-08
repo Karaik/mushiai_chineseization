@@ -12,33 +12,6 @@ import java.util.Set;
 
 public class ScrollEventHandler {
 
-    public static void installSmartScroll(ScrollPane scrollPane, double multiplier) {
-        scrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
-            Node target = event.getTarget() instanceof Node ? (Node) event.getTarget() : null;
-            Node currentNode = target;
-            boolean isInsideTextArea = false;
-
-            while (currentNode != null) {
-                if (currentNode instanceof TextArea) {
-                    isInsideTextArea = true;
-                    break;
-                }
-                currentNode = currentNode.getParent();
-            }
-
-            if (isInsideTextArea) return;
-
-            double adjustedDeltaY = event.getDeltaY() * multiplier;
-            if (scrollPane.getContent() != null && scrollPane.getContent().getBoundsInLocal().getHeight() > 0) {
-                double height = scrollPane.getContent().getBoundsInLocal().getHeight();
-                double newVValue = scrollPane.getVvalue() - (adjustedDeltaY / height);
-                scrollPane.setVvalue(Math.max(0, Math.min(1, newVValue)));
-            }
-
-            event.consume();
-        });
-    }
-
     /**
      * 为 ListView 安装智能滚动处理，允许通过 multiplier 控制滚动幅度。
      * 它会查找 ListView 内部的垂直滚动条并操作它。

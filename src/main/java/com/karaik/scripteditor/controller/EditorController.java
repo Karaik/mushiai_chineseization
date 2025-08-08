@@ -22,13 +22,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Data
 public class EditorController {
 
-    @FXML private ScrollPane mainContentScrollPane;
     @FXML private ListView<SptEntry> entryListView; // 确保 fx:id="entryListView" 在 FXML 中
     @FXML private Pagination pagination;
     @FXML private TextField pageInputField;
     @FXML private ComboBox<Integer> itemsPerPageComboBox;
     @FXML private CheckBox alwaysOnTopCheckBox;
-    // @FXML private HBox topControlsContainer; // 如果在 FXML 中添加了 fx:id
 
     private File currentFile;
     private List<SptEntry> entries = new ArrayList<>();
@@ -45,18 +43,16 @@ public class EditorController {
     private boolean initializing = true;
     private final AtomicBoolean warningShown = new AtomicBoolean(false);
     public static final double KEYBOARD_SCROLL_AMOUNT = 200;
-    public static final double MOUSE_WHEEL_SCROLL_MULTIPLIER = 2.0;
+    public static final double MOUSE_WHEEL_SCROLL_MULTIPLIER = 0.7;
 
     @FXML
     public void initialize() {
         loadPreferencesForStartup();
-//        setupScrollBehavior();
 
         if (entryListView != null) {
             entryListView.setCellFactory(listView -> new SptEntryListCell(() -> markModified(true)));
             entryListView.setPlaceholder(new Label("正在加载或无内容可显示..."));
-
-            ScrollEventHandler.installSmartScrollForListView(entryListView, MOUSE_WHEEL_SCROLL_MULTIPLIER);
+            ScrollSpeedHelper.install(entryListView, MOUSE_WHEEL_SCROLL_MULTIPLIER);
         } else {
             // 这个错误非常严重，意味着FXML加载或注入失败
             System.err.println("CRITICAL ERROR: entryListView is null after FXML loading. Check fx:id in EditorView.fxml and controller field name.");
@@ -69,12 +65,6 @@ public class EditorController {
         setupPaginationListener(); // 确保在 paginationUIController.setupPagination() 之前
         setupUIAfterLoad(); // 这个方法会调用 paginationUIController.setupPagination()
     }
-
-//    private void setupScrollBehavior() {
-//        if (mainContentScrollPane != null) {
-//            ScrollEventHandler.installSmartScroll(mainContentScrollPane, MOUSE_WHEEL_SCROLL_MULTIPLIER);
-//        }
-//    }
 
     private void setupControllers() {
         // 确保在 EditorController 的成员变量被 FXML 注入（如 pagination, entryListView）之后再创建这些控制器
@@ -320,11 +310,8 @@ public class EditorController {
         lastPageChangeTime = System.currentTimeMillis();
     }
 
-    // Getter for PaginationUIController and other components if needed by helpers
     public ListView<SptEntry> getEntryListView() { return entryListView; }
     public Pagination getPagination() { return pagination; }
     public List<SptEntry> getEntries() { return entries; }
     public int getItemsPerPage() { return itemsPerPage > 0 ? itemsPerPage : 3; } // 防御
-    // public AtomicBoolean getIsRendering() { return isRendering; } // 如果其他类需要
-    // public Stage getPrimaryStage() { return primaryStage; } // 如果其他类需要
 }

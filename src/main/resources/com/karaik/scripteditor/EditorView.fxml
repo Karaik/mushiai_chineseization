@@ -25,11 +25,7 @@
     </top>
 
     <center>
-        <ScrollPane fx:id="mainContentScrollPane" fitToWidth="true" fitToHeight="true" vbarPolicy="NEVER">
-            <content>
-                <ListView fx:id="entryListView" />
-            </content>
-        </ScrollPane>
+        <ListView fx:id="entryListView" />
     </center>
 
 </BorderPane>

@@ -53,16 +53,14 @@ public class SptEntryListCell extends ListCell<SptEntry> {
         super.updateItem(entry, empty);
         if (empty || entry == null) {
             setText(null);
-            if (viewNode != null) {
-                viewNode.updateData(null, null);
-            }
-            setGraphic(null);
+            setGraphic(null); // 清空即可
         } else {
             if (viewNode == null) {
-                viewNode = new SptEntryNode(entry, onModifiedCallback);
-            } else {
-                viewNode.updateData(entry, onModifiedCallback);
+                // 使用无参构造函数创建一次
+                viewNode = new SptEntryNode();
             }
+            // 每次都调用 updateData
+            viewNode.updateData(entry, onModifiedCallback);
             setGraphic(viewNode);
         }
     }
