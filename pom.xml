@@ -50,6 +50,12 @@
             <artifactId>hutool-core</artifactId>
             <version>5.8.16</version>
         </dependency>
+        <dependency>
+            <groupId>com.atilika.kuromoji</groupId>
+            <artifactId>kuromoji-ipadic</artifactId>
+            <version>0.9.0</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
