@@ -41,8 +41,6 @@ public class SptEntryNode extends VBox {
     private List<Runnable> disposables = new ArrayList<>();
     private ListChangeListener<StringProperty> translatedSegmentsListener;
 
-    private final List<HBox> translatedSegmentRows = new ArrayList<>();
-
     public SptEntryNode() {
         super(5);
         this.setPadding(new Insets(5));
@@ -164,105 +162,6 @@ public class SptEntryNode extends VBox {
         }
 
         updateAddBtnState(addBtnInstance, segs);
-    }
-
-    private void buildAndConfigureUI() {
-        this.getChildren().clear();
-        if (this.entry == null) return;
-
-        metaLabel = new Label(this.entry.getIndex() + " | " + this.entry.getAddress() + " | " + this.entry.getLength());
-        metaLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 0.9em;");
-
-        Button copyBtn = new Button("复制本条");
-        EventHandler<ActionEvent> copyAction = e -> copyWholeEntryInternal(this.entry);
-        copyBtn.setOnAction(copyAction);
-        addDisposable(() -> copyBtn.setOnAction(null));
-
-        HBox metaRow = new HBox(5, metaLabel, copyBtn);
-        metaRow.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(metaLabel, Priority.ALWAYS);
-        this.getChildren().add(metaRow);
-
-        originalColContainer = new VBox(3);
-        translatedColContainer = new VBox(3);
-
-        buildOriginalColumnInternal();
-        buildTranslatedColumnInternalAndAttachListener();
-
-        HBox body = new HBox(10, originalColContainer, translatedColContainer);
-        HBox.setHgrow(originalColContainer, Priority.ALWAYS);
-        HBox.setHgrow(translatedColContainer, Priority.ALWAYS);
-        this.getChildren().add(body);
-    }
-
-    private void buildOriginalColumnInternal() {
-        originalColContainer.getChildren().clear();
-        originalColContainer.getChildren().add(new Label("原文:"));
-        List<ReadOnlyStringWrapper> originalSegs = entry.getOriginalSegments();
-        if (originalSegs.isEmpty() || (originalSegs.size() == 1 && (originalSegs.get(0).get() == null || originalSegs.get(0).get().isEmpty()))) {
-            Label empty = new Label("(原文为空)");
-            empty.setPadding(new Insets(2));
-            originalColContainer.getChildren().add(empty);
-        } else {
-            originalSegs.forEach(segWrapper -> {
-                TextArea ta = new TextArea(segWrapper.get());
-                ta.setEditable(false);
-                ta.setWrapText(true);
-                ta.setPrefWidth(ORIGINAL_TEXT_AREA_PREF_WIDTH);
-                ta.setPrefHeight(calculateTextAreaHeightBasedOnContent(segWrapper.get(), ta.getFont()));
-                originalColContainer.getChildren().add(ta);
-                ChangeListener<String> originalTextListener = (obs, oldV, newV) -> {
-                    ta.setText(newV);
-                };
-                segWrapper.addListener(originalTextListener);
-                addDisposable(() -> segWrapper.removeListener(originalTextListener));
-            });
-        }
-    }
-
-    private void buildTranslatedColumnInternalAndAttachListener() {
-        rebuildFullTranslatedColumnUI();
-        ObservableList<StringProperty> segs = this.entry.getTranslatedSegments();
-        if (segs != null) {
-            translatedSegmentsListener = c -> {
-                boolean needsRebuild = false;
-                while (c.next()) {
-                    if (c.wasAdded() || c.wasRemoved() || c.wasReplaced() || c.wasUpdated()) {
-                        needsRebuild = true;
-                        break;
-                    }
-                }
-                if (needsRebuild) {
-                    rebuildFullTranslatedColumnUI();
-                    if (this.onModified != null) this.onModified.run();
-                }
-            };
-            segs.addListener(translatedSegmentsListener);
-        }
-    }
-
-    private void rebuildFullTranslatedColumnUI() {
-        translatedColContainer.getChildren().clear();
-        translatedColContainer.getChildren().add(new Label("译文:"));
-        ObservableList<StringProperty> segs = this.entry.getTranslatedSegments();
-        if (segs != null) {
-            for (StringProperty segProp : segs) {
-                translatedColContainer.getChildren().add(buildSegRowInternal(segProp));
-            }
-        }
-        addBtnInstance = new Button("(+)");
-        updateAddBtnState(addBtnInstance, segs);
-        EventHandler<ActionEvent> addAction = e -> {
-            if (this.entry.getTranslatedSegments().size() < 4) {
-                this.entry.addTranslatedSegment("");
-            }
-        };
-        addBtnInstance.setOnAction(addAction);
-        addDisposable(() -> { if (addBtnInstance != null) addBtnInstance.setOnAction(null); });
-        HBox addBox = new HBox(addBtnInstance);
-        addBox.setAlignment(Pos.CENTER_RIGHT);
-        addBox.setPadding(new Insets(3, 0, 0, 0));
-        translatedColContainer.getChildren().add(addBox);
     }
 
     private HBox buildSegRowInternal(StringProperty prop) {

@@ -53,7 +53,12 @@ public class SptEntryListCell extends ListCell<SptEntry> {
         super.updateItem(entry, empty);
         if (empty || entry == null) {
             setText(null);
-            setGraphic(null); // 清空即可
+            // 如果 viewNode 存在，必须在 setGraphic(null) 之前或之后清理它，
+            // 以断开它与上一个 SptEntry 的所有连接。
+            if (viewNode != null) {
+                viewNode.dispose();
+            }
+            setGraphic(null);
         } else {
             if (viewNode == null) {
                 // 使用无参构造函数创建一次
