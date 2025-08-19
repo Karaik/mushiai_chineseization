@@ -7,7 +7,7 @@
     <groupId>com.karaik</groupId>
     <artifactId>scriptEditor</artifactId>
     <version>1.0.4</version>
-    <name>scriptEditor</name>
+    <name>ScriptEditor</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -60,6 +60,17 @@
     </dependencies>
 
     <build>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>com/karaik/scripteditor/**</include>
+                    <include>images/**</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -73,28 +84,96 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.4.2</version>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>${main.class}</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.4.1</version>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <minimizeJar>true</minimizeJar>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>FULL</shadedClassifierName>
+
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.karaik.scripteditor.EditorApplication</mainClass>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>io.github.fvarrui</groupId>
+                <artifactId>javapackager</artifactId>
+                <version>1.7.6</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>${main.class}</mainClass>
+                            <bundleJre>true</bundleJre>
+                            <customizedJre>true</customizedJre>
+                            <copyDependencies>false</copyDependencies>
+                            <iconFile>${project.basedir}/src/main/resources/icon.ico</iconFile>
+                            <runnableJar>${project.build.directory}/${project.artifactId}-${project.version}-FULL.jar</runnableJar>
+
+                            <additionalModules>
+                                <additionalModule>javafx.base</additionalModule>
+                                <additionalModule>javafx.graphics</additionalModule>
+                                <additionalModule>javafx.controls</additionalModule>
+                                <additionalModule>javafx.fxml</additionalModule>
+                                <additionalModule>java.desktop</additionalModule>
+                                <additionalModule>java.xml</additionalModule>
+                                <additionalModule>java.xml.crypto</additionalModule>
+                                <additionalModule>java.logging</additionalModule>
+                                <additionalModule>jdk.charsets</additionalModule>
+                                <additionalModule>jdk.unsupported</additionalModule>
+                                <additionalModule>java.sql</additionalModule>
+                                <additionalModule>java.naming</additionalModule>
+                            </additionalModules>
+
+                            <jrePath>${packager.jdk}</jrePath>
+
+                            <generateInstaller>true</generateInstaller>
+                            <administratorRequired>false</administratorRequired>
+                            <platform>windows</platform>
+                            <displayName>虫爱少女汉化文本编辑器</displayName>
+                            <name>ScriptEditor</name>
+                            <version>1.0.4</version>
+                            <winConfig>
+                                <icoFile>${project.basedir}/src/main/resources/icon.ico</icoFile>
+                                <!-- debug控制台日志 -->
+                                <!-- <headerType>console</headerType>-->
+
+                                <language>2052</language>
+                                <generateSetup>false</generateSetup>
+                                <generateMsi>false</generateMsi>
+                                <generateMsm>false</generateMsm>
+                                <fileDescription>miaomiao's asshole is big and juicy</fileDescription>
+                                <fileVersion>1.0.4.0</fileVersion>
+                                <productName>TextEditor</productName>
+                                <productVersion>1.0.4.0</productVersion>
+                                <companyName>miaomiao's asshole is juicy company</companyName>
+                                <copyright>Copyright 2025 karaik</copyright>
+                                <internalName>ScriptEditor</internalName>
+                                <originalFilename>ScriptEditor.exe</originalFilename>
+                            </winConfig>
+                        </configuration>
+
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 </project>
