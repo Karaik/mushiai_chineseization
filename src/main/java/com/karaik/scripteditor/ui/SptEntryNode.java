@@ -198,6 +198,10 @@ public class SptEntryNode extends VBox {
             if (isTooLong || hasBadChars) {
                 ta.getStyleClass().add("text-area-red-overflow");
             }
+            if (" ".contentEquals(badChars)) {
+                illegal.setText(hasBadChars ? "非法字符: （半角空格）" : "");
+                return;
+            }
             illegal.setText(hasBadChars ? "非法字符: " + badChars : "");
         };
 
