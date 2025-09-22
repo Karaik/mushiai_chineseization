@@ -1,18 +1,28 @@
 package com.karaik.scripteditor.helper;
 
 import com.karaik.scripteditor.controller.EditorController;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 import java.util.function.Supplier;
 
 public class StageCloseHandler {
 
-    public static void attach(Stage stage, Supplier<Boolean> isModifiedSupplier, Runnable onSave, Runnable onClose,
-                              EditorController controller)
-    {
+    public static void attach(Stage stage,
+                              Supplier<Boolean> isModifiedSupplier,
+                              Runnable onSave,
+                              Runnable onClose,
+                              EditorController controller) {
         stage.setOnCloseRequest(event -> {
+            Runnable historyTask = () -> {
+                if (controller != null) {
+                    HistoryManager.storeSnapshot(controller.getCurrentFile());
+                }
+            };
+
             if (!isModifiedSupplier.get()) {
+                historyTask.run();
                 onClose.run();
                 return;
             }
@@ -46,8 +56,10 @@ public class StageCloseHandler {
             alert.showAndWait().ifPresent(response -> {
                 if (response == save) {
                     onSave.run();
+                    historyTask.run();
                     onClose.run();
                 } else if (response == discard) {
+                    historyTask.run();
                     onClose.run();
                 }
             });
