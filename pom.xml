@@ -6,7 +6,7 @@
 
     <groupId>com.karaik</groupId>
     <artifactId>scriptEditor</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <name>ScriptEditor</name>
 
     <properties>
@@ -157,10 +157,10 @@
                             <platform>windows</platform>
                             <displayName>虫爱少女汉化文本编辑器</displayName>
                             <name>ScriptEditor</name>
-                            <version>1.0.5</version>
+                            <version>1.0.6</version>
                             <winConfig>
                                 <icoFile>${project.basedir}/src/main/resources/icon.ico</icoFile>
-                                <!-- debug鎺у埗鍙版棩蹇?-->
+                                <!-- debug控制台日志 -->
                                 <!-- <headerType>console</headerType>-->
 
                                 <language>2052</language>
@@ -168,9 +168,9 @@
                                 <generateMsi>false</generateMsi>
                                 <generateMsm>false</generateMsm>
                                 <fileDescription>miaomiao's asshole is big and juicy</fileDescription>
-                                <fileVersion>1.0.5.0</fileVersion>
+                                <fileVersion>1.0.6.0</fileVersion>
                                 <productName>TextEditor</productName>
-                                <productVersion>1.0.5.0</productVersion>
+                                <productVersion>1.0.6.0</productVersion>
                                 <companyName>miaomiao's asshole is juicy company</companyName>
                                 <copyright>Copyright 2025 karaik</copyright>
                                 <internalName>ScriptEditor</internalName>

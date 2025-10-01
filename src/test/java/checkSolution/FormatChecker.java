@@ -1,57 +1,71 @@
 package checkSolution;
 
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
-public class FormatChecker {
+import static checkSolution.SptConstants.MARK_ORIGINAL;
+import static checkSolution.SptConstants.MARK_ORIGINAL_CHAR;
+import static checkSolution.SptConstants.MARK_TRANSLATE;
+import static checkSolution.SptConstants.MARK_TRANSLATE_CHAR;
+import static checkSolution.SptConstants.SPLIT_REGEX;
 
-    /**
-     * 格式校验
-     * 例句对（普通文本）
-     * ○00933|12D9C4|07A○ あちこちに新しい家が見られるようになり、夢美の[\r][\n]住むマンションの外観など、今では古びた雰囲気さ[\r][\n]え漂うようになっていた。[\r][\n]
-     * ●00933|12D9C4|07A● 随处都盖起了新的房子，[\r][\n]梦美现在住的公寓从外观上看也带上了一种老旧的氛围感。[\r][\n]
-     * 规则：（仅对●开头的译文行做校验）
-     * 1.原文开头标识用一对○包裹，译文用一对●包裹，中间的内容一致
-     * 2.开头标识过后，必定有一个且仅有一个半角空格分隔，后面的全是正文文本
-     * 3.游戏内用[\r][\n]分行，一行的字符在不包括分隔符的情况下不超过24个字
-     *
-     * 例句对（对话框文本）
-     * ○00961|12E0F8|050○ 優斗[\r][\n]「明日は休みだけど、どうする？[\r][\n]　久しぶりにどこか遊びにでも行くかい？」[\r][\n]
-     * ●00961|12E0F8|050● 优斗[\r][\n]「明天是休息，你有什么打算吗？[\r][\n]　要不要久违地一起去哪玩玩吗？」[\r][\n]
-     * 4.如果第二行的开始，与最后一行的结尾能组成一对「」或『』，则代表此文本为对话文本，进行对话文本的格式校验
-     * 5.「只能和」组成一对，且必须能组成一对，否则错误，『』同理，一对对话框内的文本叫语音句子
-     * 6.语音句子内，除了第一行，都必须带有且仅有一个全角空格
-     * 7.最后一行的」或』前，可以有标点，但标点不能是。、，和全角或半角空格
-     *
-     */
-    public static String sptCheckFormat(String line, String originalLine) {
-        StringBuilder result = new StringBuilder();
+/**
+ * 格式校验规则集合。
+ * 需要临时关闭格式校验时，可在 {@link CheckerPipeline#evaluateTranslateLine(String, String, int)} 中
+ * 注释掉对本方法的调用，或直接将整个方法体注释掉。
+ *
+ * 规则摘要：
+ *  1. 原文行以○包裹，译文行以●包裹，锚点 ID 必须一致；
+ *  2. ● 结束后必须紧跟一个半角空格，之后为正文；
+ *  3. 正文使用 [\r][\n] 分行，每行不超过 24 个字符；
+ *  4. 通过第二、最后一行的「」或『』判断是否为对话文本；
+ *  5. 对话文本的引号需成对出现；
+ *  6. 对话文本从第三行开始需包含且仅包含一个全角空格；
+ *  7. 对话文本的结尾引号前不能为 。、，或空格。
+ */
+public final class FormatChecker {
+
+    private FormatChecker() {
+    }
+
+    public static List<String> sptCheckFormat(String line, String originalLine) {
+        List<String> errors = new ArrayList<>();
+        if (line == null || originalLine == null) {
+            errors.add("错误：缺少对应行用于格式校验");
+            return errors;
+        }
+
+        if (!line.startsWith(MARK_TRANSLATE) || !originalLine.startsWith(MARK_ORIGINAL)) {
+            errors.add("错误：开头标识不正确，应为●或○开头");
+            return errors;
+        }
+
+        int headerEnd = line.indexOf(MARK_TRANSLATE_CHAR, 1);
+        int originalHeaderEnd = originalLine.indexOf(MARK_ORIGINAL_CHAR, 1);
 
         // 1. 校验头标记一致（规则1）
-        if (!line.startsWith("●") || !originalLine.startsWith("○")) {
-            CheckerPipeline.hasError = true;
-            result.append("错误：开头标识不正确，应为●或○开头\n");
-            return result.toString();
+        if (headerEnd == -1 || originalHeaderEnd == -1 ||
+                !line.substring(1, headerEnd).equals(originalLine.substring(1, originalHeaderEnd))) {
+            errors.add("错误：●...●内的标识与原文不一致");
         }
-        int headerEnd = line.indexOf('●', 1);
-        if (headerEnd == -1 || !line.substring(1, headerEnd).equals(originalLine.substring(1, originalLine.indexOf('○', 1)))) {
-            CheckerPipeline.hasError = true;
-            result.append("错误：●...● 内的标识与原文不一致\n");
+
+        if (headerEnd == -1) {
+            return errors;
         }
 
         // 2. 校验●标识后必须有一个半角空格（规则2）
         if (line.length() <= headerEnd + 1 || line.charAt(headerEnd + 1) != ' ') {
-            CheckerPipeline.hasError = true;
-            result.append("错误：●标识后必须紧跟一个半角空格\n");
-            return result.toString();
+            errors.add("错误：●标识后必须紧跟一个半角空格");
+            return errors;
         }
-        String content = line.substring(headerEnd + 2); // 跳过“●内容● 空格”
-        String[] lines = content.split(Pattern.quote("[\\r][\\n]"));
+
+        String content = line.substring(headerEnd + 2);
+        String[] lines = content.split(SPLIT_REGEX);
 
         // 3. 校验普通文本每行不超过24字（规则3）
         for (int i = 0; i < lines.length; i++) {
             if (lines[i].length() > 24) {
-                CheckerPipeline.hasError = true;
-                result.append("错误：第").append(i + 1).append("行超过24个字符，当前为").append(lines[i].length()).append("\n");
+                errors.add("错误：第" + (i + 1) + "行超过24个字符，当前为 " + lines[i].length());
             }
         }
 
@@ -67,25 +81,28 @@ public class FormatChecker {
         }
 
         if (isDialog) {
-            // 5. 校验对话框符号配对（规则5）
-            int open = 0, close = 0;
+            int open = 0;
+            int close = 0;
             for (String l : lines) {
                 for (char c : l.toCharArray()) {
-                    if (c == '「' || c == '『') open++;
-                    if (c == '」' || c == '』') close++;
+                    if (c == '「' || c == '『') {
+                        open++;
+                    }
+                    if (c == '」' || c == '』') {
+                        close++;
+                    }
                 }
             }
+            // 5. 校验对话框符号配对（规则5）
             if (open != close) {
-                CheckerPipeline.hasError = true;
-                result.append("错误：对话框符号数量不匹配\n");
+                errors.add("错误：对话框符号数量不匹配");
             }
 
             // 6. 语音句子第二行开始必须包含且仅包含一个全角空格
             for (int i = 2; i < lines.length; i++) {
-                long spaceCount = lines[i].chars().filter(c -> c == '　').count();
+                long spaceCount = lines[i].chars().filter(ch -> ch == '　').count();
                 if (spaceCount != 1) {
-                    CheckerPipeline.hasError = true;
-                    result.append("错误：第").append(i + 1).append("行开头应包含一个全角空格，当前为").append(spaceCount).append("个").append("\n");
+                    errors.add("错误：第" + (i + 1) + "行开头应包含一个全角空格，当前为 " + spaceCount + " 个");
                 }
             }
 
@@ -94,16 +111,15 @@ public class FormatChecker {
             if (lastLine.endsWith("」") || lastLine.endsWith("』")) {
                 if (lastLine.length() >= 2) {
                     char before = lastLine.charAt(lastLine.length() - 2);
-                    if (before == '。' || before == '、' || before == '，' || before == ' ' || before == '　') {
-                        CheckerPipeline.hasError = true;
-                        result.append("错误：对话结尾符号前不能为 。、，或空格").append("\n");
+                    if (before == '。' || before == '，' || before == '、' || before == ' ' || before == '　') {
+                        errors.add("错误：对话结尾符号前不能为 。、，或空格");
                     }
                 }
             }
 
         }
 
-        return result.toString();
+        return errors;
     }
 
 }

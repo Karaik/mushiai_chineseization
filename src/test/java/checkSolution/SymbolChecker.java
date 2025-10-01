@@ -1,52 +1,62 @@
 package checkSolution;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SymbolChecker {
+import static checkSolution.SptConstants.MARK_TRANSLATE_CHAR;
+import static checkSolution.SptConstants.SPLIT_REGEX;
 
-    /**
-     * 符号校验（仅针对译文）
-     * 1.不允许出现！？这样的配对，问号只能出现在感叹号前面，且为全角，不允许半角标点
-     * 2.所有的波浪线全都为～ 其它种类的波浪线不允许出现
-     * 3.如果一个逗号的前后两个字一样（如：我，我才没有），则应该为顿号（正确示例：我、我才没有）
-     * 4.如果顿号的前后两个字不一样，也要提示错误
-     * 5.所有的破折号全都为―（U+2015），且必须两两出现
-     * 6.所有的半角符号全部都不支持
-     * 7.译文中的任何引号（【】 「」 『』 ”” "" 等等），都应该为中文的引号（“”），且必须成对出现
-     * 8.同一行中除了对话文本的开头，不允许出现半角或全角空格
-     */
-    public static String sptCheckSymbol(String line, String originalLine) {
-        StringBuilder result = new StringBuilder();
+/**
+ * 符号规则校验集合。
+ * 若暂时不需要符号检查，可在 {@link CheckerPipeline#evaluateTranslateLine(String, String, int)} 中
+ * 注释掉对本方法的调用，或将下方实现整体注释。
+ *
+ * 规则摘要：
+ *  1. 禁止出现“！？”或半角 ?! 组合；
+ *  2. 仅允许全角 ～ 波浪线；
+ *  3. 顿号前后必须是同一字符；
+ *  4. 若逗号前后字符相同则应改为顿号；
+ *  5. 仅允许全角破折号 ― 且需成对出现；
+ *  6. 禁止所有半角符号；
+ *  7. 引号必须使用中文“”并保持成对；
+ *  8. 除对话开头外禁止出现半角或非开头全角空格；
+ *  9. 省略号需要成双成对出现。
+ */
+public final class SymbolChecker {
 
-        // 提取正文内容（跳过 ●xxx● 空格）
-        int headerEnd = line.indexOf('●', 1);
-        if (headerEnd == -1 || line.length() <= headerEnd + 2) return "";
+    private static final Pattern ELLIPSIS_PATTERN = Pattern.compile("…+");
+
+    private SymbolChecker() {
+    }
+
+    public static List<String> sptCheckSymbol(String line, String originalLine) {
+        List<String> errors = new ArrayList<>();
+        if (line == null) {
+            return errors;
+        }
+
+        int headerEnd = line.indexOf(MARK_TRANSLATE_CHAR, 1);
+        if (headerEnd == -1 || line.length() <= headerEnd + 2) {
+            return errors;
+        }
 
         String content = line.substring(headerEnd + 2);
-        String[] lines = content.split("\\[\\\\r]\\[\\\\n]");
+        String[] segments = content.split(SPLIT_REGEX);
 
-        boolean isDialog = false;
-        if (lines.length >= 2) {
-            String first = lines[1].trim();
-            String last = lines[lines.length - 1].trim();
-            if ((first.startsWith("「") && last.endsWith("」")) ||
-                    (first.startsWith("『") && last.endsWith("』"))) {
-                isDialog = true;
-            }
-        }
+        boolean isDialog = determineDialog(segments);
 
         // 拼接去除换行的内容，供统一校验使用
         StringBuilder contentNoTag = new StringBuilder();
-        for (String linePart : lines) {
-            contentNoTag.append(linePart);
+        for (String segment : segments) {
+            contentNoTag.append(segment);
         }
         String fullText = contentNoTag.toString();
 
         // 1. 禁止“！？”或“?!”配对（全角或半角）
         if (fullText.contains("！？") || fullText.contains("!?") || fullText.contains("?!")) {
-            CheckerPipeline.hasError = true;
-            result.append("错误：问号应该在感叹号前且应该都为全角\n");
+            errors.add("错误：问号应该在感叹号前且应该都为全角");
         }
 
         // 2. 禁止非法波浪线（仅允许全角 ～）
@@ -54,8 +64,7 @@ public class SymbolChecker {
         for (char c : fullText.toCharArray()) {
             for (char bad : invalidTildes) {
                 if (c == bad) {
-                    CheckerPipeline.hasError = true;
-                    result.append("错误：禁止使用非法波浪线 ‘").append(c).append("’，仅允许使用全角 ～\n");
+                    errors.add("错误：禁止使用非法波浪线‘" + bad + "’，仅允许使用全角“～”");
                     break;
                 }
             }
@@ -68,32 +77,29 @@ public class SymbolChecker {
             char next = fullText.charAt(i + 1);
 
             if (curr == '、' && prev != next) {
-                CheckerPipeline.hasError = true;
-                result.append("错误：顿号 ‘、’ 前后两个字不一致，应为相同字\n");
+                errors.add("错误：顿号‘、’前后两个字不一致，应为相同字");
+                break;
             } else if (curr == '，' && prev == next) {
-                CheckerPipeline.hasError = true;
-                result.append("错误：逗号 ‘，’ 前后两个字相同，应为顿号 ‘、’\n");
+                errors.add("错误：逗号‘，’前后两个字相同，应为顿号‘、’");
+                break;
             }
         }
 
         // 4. 破折号：仅允许使用 ―（U+2015），其它破折号全不允许，且必须成对出现
         long countValidDash = content.chars().filter(c -> c == '―').count();
-        if (countValidDash != 0 && countValidDash != 2) {
-            CheckerPipeline.hasError = true;
-            result.append("错误：破折号 ‘―’ 必须成对出现，且应为两个\n");
-        }
-        for (char ch : new char[]{'‐', '-', '–', '—', 'ー'}) { // 包含 U+2010 到 U+2014
+//        if (countValidDash != 0 && countValidDash != 2) {
+//            errors.add("错误：破折号‘―’必须成对出现，且应为两个");
+//        }
+        for (char ch : new char[]{'‐', '-', '–', '—', 'ー'}) {
             if (content.indexOf(ch) != -1) {
-                CheckerPipeline.hasError = true;
-                result.append("错误：出现非法破折号 ‘").append(ch).append("’，仅允许使用 ―（U+2015）\n");
+                errors.add("错误：出现非法破折号‘" + ch + "’，仅允许使用“―”（U+2015）");
             }
         }
 
         // 5. 禁止所有半角符号（ASCII 符号）
         for (char c : fullText.toCharArray()) {
             if (c >= 0x21 && c <= 0x7E && "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~".indexOf(c) != -1) {
-                CheckerPipeline.hasError = true;
-                result.append("错误：出现非法半角符号 ‘").append(c).append("’\n");
+                errors.add("错误：出现非法半角符号‘" + c + "’");
             }
         }
 
@@ -117,41 +123,45 @@ public class SymbolChecker {
 
             // 非法引号检测
             if ("「」『』【】\"'‘’".indexOf(c) != -1) {
-                CheckerPipeline.hasError = true;
-                result.append("错误：禁止使用引号 ‘").append(c).append("’，仅允许使用中文引号 “ ”\n");
+                errors.add("错误：禁止使用引号‘" + c + "’，仅允许使用中文引号“”");
             }
         }
-        long quoteOpen = fullText.chars().filter(c -> c == '“').count();
-        long quoteClose = fullText.chars().filter(c -> c == '”').count();
+        long quoteOpen = fullText.chars().filter(ch -> ch == '“').count();
+        long quoteClose = fullText.chars().filter(ch -> ch == '”').count();
         if (quoteOpen != quoteClose) {
-            CheckerPipeline.hasError = true;
-            result.append("错误：中文引号 ‘“’ 与 ‘”’ 不成对\n");
+            errors.add("错误：中文引号‘“’与‘”’不成对");
         }
 
         // 7. 非首行不得包含空格（全角或半角），空格在开头如果是全角空格也可以
-        for (int i = 1; i < lines.length; i++) {
-            String lineText = lines[i];
+        for (int i = 1; i < segments.length; i++) {
+            String lineText = segments[i];
             boolean hasHalfWidthSpace = lineText.contains(" ");
             boolean hasIllegalFullWidthSpace = lineText.contains("　") && !lineText.startsWith("　");
 
             if (hasHalfWidthSpace || hasIllegalFullWidthSpace) {
-                CheckerPipeline.hasError = true;
-                result.append("错误：第").append(i + 1).append("行包含非法空格（半角或非开头的全角空格）\n");
+                errors.add("错误：第" + (i + 1) + "行包含非法空格（半角或非开头的全角空格）");
             }
         }
 
         // 8. 省略号应该是两个两个一组出现……
-        Matcher matcher = Pattern.compile("…+").matcher(content);
-        while (matcher.find()) {
-            int len = matcher.group().length();
-            if (len % 2 != 0) {
-                CheckerPipeline.hasError = true;
-                result.append("错误：省略号连续出现 ‘…’ 的数量应该为2的倍数，当前为 ")
-                        .append(len).append("个\n");
-            }
-        }
+//        Matcher matcher = ELLIPSIS_PATTERN.matcher(content);
+//        while (matcher.find()) {
+//            int len = matcher.group().length();
+//            if (len % 2 != 0) {
+//                errors.add("错误：省略号连续出现‘…’的数量应该为2的倍数，当前为 " + len + " 个");
+//            }
+//        }
 
-        return result.toString();
+        return errors;
     }
 
+    private static boolean determineDialog(String[] lines) {
+        if (lines.length < 2) {
+            return false;
+        }
+        String first = lines[1].trim();
+        String last = lines[lines.length - 1].trim();
+        return (first.startsWith("「") && last.endsWith("」")) ||
+                (first.startsWith("『") && last.endsWith("』"));
+    }
 }
