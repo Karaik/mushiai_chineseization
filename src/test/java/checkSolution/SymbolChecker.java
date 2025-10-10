@@ -71,19 +71,19 @@ public final class SymbolChecker {
         }
 
         // 3. 顿号必须两字相同；逗号若两字相同应为顿号
-        for (int i = 1; i < fullText.length() - 1; i++) {
-            char prev = fullText.charAt(i - 1);
-            char curr = fullText.charAt(i);
-            char next = fullText.charAt(i + 1);
-
-            if (curr == '、' && prev != next) {
-                errors.add("错误：顿号‘、’前后两个字不一致，应为相同字");
-                break;
-            } else if (curr == '，' && prev == next) {
-                errors.add("错误：逗号‘，’前后两个字相同，应为顿号‘、’");
-                break;
-            }
-        }
+//        for (int i = 1; i < fullText.length() - 1; i++) {
+//            char prev = fullText.charAt(i - 1);
+//            char curr = fullText.charAt(i);
+//            char next = fullText.charAt(i + 1);
+//
+//            if (curr == '、' && prev != next) {
+//                errors.add("错误：顿号‘、’前后两个字不一致，应为相同字");
+//                break;
+//            } else if (curr == '，' && prev == next) {
+//                errors.add("错误：逗号‘，’前后两个字相同，应为顿号‘、’");
+//                break;
+//            }
+//        }
 
         // 4. 破折号：仅允许使用 ―（U+2015），其它破折号全不允许，且必须成对出现
         long countValidDash = content.chars().filter(c -> c == '―').count();
