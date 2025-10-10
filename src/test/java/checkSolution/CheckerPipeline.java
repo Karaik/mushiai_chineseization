@@ -13,21 +13,6 @@ public final class CheckerPipeline {
     private CheckerPipeline() {
     }
 
-    public static String sptFormatCheck(String line, String originalLine) {
-        Optional<Violation> violation = evaluateTranslateLine(line, originalLine, -1);
-        if (violation.isEmpty()) {
-            return "";
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.append(System.lineSeparator())
-                .append(line)
-                .append(System.lineSeparator());
-        for (String message : violation.get().messages()) {
-            builder.append(message).append(System.lineSeparator());
-        }
-        return builder.toString();
-    }
-
     public static Optional<Violation> evaluateTranslateLine(String line, String originalLine, int lineIndex) {
         List<String> messages = new ArrayList<>();
         // 若不想执行格式规则，可注释掉下一行。
@@ -41,7 +26,4 @@ public final class CheckerPipeline {
         return Optional.of(new Violation(id, true, line, lineIndex, messages));
     }
 
-    public static Optional<Violation> evaluateTranslateLine(String line, String originalLine) {
-        return evaluateTranslateLine(line, originalLine, -1);
-    }
 }

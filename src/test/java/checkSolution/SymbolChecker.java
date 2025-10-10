@@ -132,14 +132,46 @@ public final class SymbolChecker {
             errors.add("错误：中文引号‘“’与‘”’不成对");
         }
 
-        // 7. 非首行不得包含空格（全角或半角），空格在开头如果是全角空格也可以
+        // 7. 空格规则：禁止任何半角空格；全角空格不得出现在句尾。
+        //    特例：若为对话文本，从第3行开始（segments[0]是说话人，因此阈值 i>=2），
+        //    只统计“开头”的全角空格数量用于缩进判断；句中出现的全角空格不计入缩进、且允许存在。
+        String first = segments.length > 1 ? segments[1].trim() : "";
+        String last  = segments.length > 1 ? segments[segments.length - 1].trim() : "";
+        boolean dialogByBrackets =
+                ((first.startsWith("「") && last.endsWith("」")) ||
+                        (first.startsWith("『") && last.endsWith("』")) ||
+                        (first.startsWith("（") && last.endsWith("）")));
+        boolean dialogLike = isDialog || dialogByBrackets;
+
         for (int i = 1; i < segments.length; i++) {
             String lineText = segments[i];
-            boolean hasHalfWidthSpace = lineText.contains(" ");
-            boolean hasIllegalFullWidthSpace = lineText.contains("　") && !lineText.startsWith("　");
 
-            if (hasHalfWidthSpace || hasIllegalFullWidthSpace) {
-                errors.add("错误：第" + (i + 1) + "行包含非法空格（半角或非开头的全角空格）");
+            // 半角空格：任何位置都不允许
+            if (lineText.indexOf(' ') >= 0) {
+                errors.add("错误：第" + (i + 1) + "行包含半角空格");
+            }
+
+            // 仅统计“开头”的全角空格数量（U+3000）；句中的全角空格不计入
+            int leadingFW = 0;
+            while (leadingFW < lineText.length() && lineText.charAt(leadingFW) == '　') {
+                leadingFW++;
+            }
+
+            // 句尾全角空格不允许
+            if (!lineText.isEmpty() && lineText.charAt(lineText.length() - 1) == '　') {
+                errors.add("错误：第" + (i + 1) + "行不允许以全角空格结尾");
+            }
+
+            boolean mustIndent = dialogLike && i >= 2; // 对话从第3行起必须缩进（至少 1 个全角空格）
+            if (mustIndent) {
+                if (leadingFW < 1) {
+                    errors.add("错误：第" + (i + 1) + "行（对白第3行起）开头必须至少 1 个全角空格");
+                }
+                // 允许 >=1 个开头全角空格；不限制上限
+            } else {
+                if (leadingFW > 0) {
+                    errors.add("错误：第" + (i + 1) + "行不允许以全角空格开头");
+                }
             }
         }
 

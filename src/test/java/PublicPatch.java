@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 /**
  * 根据补丁文件回写资源文件；若要暂时停用可直接注释整个测试方法或 applyPatch 调用。
  */
+@Slf4j
 public class PublicPatch {
 
     private static final Path RESOURCES_PATH = Paths.get("src/main/resources");
@@ -38,6 +39,7 @@ public class PublicPatch {
         List<String> missingIds = new ArrayList<>();
 
         for (PatchFile patchFile : patchFiles) {
+            log.info("with file -> {}", patchFile.relativePath);
             // 若不想回写，可注释掉下一行。
             PatchOutcome outcome = applyPatch(patchFile);
             totalUpdated += outcome.updated();
@@ -151,6 +153,7 @@ public class PublicPatch {
             if (current.equals(entry.rawLine())) {
                 continue;
             }
+            log.info("patched : {}", entry.rawLine());
             lines.set(index, entry.rawLine());
             updated++;
             changed = true;

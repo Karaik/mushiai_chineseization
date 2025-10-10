@@ -185,16 +185,86 @@ public class PublicTest {
                     builder.append(System.lineSeparator());
                     continue;
                 }
+
+                // 默认用原行，若触发“！？”修正规则则替换为修正后的整行
+                String lineOut = violation.rawLine();
+
                 builder.append("# ID: ").append(violation.id()).append(System.lineSeparator());
                 for (String message : violation.messages()) {
                     builder.append("# ERR: ").append(message).append(System.lineSeparator());
+
+                    // 命中该错误 -> 生成修正行（只移动全角“？”）
+                    if (message.contains("问号应该在感叹号前且应该都为全角")) {
+                        String fixed = rewriteBangQuestion(lineOut);
+                        if (!fixed.equals(lineOut)) {
+                            lineOut = fixed; // 用修正后的整行写入补丁
+                        }
+                    }
                 }
-                builder.append(violation.rawLine()).append(System.lineSeparator()).append(System.lineSeparator());
+
+                builder.append(lineOut).append(System.lineSeparator()).append(System.lineSeparator());
             }
         }
 
         Files.writeString(patchFile, builder.toString(), StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+    }
+
+    // 只移动“？”到其左侧连续“！”之前；只处理全角字符，不做其他归一化
+    private static String rewriteBangQuestion(String fullLine) {
+        int headerEnd = fullLine.indexOf(SptConstants.MARK_TRANSLATE_CHAR, 1);
+        if (headerEnd == -1 || fullLine.length() <= headerEnd + 2) return fullLine;
+
+        String prefix  = fullLine.substring(0, headerEnd + 2);
+        String content = fullLine.substring(headerEnd + 2);
+
+        String fixed = moveQBeforeBangRuns(content);
+        return fixed.equals(content) ? fullLine : (prefix + fixed);
+    }
+
+    private static String moveQBeforeBangRuns(String s) {
+        StringBuilder sb = new StringBuilder(s);
+        int from = 0;
+        boolean changed = false;
+
+        while (true) {
+
+            // 找下一枚全角问号
+            int q = sb.indexOf("？", from);
+            if (q == -1) break;
+
+            int p = q - 1;
+
+            // 左侧是感叹号串
+            if (p >= 0 && sb.charAt(p) == '！') {
+                int left = p;
+
+                // 找到串起点前一个位置
+                while (left >= 0 && sb.charAt(left) == '！') {
+                    left--;
+                }
+
+                // 串起点
+                int insertPos = left + 1;
+
+                // 在串起点插入问号
+                sb.insert(insertPos, '？');
+
+                // 删除原问号（考虑插入位移）
+                int removeIndex = q + (insertPos <= q ? 1 : 0);
+                sb.deleteCharAt(removeIndex);
+
+                changed = true;
+
+                // 继续向后处理下一组
+                from = insertPos + 1;
+            } else {
+
+                // 这枚问号不属于“！…？”组
+                from = q + 1;
+            }
+        }
+        return changed ? sb.toString() : s;
     }
 
     private static String buildPatchFileName(String relativePath) {

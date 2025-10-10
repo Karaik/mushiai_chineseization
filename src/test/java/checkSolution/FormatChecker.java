@@ -98,13 +98,13 @@ public final class FormatChecker {
                 errors.add("错误：对话框符号数量不匹配");
             }
 
-            // 6. 语音句子第二行开始必须包含且仅包含一个全角空格
-            for (int i = 2; i < lines.length; i++) {
-                long spaceCount = lines[i].chars().filter(ch -> ch == '　').count();
-                if (spaceCount != 1) {
-                    errors.add("错误：第" + (i + 1) + "行开头应包含一个全角空格，当前为 " + spaceCount + " 个");
-                }
-            }
+//            // 6. 语音句子第二行开始必须包含且仅包含一个全角空格
+//            for (int i = 2; i < lines.length; i++) {
+//                long spaceCount = lines[i].chars().filter(ch -> ch == '　').count();
+//                if (spaceCount != 1) {
+//                    errors.add("错误：第" + (i + 1) + "行开头应包含一个全角空格，当前为 " + spaceCount + " 个");
+//                }
+//            }
 
             // 7. 最后一行结尾前符号检查
             String lastLine = lines[lines.length - 1];
