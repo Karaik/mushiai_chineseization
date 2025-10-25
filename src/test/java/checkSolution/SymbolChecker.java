@@ -45,7 +45,31 @@ public final class SymbolChecker {
         String content = line.substring(headerEnd + 2);
         String[] segments = content.split(SPLIT_REGEX);
 
-        boolean isDialog = determineDialog(segments);
+        // 1. 核心格式判断模块
+        boolean isDialogWithSpeaker = false;
+        boolean isMonologue = false;
+
+        // 优先判断是否为“带名字的对话”（结构 A）
+        // 特征：至少有两行，且第二行以「或『开头
+        if (segments.length >= 2) {
+            String secondLine = segments[1].trim();
+            String lastLine = segments[segments.length - 1].trim();
+            if ((secondLine.startsWith("「") && lastLine.endsWith("」")) ||
+                    (secondLine.startsWith("『") && lastLine.endsWith("』")) ||
+                    (secondLine.startsWith("（") && lastLine.endsWith("）"))) {
+                isDialogWithSpeaker = true;
+            }
+        }
+
+        // 如果不是“带名字的对话”，再判断是否为“内心独白”（结构 B）
+        // 特征：第一行以（开头，最后一行以）结尾
+        if (!isDialogWithSpeaker && segments.length > 0) {
+            String firstLine = segments[0].trim();
+            String lastLine = segments[segments.length - 1].trim();
+            if (firstLine.startsWith("（") && lastLine.endsWith("）")) {
+                isMonologue = true;
+            }
+        }
 
         // 拼接去除换行的内容，供统一校验使用
         StringBuilder contentNoTag = new StringBuilder();
@@ -99,7 +123,7 @@ public final class SymbolChecker {
         // 5. 禁止所有半角符号（ASCII 符号）
         for (char c : fullText.toCharArray()) {
             if (c >= 0x21 && c <= 0x7E && "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~".indexOf(c) != -1) {
-                errors.add("错误：出现非法半角符号‘" + c + "’");
+                errors.add("错误：出现非法半角符号‘ " + c + "’");
             }
         }
 
@@ -109,7 +133,9 @@ public final class SymbolChecker {
             char c = fullText.charAt(i);
 
             // 忽略对话框起始引号「」或『』（如果是对话）
-            if (isDialog && !skippedQuotes) {
+            // MODIFICATION START: Changed `isDialog` to `isDialogWithSpeaker`
+            if (isDialogWithSpeaker && !skippedQuotes) {
+                // MODIFICATION END
                 if ( ((c == '「' || c == '『') || (c == '（' || c == '）'))
                         && i < fullText.length() - 1) {
                     char end = (c == '「') ? '」' : '』';
@@ -133,45 +159,42 @@ public final class SymbolChecker {
             errors.add("错误：中文引号‘“’与‘”’不成对");
         }
 
-        // 7. 空格规则：禁止任何半角空格；全角空格不得出现在句尾。
-        //    特例：若为对话文本，从第3行开始（segments[0]是说话人，因此阈值 i>=2），
-        //    只统计“开头”的全角空格数量用于缩进判断；句中出现的全角空格不计入缩进、且允许存在。
-        String first = segments.length > 1 ? segments[1].trim() : "";
-        String last  = segments.length > 1 ? segments[segments.length - 1].trim() : "";
-        boolean dialogByBrackets =
-                ((first.startsWith("「") && last.endsWith("」")) ||
-                        (first.startsWith("『") && last.endsWith("』")) ||
-                        (first.startsWith("（") && last.endsWith("）")));
-        boolean dialogLike = isDialog || dialogByBrackets;
-
-        for (int i = 1; i < segments.length; i++) {
+        // 7. 整合后的空格与缩进规则
+        for (int i = 0; i < segments.length; i++) {
             String lineText = segments[i];
 
-            // 半角空格：任何位置都不允许
+            // 7.1. 通用规则：禁止半角空格和行尾全角空格
             if (lineText.indexOf(' ') >= 0) {
-                errors.add("错误：第" + (i + 1) + "行包含半角空格");
+                errors.add("错误：第 " + (i + 1) + " 行包含半角空格");
+            }
+            if (!lineText.isEmpty() && lineText.charAt(lineText.length() - 1) == '　') {
+                errors.add("错误：第 " + (i + 1) + " 行不允许以全角空格结尾");
             }
 
-            // 仅统计“开头”的全角空格数量（U+3000）；句中的全角空格不计入
+            // 7.2. 缩进规则：根据文本类型进行判断
             int leadingFW = 0;
             while (leadingFW < lineText.length() && lineText.charAt(leadingFW) == '　') {
                 leadingFW++;
             }
 
-            // 句尾全角空格不允许
-            if (!lineText.isEmpty() && lineText.charAt(lineText.length() - 1) == '　') {
-                errors.add("错误：第" + (i + 1) + "行不允许以全角空格结尾");
-            }
-
-            boolean mustIndent = dialogLike && i >= 2; // 对话从第3行起必须缩进（至少 1 个全角空格）
-            if (mustIndent) {
-                if (leadingFW < 1) {
-                    errors.add("错误：第" + (i + 1) + "行（对白第3行起）开头必须至少 1 个全角空格");
+            if (isDialogWithSpeaker) {
+                // 带名字的对话：第1行(名字)和第2行(对话开头)不缩进，后续行必须缩进
+                if (i == 0) { // 第1行是名字，不允许缩进
+                    if (leadingFW > 0) errors.add("错误：第 " + (i + 1) + " 行（说话人）不允许以空格开头");
+                } else if (i >= 2) { // 对话从第3行起 (数组索引为2) 必须缩进
+                    if (leadingFW < 1) errors.add("错误：第 " + (i + 1) + " 行（对话内容）开头必须至少有 1 个全角空格");
                 }
-                // 允许 >=1 个开头全角空格；不限制上限
+            } else if (isMonologue) {
+                // 内心独白：第1行不缩进，后续行必须且仅有1个空格
+                if (i >= 1) {
+                    if (leadingFW != 1) {
+                        errors.add("错误：第 " + (i + 1) + " 行（内心独白）开头必须有且仅有1个全角空格 (当前 " + leadingFW + " 个)");
+                    }
+                }
             } else {
+                // 普通文本：任何行都不允许开头有空格
                 if (leadingFW > 0) {
-                    errors.add("错误：第" + (i + 1) + "行不允许以全角空格开头");
+                    errors.add("错误：第 " + (i + 1) + " 行（普通文本）不允许以空格开头");
                 }
             }
         }
@@ -185,41 +208,11 @@ public final class SymbolChecker {
 //            }
 //        }
 
-        // 9. 追加空格规则
-        // 存在以下这样的文本
-        // ●03169|0AB808|05E● （正确地说应该是接近拷问，[\r][\n]　肉体的破损状况非常严重。不想细写）[\r][\n]
-        // 也就是第一行不带名字的，纯粹的内心独白文本，文本特点在于，第一行一定是“（”，最后一个换行符 [\r][\n] 前一定是 “）”
-        // 在这种情况下，需要像规则 7 一样，查一下第一行以外的行数的第一个字符，是否有且只有一个全角空格
-        if (segments.length > 1) {
-            String firstLineTrim = segments[1].trim();
-            String lastLineTrim  = segments[segments.length - 1].trim();
-            boolean isMonologue =
-                    firstLineTrim.startsWith("（") && lastLineTrim.endsWith("）");
-
-            if (isMonologue) {
-                for (int i = 2; i < segments.length; i++) {
-                    String lineText = segments[i];
-                    int leadingFW = 0;
-                    while (leadingFW < lineText.length() && lineText.charAt(leadingFW) == '　') {
-                        leadingFW++;
-                    }
-                    if (leadingFW != 1) {
-                        errors.add("错误：第" + (i + 1) + "行（内心独白第2行起）开头必须且仅 1 个全角空格（当前 "
-                                + leadingFW + " 个）");
-                    }
-                    // 句尾全角空格依旧不允许
-                    if (!lineText.isEmpty() && lineText.charAt(lineText.length() - 1) == '　') {
-                        errors.add("错误：第" + (i + 1) + "行不允许以全角空格结尾");
-                    }
-                }
-            }
-        }
-
         // 10. 检查换行符前是否有标点符号，标点符号只能为以下的几个
         // ，。……～！？―」』）
         // 如果不是，就要像之前的check规则一样报错，显示出换行符前的第一个字符是什么
         String allowed = "，。……～！？―」』）”";
-        int startIdx = dialogLike ? 2 : 1;
+        int startIdx = isDialogWithSpeaker ? 1 : 0; // 如果是带名字对话，跳过名字行
         for (int i = startIdx; i < segments.length; i++) {
             String s = segments[i];
             if (s == null || s.isEmpty()) continue;
@@ -237,13 +230,4 @@ public final class SymbolChecker {
         return errors;
     }
 
-    private static boolean determineDialog(String[] lines) {
-        if (lines.length < 2) {
-            return false;
-        }
-        String first = lines[1].trim();
-        String last = lines[lines.length - 1].trim();
-        return (first.startsWith("「") && last.endsWith("」")) ||
-                (first.startsWith("『") && last.endsWith("』"));
-    }
 }
