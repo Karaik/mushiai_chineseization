@@ -217,12 +217,30 @@ public final class SymbolChecker {
             String s = segments[i];
             if (s == null || s.isEmpty()) continue;
 
+            // 找到最后一个非空格字符的索引
             int idx = s.length() - 1;
             while (idx >= 0 && s.charAt(idx) == '　') idx--;
-            if (idx < 0) continue;
+            if (idx < 0) continue; // 整行都是空格
 
             char innerLast = s.charAt(idx);
-            if (allowed.indexOf(innerLast) == -1) {
+
+            // 检查是否为呐喊/长音的情况
+            // 条件1: 当前行不能是整个文本块的最后一行
+            // 条件2: 行尾至少有4个连续相同的字符 (例如: 哦哦哦哦)
+            boolean isRepetitiveShout = false;
+            if (i < segments.length - 1) { // 条件1
+                // 确保有足够长度进行检查 (索引至少为3)
+                if (idx >= 3) {
+                    if (s.charAt(idx - 1) == innerLast &&
+                            s.charAt(idx - 2) == innerLast &&
+                            s.charAt(idx - 3) == innerLast) {
+                        isRepetitiveShout = true;
+                    }
+                }
+            }
+
+            // 如果不满足豁免条件，并且行尾字符不在允许列表中，则报错
+            if (!isRepetitiveShout && allowed.indexOf(innerLast) == -1) {
                 errors.add("错误：第" + (i + 1) + "行换行符前应为标点（仅允许 " + allowed + "），当前为‘" + innerLast + "’");
             }
         }
