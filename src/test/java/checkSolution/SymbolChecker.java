@@ -209,9 +209,9 @@ public final class SymbolChecker {
 //        }
 
         // 10. 检查换行符前是否有标点符号，标点符号只能为以下的几个
-        // ，。……～！？―」』）
+        // ，。……～！？―」』）”、
         // 如果不是，就要像之前的check规则一样报错，显示出换行符前的第一个字符是什么
-        String allowed = "，。……～！？―」』）”";
+        String allowed = "，。……～！？―」』）”、";
         int startIdx = isDialogWithSpeaker ? 1 : 0; // 如果是带名字对话，跳过名字行
         for (int i = startIdx; i < segments.length; i++) {
             String s = segments[i];
