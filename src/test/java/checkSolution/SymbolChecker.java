@@ -110,7 +110,8 @@ public final class SymbolChecker {
 
             // 忽略对话框起始引号「」或『』（如果是对话）
             if (isDialog && !skippedQuotes) {
-                if ((c == '「' || c == '『') && i < fullText.length() - 1) {
+                if ( ((c == '「' || c == '『') || (c == '（' || c == '）'))
+                        && i < fullText.length() - 1) {
                     char end = (c == '「') ? '」' : '』';
                     int closing = fullText.indexOf(end, i + 1);
                     if (closing != -1) {
@@ -123,7 +124,7 @@ public final class SymbolChecker {
 
             // 非法引号检测
             if ("「」『』【】\"'‘’".indexOf(c) != -1) {
-                errors.add("错误：禁止使用引号‘" + c + "’，仅允许使用中文引号“”");
+                errors.add("错误：禁止使用引号‘" + c + "’，仅允许使用中文引号“”，和全角括号（）");
             }
         }
         long quoteOpen = fullText.chars().filter(ch -> ch == '“').count();
@@ -183,6 +184,55 @@ public final class SymbolChecker {
 //                errors.add("错误：省略号连续出现‘…’的数量应该为2的倍数，当前为 " + len + " 个");
 //            }
 //        }
+
+        // 9. 追加空格规则
+        // 存在以下这样的文本
+        // ●03169|0AB808|05E● （正确地说应该是接近拷问，[\r][\n]　肉体的破损状况非常严重。不想细写）[\r][\n]
+        // 也就是第一行不带名字的，纯粹的内心独白文本，文本特点在于，第一行一定是“（”，最后一个换行符 [\r][\n] 前一定是 “）”
+        // 在这种情况下，需要像规则 7 一样，查一下第一行以外的行数的第一个字符，是否有且只有一个全角空格
+        if (segments.length > 1) {
+            String firstLineTrim = segments[1].trim();
+            String lastLineTrim  = segments[segments.length - 1].trim();
+            boolean isMonologue =
+                    firstLineTrim.startsWith("（") && lastLineTrim.endsWith("）");
+
+            if (isMonologue) {
+                for (int i = 2; i < segments.length; i++) {
+                    String lineText = segments[i];
+                    int leadingFW = 0;
+                    while (leadingFW < lineText.length() && lineText.charAt(leadingFW) == '　') {
+                        leadingFW++;
+                    }
+                    if (leadingFW != 1) {
+                        errors.add("错误：第" + (i + 1) + "行（内心独白第2行起）开头必须且仅 1 个全角空格（当前 "
+                                + leadingFW + " 个）");
+                    }
+                    // 句尾全角空格依旧不允许
+                    if (!lineText.isEmpty() && lineText.charAt(lineText.length() - 1) == '　') {
+                        errors.add("错误：第" + (i + 1) + "行不允许以全角空格结尾");
+                    }
+                }
+            }
+        }
+
+        // 10. 检查换行符前是否有标点符号，标点符号只能为以下的几个
+        // ，。……～！？―」』）
+        // 如果不是，就要像之前的check规则一样报错，显示出换行符前的第一个字符是什么
+        String allowed = "，。……～！？―」』）”";
+        int startIdx = dialogLike ? 2 : 1;
+        for (int i = startIdx; i < segments.length; i++) {
+            String s = segments[i];
+            if (s == null || s.isEmpty()) continue;
+
+            int idx = s.length() - 1;
+            while (idx >= 0 && s.charAt(idx) == '　') idx--;
+            if (idx < 0) continue;
+
+            char innerLast = s.charAt(idx);
+            if (allowed.indexOf(innerLast) == -1) {
+                errors.add("错误：第" + (i + 1) + "行换行符前应为标点（仅允许 " + allowed + "），当前为‘" + innerLast + "’");
+            }
+        }
 
         return errors;
     }
