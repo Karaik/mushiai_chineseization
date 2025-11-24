@@ -4,6 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import static checkSolution.SptConstants.MARK_TRANSLATE_CHAR;
 import static checkSolution.SptConstants.SPLIT_REGEX;
@@ -26,9 +35,35 @@ import static checkSolution.SptConstants.SPLIT_REGEX;
  */
 public final class SymbolChecker {
 
-    private static final Pattern ELLIPSIS_PATTERN = Pattern.compile("…+");
+    private static final String NAMECOL_RESOURCE = "spt/namecol.xtx.txt";
+    private static final Charset NAMECOL_CHARSET = Charset.forName("GB2312");
+    private static final Path NAMECOL_PATH = Paths.get("src/main/resources").resolve(NAMECOL_RESOURCE);
+    private static final Set<String> NAMECOL_NAMES = loadNamecolNames();
 
     private SymbolChecker() {
+    }
+
+    private static Set<String> loadNamecolNames() {
+        if (!Files.exists(NAMECOL_PATH)) {
+            return Collections.emptySet();
+        }
+        Set<String> names = new HashSet<>();
+        try (BufferedReader reader = Files.newBufferedReader(NAMECOL_PATH, NAMECOL_CHARSET)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty()) {
+                    continue;
+                }
+                String[] parts = line.split("\\s+");
+                if (parts.length > 0 && !parts[0].isEmpty()) {
+                    names.add(parts[0]);
+                }
+            }
+        } catch (IOException e) {
+            return Collections.emptySet();
+        }
+        return names;
     }
 
     public static List<String> sptCheckSymbol(String line, String originalLine) {
@@ -88,7 +123,7 @@ public final class SymbolChecker {
         for (char c : fullText.toCharArray()) {
             for (char bad : invalidTildes) {
                 if (c == bad) {
-                    errors.add("错误：禁止使用非法波浪线‘" + bad + "’，仅允许使用全角“～”");
+                    errors.add("错误：禁止使用非法波浪线‘ " + bad + " ’，仅允许使用全角“～”");
                     break;
                 }
             }
@@ -116,7 +151,7 @@ public final class SymbolChecker {
 //        }
         for (char ch : new char[]{'‐', '-', '–', '—', 'ー'}) {
             if (content.indexOf(ch) != -1) {
-                errors.add("错误：出现非法破折号‘" + ch + "’，仅允许使用“―”（U+2015）");
+                errors.add("错误：出现非法破折号‘ " + ch + " ’，仅允许使用“―”（U+2015）");
             }
         }
 
@@ -150,13 +185,13 @@ public final class SymbolChecker {
 
             // 非法引号检测
             if ("「」『』【】\"'‘’".indexOf(c) != -1) {
-                errors.add("错误：禁止使用引号‘" + c + "’，仅允许使用中文引号“”，和全角括号（）");
+                errors.add("错误：禁止使用引号‘ " + c + " ’，仅允许使用中文引号“”，和全角括号（）");
             }
         }
         long quoteOpen = fullText.chars().filter(ch -> ch == '“').count();
         long quoteClose = fullText.chars().filter(ch -> ch == '”').count();
         if (quoteOpen != quoteClose) {
-            errors.add("错误：中文引号‘“’与‘”’不成对");
+            errors.add("错误：中文引号 “ 与 ” 不成对");
         }
 
         // 7. 整合后的空格与缩进规则
@@ -188,7 +223,7 @@ public final class SymbolChecker {
                 // 内心独白：第1行不缩进，后续行必须且仅有1个空格
                 if (i >= 1) {
                     if (leadingFW != 1) {
-                        errors.add("错误：第 " + (i + 1) + " 行（内心独白）开头必须有且仅有1个全角空格 (当前 " + leadingFW + " 个)");
+                        errors.add("错误：第 " + (i + 1) + " 行（内心独白）开头必须有且仅有 1 个全角空格 (当前 " + leadingFW + " 个)");
                     }
                 }
             } else {
@@ -241,8 +276,18 @@ public final class SymbolChecker {
 
             // 如果不满足豁免条件，并且行尾字符不在允许列表中，则报错
             if (!isRepetitiveShout && allowed.indexOf(innerLast) == -1) {
-                errors.add("错误：第" + (i + 1) + "行换行符前应为标点（仅允许 " + allowed + "），当前为‘" + innerLast + "’");
+                errors.add("错误：第 " + (i + 1) + " 行换行符前应为标点（仅允许 " + allowed + "） ，当前为‘ " + innerLast + " ’");
             }
+        }
+
+        // 11. 通过 src/main/resources/spt/namecol.xtx.txt 检查对话文本内的名词，是否存在于 namecol 中
+        if (isDialogWithSpeaker && !NAMECOL_NAMES.isEmpty() && segments.length > 0) {
+            String speaker = segments[0];
+            if (!speaker.isEmpty() && !NAMECOL_NAMES.contains(speaker)) {
+                errors.add("错误：说话人“ " + speaker + " ”未在 namecol.xtx.txt 中定义");
+            }
+        } else if (NAMECOL_NAMES.contains(segments[0])) {
+            errors.add("错误：匹配到 namecol.xtx.txt 中定义的人物“ " + segments[0] + " ”但文本格式似乎有误，没有被识别为对话文本，请检查括号的匹配情况或文本格式");
         }
 
         return errors;

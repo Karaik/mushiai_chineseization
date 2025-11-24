@@ -36,7 +36,7 @@ public final class FormatChecker {
         }
 
         if (!line.startsWith(MARK_TRANSLATE) || !originalLine.startsWith(MARK_ORIGINAL)) {
-            errors.add("错误：开头标识不正确，应为●或○开头");
+            errors.add("错误：开头标识不正确，应为 ● 或 ○ 开头");
             return errors;
         }
 
@@ -46,7 +46,7 @@ public final class FormatChecker {
         // 1. 校验头标记一致（规则1）
         if (headerEnd == -1 || originalHeaderEnd == -1 ||
                 !line.substring(1, headerEnd).equals(originalLine.substring(1, originalHeaderEnd))) {
-            errors.add("错误：●...●内的标识与原文不一致");
+            errors.add("错误：●...● 内的标识与原文不一致");
         }
 
         if (headerEnd == -1) {
@@ -55,7 +55,7 @@ public final class FormatChecker {
 
         // 2. 校验●标识后必须有一个半角空格（规则2）
         if (line.length() <= headerEnd + 1 || line.charAt(headerEnd + 1) != ' ') {
-            errors.add("错误：●标识后必须紧跟一个半角空格");
+            errors.add("错误：● 标识后必须紧跟一个半角空格");
             return errors;
         }
 
@@ -65,7 +65,7 @@ public final class FormatChecker {
         // 3. 校验普通文本每行不超过24字（规则3）
         for (int i = 0; i < lines.length; i++) {
             if (lines[i].length() > 24) {
-                errors.add("错误：第" + (i + 1) + "行超过24个字符，当前为 " + lines[i].length());
+                errors.add("错误：第 " + (i + 1) + " 行超过 24 个字符，当前为 " + lines[i].length());
             }
         }
 
