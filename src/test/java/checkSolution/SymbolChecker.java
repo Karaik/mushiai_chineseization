@@ -123,7 +123,7 @@ public final class SymbolChecker {
         for (char c : fullText.toCharArray()) {
             for (char bad : invalidTildes) {
                 if (c == bad) {
-                    errors.add("错误：禁止使用非法波浪线‘ " + bad + " ’，仅允许使用全角“～”");
+                    errors.add("错误：禁止使用非法波浪线 ‘ " + bad + " ’ ，仅允许使用全角“～”");
                     break;
                 }
             }
@@ -151,14 +151,14 @@ public final class SymbolChecker {
 //        }
         for (char ch : new char[]{'‐', '-', '–', '—', 'ー'}) {
             if (content.indexOf(ch) != -1) {
-                errors.add("错误：出现非法破折号‘ " + ch + " ’，仅允许使用“―”（U+2015）");
+                errors.add("错误：出现非法破折号 ‘ " + ch + " ’ ，仅允许使用“―”（U+2015）");
             }
         }
 
         // 5. 禁止所有半角符号（ASCII 符号）
         for (char c : fullText.toCharArray()) {
             if (c >= 0x21 && c <= 0x7E && "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~".indexOf(c) != -1) {
-                errors.add("错误：出现非法半角符号‘ " + c + "’");
+                errors.add("错误：出现非法半角符号 ‘ " + c + " ’ ");
             }
         }
 
@@ -185,7 +185,7 @@ public final class SymbolChecker {
 
             // 非法引号检测
             if ("「」『』【】\"'‘’".indexOf(c) != -1) {
-                errors.add("错误：禁止使用引号‘ " + c + " ’，仅允许使用中文引号“”，和全角括号（）");
+                errors.add("错误：禁止使用引号 ‘ " + c + " ’ ，仅允许使用中文引号 “” ，和全角括号（）");
             }
         }
         long quoteOpen = fullText.chars().filter(ch -> ch == '“').count();
@@ -284,10 +284,10 @@ public final class SymbolChecker {
         if (isDialogWithSpeaker && !NAMECOL_NAMES.isEmpty() && segments.length > 0) {
             String speaker = segments[0];
             if (!speaker.isEmpty() && !NAMECOL_NAMES.contains(speaker)) {
-                errors.add("错误：说话人“ " + speaker + " ”未在 namecol.xtx.txt 中定义");
+                errors.add("错误：说话人 “ " + speaker + " ” 未在 namecol.xtx.txt 中定义");
             }
         } else if (NAMECOL_NAMES.contains(segments[0])) {
-            errors.add("错误：匹配到 namecol.xtx.txt 中定义的人物“ " + segments[0] + " ”但文本格式似乎有误，没有被识别为对话文本，请检查括号的匹配情况或文本格式");
+            errors.add("错误：匹配到 namecol.xtx.txt 中定义的人物 “ " + segments[0] + " ” 但文本格式似乎有误，没有被识别为对话文本，请检查括号的匹配情况或文本格式");
         }
 
         return errors;
