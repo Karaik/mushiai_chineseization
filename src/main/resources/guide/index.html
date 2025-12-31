@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>虫爱少女 剧情攻略导览</title>
+    <style>
+        /* --- 全局样式 --- */
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            margin: 0; padding: 0;
+            background-color: #121212;
+            color: #ccc;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- 左侧导航栏 --- */
+        #nav-panel {
+            width: 220px;
+            background-color: #1e1e1e;
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            z-index: 20;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+        }
+
+        .nav-header {
+            padding: 15px;
+            background-color: #252526;
+            border-bottom: 1px solid #333;
+            font-weight: bold;
+            color: #eee;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        #chapter-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .chapter-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #2a2a2a;
+            font-size: 13px;
+            color: #aaa;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .chapter-item:hover {
+            background-color: #2a2d2e;
+            color: #fff;
+        }
+
+        .chapter-item.active {
+            background-color: #37373d;
+            color: #fff;
+            border-left-color: #4ec9b0; /* 激活时左侧亮条 */
+            font-weight: bold;
+        }
+
+        .chapter-count {
+            font-size: 11px;
+            color: #666;
+            float: right;
+        }
+
+        /* --- 中间画布 --- */
+        #cy {
+            flex: 1;
+            background-color: #121212;
+            position: relative;
+        }
+
+        /* --- 右侧详情栏 --- */
+        #info-panel {
+            width: 300px;
+            background-color: #1e1e1e;
+            border-left: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            z-index: 20;
+        }
+
+        .info-header {
+            padding: 15px;
+            background-color: #252526;
+            border-bottom: 1px solid #333;
+        }
+
+        .btn-reset {
+            width: 100%;
+            padding: 8px;
+            background-color: #0e639c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-reset:hover { background-color: #1177bb; }
+
+        #info-content {
+            padding: 15px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* 详情项样式 */
+        .detail-group { margin-bottom: 20px; }
+        .detail-label { font-size: 12px; color: #666; margin-bottom: 4px; }
+        .detail-value { font-size: 14px; color: #ddd; word-break: break-all; line-height: 1.4; }
+
+        /* 标签样式 */
+        .tag { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-right: 5px; margin-bottom: 5px;}
+        .tag-save { border: 1px solid #ffd700; color: #ffd700; background: rgba(255, 215, 0, 0.1); }
+        .tag-end { border: 1px solid #ff4d4f; color: #ff4d4f; background: rgba(255, 77, 79, 0.1); }
+        .tag-var { border: 1px solid #c586c0; color: #d8b4fe; background: rgba(197, 134, 192, 0.1); }
+
+        #loading {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85); color: white;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; font-size: 18px;
+        }
+    </style>
+    <script src="./lib/cytoscape.min.js"></script>
+</head>
+<body>
+
+<!-- 加载遮罩 -->
+<div id="loading">正在加载数据...</div>
+
+<!-- 左侧：章节导航 -->
+<div id="nav-panel">
+    <div class="nav-header">章节列表 (点击切换)</div>
+    <ul id="chapter-list">
+        <!-- JS 自动填充 -->
+    </ul>
+</div>
+
+<!-- 中间：Cytoscape 画布 -->
+<div id="cy"></div>
+
+<!-- 右侧：详情面板 -->
+<div id="info-panel">
+    <div class="info-header">
+        <h3 style="margin:0; font-size:16px; color:#4ec9b0">节点详情</h3>
+        <button class="btn-reset" id="resetBtn">重置视图</button>
+    </div>
+    <div id="info-content">
+        <div style="text-align:center; color:#555; margin-top:50px;">
+            选择左侧章节<br>↓<br>点击图中节点<br>查看路径详情
+        </div>
+    </div>
+</div>
+
+<script>
+    let cyInstance = null;
+    let rawDataGlobal = null;
+    let currentChapter = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const response = await fetch('./structured/guide_blocks_story.json');
+            if (!response.ok) throw new Error("无法读取 JSON 文件");
+            rawDataGlobal = await response.json();
+
+            // 1. 初始化左侧菜单
+            initSidebarMenu(rawDataGlobal);
+
+            // 2. 默认加载第一章
+            const firstChapter = rawDataGlobal[0].chapter;
+            switchChapter(firstChapter);
+
+            document.getElementById('loading').style.display = 'none';
+        } catch (e) {
+            document.getElementById('loading').innerHTML = `<span style="color:red">错误: ${e.message}</span>`;
+        }
+    });
+
+    // --- 初始化左侧菜单 ---
+    function initSidebarMenu(data) {
+        const listEl = document.getElementById('chapter-list');
+
+        // 提取所有不重复的章节名，并统计Block数量
+        const chapterMap = new Map();
+        data.forEach(block => {
+            if (!chapterMap.has(block.chapter)) {
+                chapterMap.set(block.chapter, 0);
+            }
+            chapterMap.set(block.chapter, chapterMap.get(block.chapter) + 1);
+        });
+
+        // 创建“全部显示”选项
+        const allLi = document.createElement('li');
+        allLi.className = 'chapter-item';
+        allLi.innerHTML = `全部显示 <span class="chapter-count">ALL</span>`;
+        allLi.onclick = () => switchChapter('ALL');
+        listEl.appendChild(allLi);
+
+        // 创建各个章节选项
+        chapterMap.forEach((count, name) => {
+            const li = document.createElement('li');
+            li.className = 'chapter-item';
+            li.dataset.chap = name;
+            li.innerHTML = `${name} <span class="chapter-count">${count}段</span>`;
+            li.onclick = () => switchChapter(name);
+            listEl.appendChild(li);
+        });
+    }
+
+    // --- 切换章节逻辑 ---
+    function switchChapter(chapterName) {
+        currentChapter = chapterName;
+
+        // 1. 更新菜单高亮样式
+        const items = document.querySelectorAll('.chapter-item');
+        items.forEach(item => {
+            if ((chapterName === 'ALL' && item.innerText.includes('全部')) ||
+                item.dataset.chap === chapterName) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+
+        // 2. 渲染图表
+        renderGraph(chapterName);
+    }
+
+    // --- 渲染图表 ---
+    function renderGraph(chapterName) {
+        // 过滤数据
+        let blocks = rawDataGlobal;
+        if (chapterName !== 'ALL') {
+            blocks = rawDataGlobal.filter(b => b.chapter === chapterName);
+        }
+
+        // 构建元素
+        const elements = buildElements(blocks, chapterName === 'ALL');
+
+        // 重建 Cytoscape 实例
+        if (cyInstance) cyInstance.destroy();
+
+        cyInstance = cytoscape({
+            container: document.getElementById('cy'),
+            elements: elements,
+            style: getStyles(),
+            layout: {
+                name: 'breadthfirst',
+                directed: true,
+                padding: 50,
+                spacingFactor: 1.2,
+                avoidOverlap: true,
+                nodeDimensionsIncludeLabels: true
+            }
+        });
+
+        bindEvents(cyInstance);
+    }
+
+    // --- 构建节点和连线 ---
+    function buildElements(blocks, isAllMode) {
+        const eles = [];
+        const saveMap = {};
+
+        // 预扫描：记录当前视图内所有存在的存档点
+        blocks.forEach(b => {
+            b.steps.forEach((s, idx) => {
+                if (s.saveLabel) saveMap[s.saveLabel] = `b${b.block}_s${idx}`;
+            });
+        });
+
+        blocks.forEach(block => {
+            // 创建分组框
+            const groupId = `g_${block.block}`;
+            // 如果是全部模式，分组标签带上章节名；否则只显示Block序号
+            const groupLabel = isAllMode ? `${block.chapter} #${block.block}` : `Block ${block.block}`;
+
+            eles.push({
+                data: { id: groupId, label: groupLabel },
+                classes: 'group-box'
+            });
+
+            // 寻找父节点（用于虚线连接）
+            let parentNodeId = null;
+            if (block.start && block.start.type === 'savestart') {
+                parentNodeId = saveMap[block.start.saveId];
+            }
+
+            block.steps.forEach((step, idx) => {
+                const nodeId = `b${block.block}_s${idx}`;
+
+                // 构造标签
+                let label = step.label;
+                if (step.variant) label += ` [${step.variant}]`;
+
+                // 确定类型
+                let type = 'normal';
+                if (step.type === 'ending') type = 'end';
+                else if (step.saveLabel) type = 'save';
+                else if (step.type === 'nextpoint') type = 'jump';
+
+                // 添加节点
+                eles.push({
+                    data: {
+                        id: nodeId,
+                        parent: groupId,
+                        label: label,
+                        type: type,
+                        step: step,
+                        block: block
+                    }
+                });
+
+                // 添加连线
+                if (idx === 0) {
+                    // 如果是该Block第一步，且能找到来源存档点，画虚线
+                    if (parentNodeId) {
+                        eles.push({ data: { source: parentNodeId, target: nodeId, type: 'load' } });
+                    }
+                } else {
+                    // 连向上一步
+                    const prevId = `b${block.block}_s${idx-1}`;
+                    eles.push({ data: { source: prevId, target: nodeId, type: 'flow' } });
+                }
+            });
+        });
+
+        return eles;
+    }
+
+    // --- 样式定义 ---
+    function getStyles() {
+        return [
+            {
+                selector: 'node',
+                style: {
+                    'label': 'data(label)',
+                    'width': 6, 'height': 6,
+                    'background-color': '#555',
+                    'color': '#888',
+                    'font-size': 9,
+                    'text-valign': 'top', 'text-margin-y': 4,
+                    'text-opacity': 0, // 默认不显示文字
+                    'transition-property': 'background-color, width, height',
+                    'transition-duration': '0.2s'
+                }
+            },
+            // 特殊节点默认可见
+            { selector: 'node[type="save"]', style: { 'background-color': '#ffd700', 'width': 12, 'height': 12, 'text-opacity': 1, 'color': '#d4b106' } },
+            { selector: 'node[type="end"]', style: { 'background-color': '#ff4d4f', 'shape': 'star', 'width': 20, 'height': 20, 'text-opacity': 1, 'color': '#ff4d4f' } },
+            { selector: 'node[type="jump"]', style: { 'background-color': '#c586c0', 'shape': 'diamond', 'width': 10, 'height': 10 } },
+
+            // 连线
+            { selector: 'edge', style: { 'width': 1, 'line-color': '#444', 'target-arrow-shape': 'triangle', 'target-arrow-color': '#444', 'curve-style': 'bezier' } },
+            { selector: 'edge[type="load"]', style: { 'line-style': 'dashed', 'line-color': '#666' } },
+
+            // 高亮状态 (Active)
+            { selector: 'node.highlight', style: { 'background-color': '#4ec9b0', 'color': '#fff', 'width': 14, 'height': 14, 'text-opacity': 1, 'z-index': 999 } },
+            { selector: 'node.highlight[type="end"]', style: { 'background-color': '#ff4d4f', 'width': 25, 'height': 25 } },
+            { selector: 'edge.highlight', style: { 'line-color': '#4ec9b0', 'target-arrow-color': '#4ec9b0', 'width': 2, 'z-index': 999 } },
+
+            // 淡出状态 (Faded)
+            { selector: '.faded', style: { 'opacity': 0.1, 'text-opacity': 0 } },
+
+            // 分组框
+            { selector: '.group-box', style: { 'background-opacity': 0.05, 'border-width': 1, 'border-color': '#333', 'border-style': 'dashed', 'color': '#444', 'font-size': 10, 'text-valign':'top', 'text-halign':'center' } }
+        ];
+    }
+
+    // --- 事件绑定 ---
+    function bindEvents(cy) {
+        // 点击节点：路径追踪
+        cy.on('tap', 'node', function(evt) {
+            const node = evt.target;
+            if (node.isParent()) return;
+
+            // 核心算法：前驱 + 自身
+            const path = node.predecessors().union(node);
+
+            // 视觉效果
+            cy.elements().removeClass('highlight').addClass('faded');
+            path.removeClass('faded').addClass('highlight');
+
+            // 更新右侧详情
+            updateInfoPanel(node, path);
+        });
+
+        // 点击空白：重置
+        const reset = () => {
+            cy.elements().removeClass('highlight faded');
+            document.getElementById('info-content').innerHTML = `
+                <div style="text-align:center; color:#555; margin-top:50px;">
+                    视图已重置
+                </div>`;
+        };
+
+        cy.on('tap', function(evt) { if (evt.target === cy) reset(); });
+        document.getElementById('resetBtn').onclick = reset;
+    }
+
+    // --- 更新右侧面板 ---
+    function updateInfoPanel(node, path) {
+        const d = node.data('step');
+        const b = node.data('block');
+        const content = document.getElementById('info-content');
+
+        // 生成标签HTML
+        let tags = '';
+        if (d.saveLabel) tags += `<span class="tag tag-save">SAVE ${d.saveLabel}</span>`;
+        if (d.type === 'ending') tags += `<span class="tag tag-end">ENDING</span>`;
+        if (d.variant) tags += `<span class="tag tag-var">分支: ${d.variant}</span>`;
+
+        content.innerHTML = `
+            <div class="detail-group">
+                <div class="detail-label">当前剧情</div>
+                <div class="detail-value" style="font-size:18px; color:#4ec9b0; font-weight:bold">${d.label}</div>
+            </div>
+
+            <div class="detail-group">
+                ${tags || '<span style="color:#666; font-size:12px">普通剧情节点</span>'}
+            </div>
+
+            <div class="detail-group">
+                <div class="detail-label">原始文本</div>
+                <div class="detail-value" style="background:#252526; padding:5px; border-radius:4px;">${d.raw}</div>
+            </div>
+
+            <div class="detail-group">
+                <div class="detail-label">所在位置</div>
+                <div class="detail-value">${b.chapter}</div>
+                <div class="detail-value" style="font-size:12px; color:#888">逻辑块 Block #${b.block}</div>
+            </div>
+
+            <div style="border-top:1px solid #333; margin-top:20px; padding-top:10px;">
+                <div class="detail-label">路径分析</div>
+                <div class="detail-value" style="color:#aaa; font-size:12px">
+                    从此节点回溯到起点共 <b>${path.nodes().length}</b> 步。<br>
+                    其他无关分支已自动隐藏。
+                </div>
+            </div>
+        `;
+    }
+</script>
+</body>
+</html>
