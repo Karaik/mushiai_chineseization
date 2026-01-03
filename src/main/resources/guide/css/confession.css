@@ -1,0 +1,288 @@
+/* =========================================
+   1. 基础设定 & 背景
+   ========================================= */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: "Microsoft YaHei", "Heiti SC", sans-serif;
+    color: #fff;
+    background: url('../images/chart_back8_2.png') no-repeat center center fixed;
+    background-size: cover;
+    overflow: hidden;
+}
+
+/* 遮罩层 */
+.bg-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+    z-index: 90;
+}
+.bg-overlay.active { opacity: 1; }
+
+.container {
+    width: 100%;
+    height: 100vh;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 100;
+}
+
+/* 顶部标题栏 */
+.top-bar {
+    flex-shrink: 0;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    z-index: 50;
+}
+.logo-area h1 {
+    font-size: 28px;
+    color: #64d2ff;
+    text-shadow: 0 0 10px #64d2ff;
+    margin: 0;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+.logo-area small {
+    font-size: 16px;
+    color: #ccc;
+    margin-left: 12px;
+    letter-spacing: 1px;
+    font-weight: normal;
+    opacity: 0.8;
+}
+
+.hidden { display: none !important; }
+.fade-in { animation: fadeIn 0.5s ease-out; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   2. 视图A: 地图模式
+   ========================================= */
+.stage-map {
+    flex: 1;
+    display: flex;
+    gap: 20px;
+    height: calc(100vh - 80px);
+    overflow: hidden;
+}
+
+/* 左侧菜单 */
+.role-sidebar {
+    width: 140px;
+    margin-top: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.sidebar-header {
+    background: linear-gradient(90deg, rgba(100, 200, 255, 0.2), transparent);
+    padding: 5px 10px;
+    font-size: 12px;
+    color: #8cbbe6;
+    letter-spacing: 2px;
+    border-left: 3px solid #64d2ff;
+}
+.role-btn {
+    width: 100%;
+    height: 32px;
+    background: url('../images/ta_chart_button.png') no-repeat center center;
+    background-size: 100% 100%;
+    color: #8cbbe6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+    filter: brightness(0.9);
+}
+.role-btn:hover { color: #fff; filter: brightness(1.2) contrast(1.1); }
+.role-btn.active { color: #fff; filter: brightness(1.4) contrast(1.2); text-shadow: 0 0 8px currentColor; }
+
+/* 多彩菜单 */
+.role-btn.role-gold { filter: hue-rotate(190deg) brightness(1.1) saturate(1.2); color: #ffeeb0; }
+.role-btn.role-gold.active { filter: hue-rotate(190deg) brightness(1.5) saturate(1.2); color: #fff; }
+.role-btn.role-red { filter: hue-rotate(150deg) saturate(1.1); color: #ffcccc; }
+.role-btn.role-red.active { filter: hue-rotate(150deg) brightness(1.4) saturate(1.2); color: #fff; }
+.role-btn.role-blue { filter: hue-rotate(0deg); color: #cceeff; }
+.role-btn.role-blue.active { filter: brightness(1.4); color: #fff; }
+.role-btn.role-purple { filter: hue-rotate(60deg) brightness(1.1); color: #eecce8; }
+.role-btn.role-purple.active { filter: hue-rotate(60deg) brightness(1.5); color: #fff; }
+.role-btn.role-green { filter: hue-rotate(-90deg) brightness(1.1); color: #ccffcc; }
+.role-btn.role-green.active { filter: hue-rotate(-90deg) brightness(1.4); color: #fff; }
+.role-btn.role-cyan { filter: hue-rotate(-30deg) brightness(1.2); color: #ccffff; }
+.role-btn.role-cyan.active { filter: hue-rotate(-30deg) brightness(1.5); color: #fff; }
+.role-btn.role-pink { filter: hue-rotate(110deg) brightness(1.1); color: #ffcce6; }
+.role-btn.role-pink.active { filter: hue-rotate(110deg) brightness(1.4); color: #fff; }
+.role-btn.role-orange { filter: hue-rotate(170deg) brightness(1.1); color: #ffddcc; }
+.role-btn.role-orange.active { filter: hue-rotate(170deg) brightness(1.4); color: #fff; }
+
+/* 右侧地图 */
+.map-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.hover-info-panel {
+    width: 500px;
+    height: 100px;
+    flex-shrink: 0;
+    background: url('../images/ta_chart_meswin1.png') no-repeat center center;
+    background-size: contain;
+    text-align: center;
+    padding-top: 35px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #aaddff;
+}
+.episode-title { font-size: 20px; color: #fff; text-shadow: 0 0 8px #64d2ff; margin: 0 0 4px 0; font-weight: bold; }
+.episode-desc { font-size: 13px; color: #99bbdd; margin: 0; opacity: 0.8; }
+
+.chart-map {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    border: 1px solid rgba(100, 200, 255, 0.3);
+    border-radius: 10px;
+    background: rgba(5, 15, 30, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+.map-grid-bg {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: url('../images/ta_chart_center1.png') no-repeat center center;
+    background-size: cover;
+    opacity: 0.2;
+    pointer-events: none;
+}
+.connections { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
+.nodes-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; }
+
+/* 节点按钮 */
+.node-btn {
+    position: absolute;
+    padding: 0 12px;
+    height: 28px;
+    transform: translate(-50%, -50%);
+    background: url('../images/ta_chart_button.png') no-repeat center center;
+    background-size: 100% 100%;
+    color: #8cbbe6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.3s;
+    user-select: none;
+    text-shadow: 1px 1px 2px #000;
+}
+.node-btn:hover { color: #fff; filter: brightness(1.3); box-shadow: 0 0 10px #64d2ff; z-index: 10; }
+.node-btn.dimmed { opacity: 0.3; filter: grayscale(1); transform: translate(-50%, -50%) scale(0.95); }
+.node-btn.highlight { filter: brightness(1.3); box-shadow: 0 0 15px #64d2ff; z-index: 5; color: #fff; transform: translate(-50%, -50%) scale(1.1); }
+.node-special { filter: hue-rotate(200deg); color: #ddaacc; height: 32px; padding: 0 20px; font-size: 12px; }
+
+/* =========================================
+   3. 视图B: 对话模式
+   ========================================= */
+.stage-dialogue {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 50px;
+}
+
+/* 立绘固定方框 */
+.character-stand {
+    position: absolute;
+    top: 40%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 450px; height: 450px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(100, 200, 255, 0.3);
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 150;
+    pointer-events: none;
+    overflow: hidden;
+}
+.character-stand img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: top left;
+    animation: fadeUp 0.5s ease-out;
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.dialogue-box {
+    position: relative;
+    width: 800px;
+    height: 180px;
+    background: url('../images/ta_xtg_meswin01.png') no-repeat center center;
+    background-size: 100% 100%;
+    padding: 35px 50px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    animation: slideUp 0.3s ease-out;
+    z-index: 200;
+}
+
+.name-tag {
+    position: absolute;
+    top: -20px; left: 20px;
+    width: 160px; height: 50px;
+    background: url('../images/ta_xtg_meswin02.png') no-repeat center center;
+    background-size: contain;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: bold; font-size: 16px;
+    text-shadow: 0 0 5px #000;
+    z-index: 5;
+}
+
+.text-content {
+    margin-top: 15px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #eef;
+    text-shadow: 1px 1px 2px #000;
+}
+
+.dialog-arrow {
+    position: absolute;
+    bottom: 20px; right: 30px;
+    color: #64d2ff; font-size: 20px;
+    animation: bounce 1s infinite;
+}
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); opacity: 1; }
+    50% { transform: translateY(5px); opacity: 0.5; }
+}

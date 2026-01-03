@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>汉化感言 - 甜心汉化组</title>
+    <link rel="stylesheet" href="css/confession.css">
+</head>
+<body>
+
+<!-- 遮罩层 -->
+<div class="bg-overlay"></div>
+
+<main class="container">
+    <header class="top-bar">
+        <div class="logo-area">
+            <h1>甜心汉化组 <small>汉化感言</small></h1>
+        </div>
+    </header>
+
+    <!-- 视图 A: 地图模式 -->
+    <section id="viewMap" class="stage-map fade-in">
+        <aside class="role-sidebar">
+            <div class="sidebar-header">STAFF ROLL</div>
+            <div id="roleMenu" class="role-list"></div>
+        </aside>
+
+        <div class="map-content">
+            <div class="hover-info-panel">
+                <h2 class="episode-title" id="hoverTitle">Loading...</h2>
+                <p class="episode-desc" id="hoverDesc">正在读取数据...</p>
+            </div>
+
+            <div class="chart-map">
+                <div class="map-grid-bg"></div>
+                <svg class="connections" id="linesLayer" width="100%" height="100%"></svg>
+                <div id="nodesLayer" class="nodes-container"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 视图 B: 对话模式 -->
+    <section id="viewDialogue" class="stage-dialogue hidden">
+
+        <div class="character-stand" id="charStand"></div>
+
+        <div class="dialogue-box" id="dialogBox">
+            <div class="name-tag" id="dialogName">???</div>
+            <div class="text-content" id="dialogText"></div>
+            <div class="dialog-arrow">▼</div>
+        </div>
+    </section>
+</main>
+
+<script>
+    const ROLES = [
+        { id: 'all', label: '全部显示', style: 'role-gold' },
+        { id: 'supervisor', label: '监修', style: 'role-red' },
+        { id: 'coder', label: '程序', style: 'role-blue' },
+        { id: 'artist', label: '美工', style: 'role-purple' },
+        { id: 'trans', label: '翻译', style: 'role-green' },
+        { id: 'proof', label: '校对', style: 'role-cyan' },
+        { id: 'polish', label: '润色', style: 'role-pink' },
+        { id: 'test', label: '测试', style: 'role-orange' }
+    ];
+
+    const NODES = [
+        { id: '鸟谷真琴厨', roles: ['supervisor', 'proof'], x: 15, y: 15 },
+        { id: 'DevSeeD', roles: ['coder'], x: 85, y: 12 },
+        { id: '喵喵酱', roles: ['supervisor', 'trans', 'proof', 'polish'], x: 38, y: 32 },
+        { id: '这位同学', roles: ['coder', 'trans', 'proof', 'polish', 'test'], x: 62, y: 28 },
+        { id: '百分百原味胖次', roles: ['artist', 'proof', 'test'], x: 80, y: 35 },
+        { id: '橘猫', roles: ['trans'], x: 10, y: 35 },
+        { id: '情报弱者', roles: ['trans'], x: 20, y: 48 },
+        { id: 'バカ', roles: ['trans'], x: 8, y: 55 },
+        { id: '小白', roles: ['trans', 'proof', 'polish'], x: 50, y: 45 },
+        { id: 'ニャ森', roles: ['trans', 'proof'], x: 32, y: 52 },
+        { id: 'Ayachi00', roles: ['trans', 'polish'], x: 70, y: 48 },
+        { id: '绅士君', roles: ['trans', 'polish'], x: 88, y: 52 },
+        { id: '星洲鯨鯊。', roles: ['trans'], x: 92, y: 25 },
+        { id: 'nayuta', roles: ['proof'], x: 15, y: 65 },
+        { id: '夜寒', roles: ['proof'], x: 25, y: 60 },
+        { id: 'ダレソカレ', roles: ['proof'], x: 42, y: 62 },
+        { id: '月社キサキ', roles: ['proof'], x: 30, y: 72 },
+        { id: '荠', roles: ['polish', 'test'], x: 58, y: 65 },
+        { id: 'bouquet', roles: ['polish'], x: 75, y: 58 },
+        { id: '朝日紫', roles: ['polish'], x: 85, y: 62 },
+        { id: '白薇啤酒', roles: ['test'], x: 12, y: 80 },
+        { id: '雪月涯', roles: ['test'], x: 25, y: 82 },
+        { id: '君君子兰', roles: ['test'], x: 38, y: 78 },
+        { id: '森凉℃', roles: ['test'], x: 50, y: 75 },
+        { id: '稻田养生', roles: ['test'], x: 62, y: 80 },
+        { id: '久岛理', roles: ['test'], x: 75, y: 82 },
+        { id: 'weii', roles: ['test'], x: 88, y: 78 },
+        { id: 'special', label: '致谢前汉化组', roles: ['special'], x: 50, y: 90 }
+    ];
+
+    const LINKS = [
+        ['鸟谷真琴厨', '喵喵酱'], ['DevSeeD', '这位同学'],
+        ['喵喵酱', '这位同学'], ['这位同学', '百分百原味胖次'],
+        ['喵喵酱', '橘猫'], ['喵喵酱', '情报弱者'], ['橘猫', 'バカ'],
+        ['情报弱者', 'ニャ森'], ['喵喵酱', '小白'],
+        ['这位同学', '小白'], ['这位同学', 'Ayachi00'],
+        ['这位同学', '星洲鯨鯊。'], ['百分百原味胖次', '绅士君'],
+        ['小白', '荠'], ['ニャ森', 'nayuta'], ['ニャ森', '夜寒'],
+        ['小白', 'ダレソカレ'], ['喵喵酱', '月社キサキ'],
+        ['Ayachi00', 'bouquet'], ['绅士君', '朝日紫'],
+        ['百分百原味胖次', 'weii'], ['荠', '稻田养生'], ['荠', '久岛理'],
+        ['这位同学', '森凉℃'], ['ダレソカレ', '君君子兰'],
+        ['夜寒', '雪月涯'], ['nayuta', '白薇啤酒'],
+        ['森凉℃', 'special'], ['稻田养生', 'special'], ['君君子兰', 'special']
+    ];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const viewMap = document.getElementById('viewMap');
+        const viewDialogue = document.getElementById('viewDialogue');
+        const bgOverlay = document.querySelector('.bg-overlay');
+        const roleMenu = document.getElementById('roleMenu');
+        const linesLayer = document.getElementById('linesLayer');
+        const nodesLayer = document.getElementById('nodesLayer');
+        const hoverTitle = document.getElementById('hoverTitle');
+        const hoverDesc = document.getElementById('hoverDesc');
+        const dialogBox = document.getElementById('dialogBox');
+        const dialogName = document.getElementById('dialogName');
+        const dialogText = document.getElementById('dialogText');
+        const charStand = document.getElementById('charStand');
+
+        let currentDialogLines = [];
+        let currentLineIndex = 0;
+
+        const csvContent = `Key,Avatar,Episode,Content
+鸟谷真琴厨,head.png,监修EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试@n测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试@p这是第二页内容：测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+喵喵酱,head.png,核心EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试@n测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试@p第二页：测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+DevSeeD,head.png,程序EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试@n测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+这位同学,head.png,全能EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试@n测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试@p第二页：测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试@p第三页：测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+百分百原味胖次,head.png,美工EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+橘猫,head.png,翻译EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+情报弱者,head.png,翻译EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+バカ,head.png,翻译EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+小白,head.png,翻译EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+ニャ森,head.png,翻译EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+Ayachi00,head.png,翻译EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+绅士君,head.png,翻译EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+星洲鯨鯊。,head.png,翻译EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+nayuta,head.png,校对EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+夜寒,head.png,校对EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+ダレソカレ,head.png,校对EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+月社キサキ,head.png,校对EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+荠,head.png,润色EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+bouquet,head.png,润色EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+朝日紫,head.png,润色EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+白薇啤酒,head.png,测试EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+雪月涯,head.png,测试EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+君君子兰,head.png,测试EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+森凉℃,head.png,测试EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+稻田养生,head.png,测试EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+久岛理,head.png,测试EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+weii,head.png,测试EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+致谢前汉化组,,致谢EP,"测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试@n测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试@p第二页测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"`;
+
+        function parseCSVString(csvText) {
+            const rows = csvText.split('\n').map(line => line.trim()).filter(line => line);
+            const dataMap = new Map();
+            for (let i = 1; i < rows.length; i++) {
+                const match = rows[i].match(/([^,]+),([^,]*),([^,]+),(.+)/);
+                if (match) {
+                    const key = match[1].trim();
+                    let content = match[4].trim();
+                    if (content.startsWith('"') && content.endsWith('"')) content = content.slice(1, -1);
+                    dataMap.set(key, { avatar: match[2].trim(), ep: match[3].trim(), content });
+                }
+            }
+            return dataMap;
+        }
+        const csvData = parseCSVString(csvContent);
+        hoverTitle.innerText = "Select Node";
+        hoverDesc.innerText = "请选择节点";
+
+        ROLES.forEach(role => {
+            const btn = document.createElement('div');
+            btn.className = `role-btn ${role.style || ''}`;
+            btn.innerText = role.label;
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.node-btn').forEach(nodeBtn => {
+                    const nodeRoles = JSON.parse(nodeBtn.dataset.roles || "[]");
+                    if (role.id === 'all') {
+                        nodeBtn.classList.remove('dimmed', 'highlight');
+                    } else {
+                        if (nodeRoles.includes(role.id)) {
+                            nodeBtn.classList.remove('dimmed');
+                            nodeBtn.classList.add('highlight');
+                        } else {
+                            nodeBtn.classList.remove('highlight');
+                            nodeBtn.classList.add('dimmed');
+                        }
+                    }
+                });
+            });
+            roleMenu.appendChild(btn);
+        });
+        roleMenu.firstElementChild?.click();
+
+        LINKS.forEach(link => {
+            const [startId, endId] = link;
+            const sNode = NODES.find(n => n.id === startId || n.label === startId);
+            const eNode = NODES.find(n => n.id === endId || n.label === endId);
+            if (sNode && eNode) {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', sNode.x + '%');
+                line.setAttribute('y1', sNode.y + '%');
+                line.setAttribute('x2', eNode.x + '%');
+                line.setAttribute('y2', eNode.y + '%');
+                line.setAttribute('stroke', '#4e8dbf');
+                line.setAttribute('stroke-width', '1.5');
+                line.setAttribute('opacity', '0.4');
+                linesLayer.appendChild(line);
+            }
+        });
+
+        NODES.forEach(node => {
+            const btn = document.createElement('div');
+            btn.className = 'node-btn';
+            const lookupKey = node.label || node.id;
+            const nodeData = csvData.get(lookupKey);
+
+            node.runtimeEp = nodeData ? nodeData.ep : "测试ep文本";
+            node.runtimeContent = nodeData ? nodeData.content : "";
+            node.runtimeAvatar = nodeData ? nodeData.avatar : "";
+
+            btn.innerText = lookupKey;
+            btn.style.left = node.x + '%';
+            btn.style.top = node.y + '%';
+            btn.dataset.roles = JSON.stringify(node.roles);
+            if(node.roles.includes('special')) btn.classList.add('node-special');
+
+            btn.addEventListener('mouseenter', () => {
+                hoverTitle.innerText = lookupKey;
+                hoverDesc.innerText = node.runtimeEp;
+                btn.classList.add('hovering');
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.classList.remove('hovering');
+            });
+
+            btn.addEventListener('click', () => {
+                enterDialogueMode(node, lookupKey);
+            });
+
+            nodesLayer.appendChild(btn);
+        });
+
+        function enterDialogueMode(node, name) {
+            let rawContent = node.runtimeContent;
+            if (!rawContent) rawContent = "暂无内容...@p请在 CSV 中配置该节点的文本。";
+            currentDialogLines = rawContent.split('@p').map(page => page.replace(/@n/g, '<br>'));
+            currentLineIndex = 0;
+            dialogName.innerText = name;
+
+            charStand.innerHTML = '';
+            if (node.runtimeAvatar && node.runtimeAvatar.trim() !== '') {
+                const img = document.createElement('img');
+                img.src = `images/head/${node.runtimeAvatar}`;
+                img.alt = name;
+                img.style.display = 'block';
+                img.onerror = function() { this.style.display = 'none'; };
+                charStand.appendChild(img);
+            }
+
+            viewMap.classList.add('hidden');
+            bgOverlay.classList.add('active');
+            viewDialogue.classList.remove('hidden');
+            showNextLine();
+        }
+
+        function exitDialogueMode() {
+            viewDialogue.classList.add('hidden');
+            bgOverlay.classList.remove('active');
+            viewMap.classList.remove('hidden');
+            currentDialogLines = [];
+            currentLineIndex = 0;
+            charStand.innerHTML = '';
+        }
+
+        function showNextLine() {
+            if (currentLineIndex >= currentDialogLines.length) {
+                exitDialogueMode();
+                return;
+            }
+            dialogText.innerHTML = currentDialogLines[currentLineIndex];
+            currentLineIndex++;
+        }
+
+        dialogBox.addEventListener('click', (e) => { e.stopPropagation(); showNextLine(); });
+        viewDialogue.addEventListener('click', () => { showNextLine(); });
+    });
+</script>
+</body>
+</html>

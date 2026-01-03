@@ -1,0 +1,4726 @@
+window.GUIDE_BLOCKS = [
+  {
+    "chapter": "幼虫篇",
+    "block": 1,
+    "start": {
+      "type": "chapterstart",
+      "label": "Prologue",
+      "raw": "Prologue"
+    },
+    "steps": [
+      {
+        "label": "Prologue",
+        "raw": "Prologue",
+        "type": "chapterstart"
+      },
+      {
+        "label": "离群的虫使",
+        "raw": "离群的虫使【SAVE1】",
+        "saveLabel": "SAVE1"
+      },
+      {
+        "label": "炼悟的工作",
+        "raw": "炼悟的工作"
+      },
+      {
+        "label": "委托书",
+        "raw": "委托书 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "女性追击者",
+        "raw": "女性追击者 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "萨由莉的报告Ⅰ",
+        "raw": "萨由莉的报告Ⅰ"
+      },
+      {
+        "label": "苗床的少女",
+        "raw": "苗床的少女"
+      },
+      {
+        "label": "小道具",
+        "raw": "小道具"
+      },
+      {
+        "label": "日常生活",
+        "raw": "日常生活"
+      },
+      {
+        "label": "虫的作业Ⅰ",
+        "raw": "虫的作业Ⅰ"
+      },
+      {
+        "label": "怯懦的眼神",
+        "raw": "怯懦的眼神"
+      },
+      {
+        "label": "所有者",
+        "raw": "所有者【SAVE2】",
+        "saveLabel": "SAVE2"
+      },
+      {
+        "label": "开始孵育的卵",
+        "raw": "开始孵育的卵"
+      },
+      {
+        "label": "再次来临的痛苦",
+        "raw": "再次来临的痛苦"
+      },
+      {
+        "label": "就寝",
+        "raw": "就寝 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "开始反击",
+        "raw": "开始反击 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "探索Ⅱ",
+        "raw": "探索Ⅱ"
+      },
+      {
+        "label": "强制侍奉",
+        "raw": "强制侍奉"
+      },
+      {
+        "label": "一天的成果",
+        "raw": "一天的成果"
+      },
+      {
+        "label": "偷来的卵",
+        "raw": "偷来的卵"
+      },
+      {
+        "label": "小巷的战斗",
+        "raw": "小巷的战斗"
+      },
+      {
+        "label": "虫使的战斗方法",
+        "raw": "虫使的战斗方法 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "早晨",
+        "raw": "早晨"
+      },
+      {
+        "label": "另一位虫使",
+        "raw": "另一位虫使 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "卵的状况",
+        "raw": "卵的状况"
+      },
+      {
+        "label": "购物",
+        "raw": "购物"
+      },
+      {
+        "label": "死里逃生",
+        "raw": "死里逃生"
+      },
+      {
+        "label": "痛苦的少女",
+        "raw": "痛苦的少女"
+      },
+      {
+        "label": "梦醒时分",
+        "raw": "梦醒时分"
+      },
+      {
+        "label": "兽魔虫",
+        "raw": "兽魔虫 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "思索",
+        "raw": "思索 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "刺骨的空气",
+        "raw": "刺骨的空气"
+      },
+      {
+        "label": "久违的对话",
+        "raw": "久违的对话"
+      },
+      {
+        "label": "莲",
+        "raw": "莲"
+      },
+      {
+        "label": "下酒菜",
+        "raw": "下酒菜"
+      },
+      {
+        "label": "委托工作",
+        "raw": "委托工作【SAVE3】",
+        "saveLabel": "SAVE3"
+      },
+      {
+        "label": "弱者的抵抗",
+        "raw": "弱者的抵抗"
+      },
+      {
+        "label": "母亲的回绝",
+        "raw": "母亲的回绝"
+      },
+      {
+        "label": "扫除",
+        "raw": "扫除"
+      },
+      {
+        "label": "消失的尸骸",
+        "raw": "消失的尸骸"
+      },
+      {
+        "label": "消遣",
+        "raw": "消遣"
+      },
+      {
+        "label": "虫的食物",
+        "raw": "虫的食物 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "墓",
+        "raw": "墓 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "备战",
+        "raw": "备战 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "母子",
+        "raw": "母子 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "喂虫的少女",
+        "raw": "喂虫的少女"
+      },
+      {
+        "label": "追来的莲",
+        "raw": "追来的莲"
+      },
+      {
+        "label": "一时兴起的威胁",
+        "raw": "一时兴起的威胁"
+      },
+      {
+        "label": "少女与虫",
+        "raw": "少女与虫"
+      },
+      {
+        "label": "使虫之人",
+        "raw": "使虫之人 4/4",
+        "variant": "4/4"
+      },
+      {
+        "label": "BE 1 —— 使虫之人",
+        "raw": "BE 1 —— 使虫之人",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "幼虫篇",
+    "block": 2,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE3开始",
+      "raw": "SAVE3开始",
+      "saveId": "SAVE3"
+    },
+    "steps": [
+      {
+        "label": "SAVE3开始",
+        "raw": "SAVE3开始",
+        "type": "savestart",
+        "saveId": "SAVE3"
+      },
+      {
+        "label": "护卫任务",
+        "raw": "护卫任务"
+      },
+      {
+        "label": "样品",
+        "raw": "样品"
+      },
+      {
+        "label": "弱者的抵抗",
+        "raw": "弱者的抵抗"
+      },
+      {
+        "label": "特别的母体",
+        "raw": "特别的母体"
+      },
+      {
+        "label": "母亲的回绝",
+        "raw": "母亲的回绝"
+      },
+      {
+        "label": "扫除",
+        "raw": "扫除"
+      },
+      {
+        "label": "消失的尸骸",
+        "raw": "消失的尸骸"
+      },
+      {
+        "label": "消遣",
+        "raw": "消遣"
+      },
+      {
+        "label": "怪虫",
+        "raw": "怪虫"
+      },
+      {
+        "label": "新的伙伴",
+        "raw": "新的伙伴"
+      },
+      {
+        "label": "暴走",
+        "raw": "暴走1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "虫的食物",
+        "raw": "虫的食物 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "偷吃",
+        "raw": "偷吃"
+      },
+      {
+        "label": "墓",
+        "raw": "墓 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "备战",
+        "raw": "备战 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "喂虫的少女",
+        "raw": "喂虫的少女"
+      },
+      {
+        "label": "追来的莲",
+        "raw": "追来的莲"
+      },
+      {
+        "label": "一时兴起的威胁",
+        "raw": "一时兴起的威胁"
+      },
+      {
+        "label": "使虫之人",
+        "raw": "使虫之人 2/4",
+        "variant": "2/4"
+      },
+      {
+        "label": "Epilogue",
+        "raw": "Epilogue"
+      },
+      {
+        "label": "PrologueⅠ（建议存档）",
+        "raw": "（→ 蛹虫篇）PrologueⅠ（建议存档）",
+        "type": "nextpoint",
+        "targetHint": "蛹虫篇"
+      }
+    ]
+  },
+  {
+    "chapter": "幼虫篇",
+    "block": 3,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE2开始",
+      "raw": "SAVE2开始",
+      "saveId": "SAVE2"
+    },
+    "steps": [
+      {
+        "label": "SAVE2开始",
+        "raw": "SAVE2开始",
+        "type": "savestart",
+        "saveId": "SAVE2"
+      },
+      {
+        "label": "探索Ⅰ",
+        "raw": "探索Ⅰ"
+      },
+      {
+        "label": "突袭",
+        "raw": "突袭"
+      },
+      {
+        "label": "（就寝）",
+        "raw": "＃（就寝 2/2）",
+        "type": "note",
+        "variant": "2/2"
+      },
+      {
+        "label": "萨由莉的报告Ⅱ",
+        "raw": "萨由莉的报告Ⅱ"
+      },
+      {
+        "label": "西的搭救",
+        "raw": "西的搭救"
+      },
+      {
+        "label": "交易",
+        "raw": "交易 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "开始反击",
+        "raw": "开始反击 1/2【SAVE4】",
+        "saveLabel": "SAVE4",
+        "variant": "1/2"
+      },
+      {
+        "label": "探索Ⅱ",
+        "raw": "探索Ⅱ"
+      },
+      {
+        "label": "强制侍奉",
+        "raw": "强制侍奉"
+      },
+      {
+        "label": "一天的成果",
+        "raw": "一天的成果"
+      },
+      {
+        "label": "偷来的卵",
+        "raw": "偷来的卵"
+      },
+      {
+        "label": "小巷的战斗",
+        "raw": "小巷的战斗【SAVE5】",
+        "saveLabel": "SAVE5"
+      },
+      {
+        "label": "外行人的行动",
+        "raw": "外行人的行动 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "BE 2 —— 外行人的行动",
+        "raw": "BE 2 —— 外行人的行动",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "幼虫篇",
+    "block": 4,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE5开始",
+      "raw": "SAVE5开始",
+      "saveId": "SAVE5"
+    },
+    "steps": [
+      {
+        "label": "SAVE5开始",
+        "raw": "SAVE5开始",
+        "type": "savestart",
+        "saveId": "SAVE5"
+      },
+      {
+        "label": "虫使的战斗方法",
+        "raw": "虫使的战斗方法 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "早晨",
+        "raw": "早晨"
+      },
+      {
+        "label": "另一位虫使",
+        "raw": "另一位虫使 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "危险的服务",
+        "raw": "危险的服务"
+      },
+      {
+        "label": "卵的状况",
+        "raw": "卵的状况"
+      },
+      {
+        "label": "购物",
+        "raw": "购物"
+      },
+      {
+        "label": "死里逃生",
+        "raw": "死里逃生"
+      },
+      {
+        "label": "梦醒时分",
+        "raw": "梦醒时分"
+      },
+      {
+        "label": "兽魔虫",
+        "raw": "兽魔虫 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "思索",
+        "raw": "思索 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "移交少女",
+        "raw": "移交少女 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "刺骨的空气",
+        "raw": "刺骨的空气"
+      },
+      {
+        "label": "久违的对话",
+        "raw": "久违的对话"
+      },
+      {
+        "label": "莲",
+        "raw": "莲"
+      },
+      {
+        "label": "下酒菜",
+        "raw": "下酒菜"
+      },
+      {
+        "label": "委托工作",
+        "raw": "委托工作"
+      },
+      {
+        "label": "护卫任务",
+        "raw": "护卫任务"
+      },
+      {
+        "label": "样品",
+        "raw": "样品"
+      },
+      {
+        "label": "弱者的抵抗",
+        "raw": "弱者的抵抗"
+      },
+      {
+        "label": "特别的母体",
+        "raw": "特别的母体"
+      },
+      {
+        "label": "母亲的回绝",
+        "raw": "母亲的回绝"
+      },
+      {
+        "label": "扫除",
+        "raw": "扫除"
+      },
+      {
+        "label": "消失的尸骸",
+        "raw": "消失的尸骸"
+      },
+      {
+        "label": "消遣",
+        "raw": "消遣"
+      },
+      {
+        "label": "怪虫",
+        "raw": "怪虫"
+      },
+      {
+        "label": "新的伙伴",
+        "raw": "新的伙伴"
+      },
+      {
+        "label": "暴走",
+        "raw": "暴走 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "BE 3 —— 暴走",
+        "raw": "BE 3 —— 暴走",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "幼虫篇",
+    "block": 5,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE4开始",
+      "raw": "SAVE4开始",
+      "saveId": "SAVE4"
+    },
+    "steps": [
+      {
+        "label": "SAVE4开始",
+        "raw": "SAVE4开始",
+        "type": "savestart",
+        "saveId": "SAVE4"
+      },
+      {
+        "label": "帮助与回报",
+        "raw": "帮助与回报"
+      },
+      {
+        "label": "探索Ⅱ",
+        "raw": "探索Ⅱ"
+      },
+      {
+        "label": "强制侍奉",
+        "raw": "强制侍奉"
+      },
+      {
+        "label": "一天的成果",
+        "raw": "一天的成果"
+      },
+      {
+        "label": "偷来的卵",
+        "raw": "偷来的卵"
+      },
+      {
+        "label": "小巷的战斗",
+        "raw": "小巷的战斗"
+      },
+      {
+        "label": "（外行人的行动）",
+        "raw": "＃（外行人的行动 1/2）",
+        "type": "note",
+        "variant": "1/2"
+      },
+      {
+        "label": "虫使的战斗方法",
+        "raw": "虫使的战斗方法 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "萨由莉的招数",
+        "raw": "萨由莉的招数"
+      },
+      {
+        "label": "（回收cg后结束）",
+        "raw": "（回收cg后结束）",
+        "type": "note"
+      }
+    ]
+  },
+  {
+    "chapter": "幼虫篇",
+    "block": 6,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE1开始",
+      "raw": "SAVE1开始",
+      "saveId": "SAVE1"
+    },
+    "steps": [
+      {
+        "label": "SAVE1开始",
+        "raw": "SAVE1开始",
+        "type": "savestart",
+        "saveId": "SAVE1"
+      },
+      {
+        "label": "森林",
+        "raw": "森林"
+      },
+      {
+        "label": "炼悟的工作",
+        "raw": "炼悟的工作"
+      },
+      {
+        "label": "委托书",
+        "raw": "委托书 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "女性追击者",
+        "raw": "女性追击者 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "苗床的少女",
+        "raw": "苗床的少女"
+      },
+      {
+        "label": "小道具",
+        "raw": "小道具"
+      },
+      {
+        "label": "日常生活",
+        "raw": "日常生活"
+      },
+      {
+        "label": "（虫的作业Ⅱ）",
+        "raw": "＃（虫的作业Ⅱ）",
+        "type": "note"
+      },
+      {
+        "label": "虫的作业Ⅲ",
+        "raw": "虫的作业Ⅲ"
+      },
+      {
+        "label": "怯懦的眼神",
+        "raw": "怯懦的眼神"
+      },
+      {
+        "label": "所有者",
+        "raw": "所有者"
+      },
+      {
+        "label": "探索Ⅰ",
+        "raw": "探索Ⅰ"
+      },
+      {
+        "label": "突袭",
+        "raw": "突袭"
+      },
+      {
+        "label": "西的搭救",
+        "raw": "西的搭救"
+      },
+      {
+        "label": "交易",
+        "raw": "交易 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "开始反击",
+        "raw": "开始反击 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "帮助与回报",
+        "raw": "帮助与回报"
+      },
+      {
+        "label": "探索Ⅱ",
+        "raw": "探索Ⅱ"
+      },
+      {
+        "label": "强制侍奉",
+        "raw": "强制侍奉"
+      },
+      {
+        "label": "一天的成果",
+        "raw": "一天的成果"
+      },
+      {
+        "label": "偷来的卵",
+        "raw": "偷来的卵"
+      },
+      {
+        "label": "小巷的战斗",
+        "raw": "小巷的战斗"
+      },
+      {
+        "label": "虫使的战斗方法",
+        "raw": "虫使的战斗方法 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "早晨",
+        "raw": "早晨"
+      },
+      {
+        "label": "萨由莉的末路Ⅰ",
+        "raw": "萨由莉的末路Ⅰ"
+      },
+      {
+        "label": "另一位虫使",
+        "raw": "另一位虫使 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "卵的状况",
+        "raw": "卵的状况"
+      },
+      {
+        "label": "萨由莉的末路Ⅱ",
+        "raw": "萨由莉的末路Ⅱ"
+      },
+      {
+        "label": "购物",
+        "raw": "购物"
+      },
+      {
+        "label": "死里逃生",
+        "raw": "死里逃生"
+      },
+      {
+        "label": "梦醒时分",
+        "raw": "梦醒时分"
+      },
+      {
+        "label": "萨由莉的末路Ⅲ",
+        "raw": "萨由莉的末路Ⅲ"
+      },
+      {
+        "label": "兽魔虫",
+        "raw": "兽魔虫 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "思索",
+        "raw": "思索 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "（萨由莉的末路Ⅳ）",
+        "raw": "＃（萨由莉的末路Ⅳ）",
+        "type": "note"
+      },
+      {
+        "label": "移交少女",
+        "raw": "移交少女 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "刺骨的空气",
+        "raw": "刺骨的空气"
+      },
+      {
+        "label": "（回收）",
+        "raw": "＃（回收 1/2）",
+        "type": "note",
+        "variant": "1/2"
+      },
+      {
+        "label": "处理萨由莉",
+        "raw": "处理萨由莉"
+      },
+      {
+        "label": "回收",
+        "raw": "回收 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "久违的对话",
+        "raw": "久违的对话"
+      },
+      {
+        "label": "莲",
+        "raw": "莲"
+      },
+      {
+        "label": "下酒菜",
+        "raw": "下酒菜"
+      },
+      {
+        "label": "委托工作",
+        "raw": "委托工作"
+      },
+      {
+        "label": "护卫任务",
+        "raw": "护卫任务"
+      },
+      {
+        "label": "样品",
+        "raw": "样品"
+      },
+      {
+        "label": "弱者的抵抗",
+        "raw": "弱者的抵抗"
+      },
+      {
+        "label": "特别的母体",
+        "raw": "特别的母体"
+      },
+      {
+        "label": "母亲的回绝",
+        "raw": "母亲的回绝"
+      },
+      {
+        "label": "扫除",
+        "raw": "扫除"
+      },
+      {
+        "label": "消失的尸骸",
+        "raw": "消失的尸骸"
+      },
+      {
+        "label": "消遣",
+        "raw": "消遣"
+      },
+      {
+        "label": "怪虫",
+        "raw": "怪虫【SAVE6】",
+        "saveLabel": "SAVE6"
+      },
+      {
+        "label": "新的伙伴",
+        "raw": "新的伙伴"
+      },
+      {
+        "label": "暴走",
+        "raw": "暴走 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "虫的食物",
+        "raw": "虫的食物 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "偷吃",
+        "raw": "偷吃"
+      },
+      {
+        "label": "墓",
+        "raw": "墓 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "备战",
+        "raw": "备战 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "母子",
+        "raw": "母子 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "喂虫的少女",
+        "raw": "喂虫的少女"
+      },
+      {
+        "label": "追来的莲",
+        "raw": "追来的莲"
+      },
+      {
+        "label": "一时兴起的威胁",
+        "raw": "一时兴起的威胁"
+      },
+      {
+        "label": "使虫之人",
+        "raw": "使虫之人 1/4",
+        "variant": "1/4"
+      },
+      {
+        "label": "胜利者·炼悟",
+        "raw": "胜利者·炼悟"
+      },
+      {
+        "label": "END 1 —— 胜利者·炼悟",
+        "raw": "END 1 —— 胜利者·炼悟",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "幼虫篇",
+    "block": 7,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE6开始",
+      "raw": "SAVE6开始",
+      "saveId": "SAVE6"
+    },
+    "steps": [
+      {
+        "label": "SAVE6开始",
+        "raw": "SAVE6开始",
+        "type": "savestart",
+        "saveId": "SAVE6"
+      },
+      {
+        "label": "危险的臭味",
+        "raw": "危险的臭味"
+      },
+      {
+        "label": "虫的食物",
+        "raw": "虫的食物 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "墓",
+        "raw": "墓 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "备战",
+        "raw": "备战 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "喂虫的少女",
+        "raw": "喂虫的少女"
+      },
+      {
+        "label": "追来的莲",
+        "raw": "追来的莲"
+      },
+      {
+        "label": "一时兴起的威胁",
+        "raw": "一时兴起的威胁"
+      },
+      {
+        "label": "使虫之人",
+        "raw": "使虫之人 3/4",
+        "variant": "3/4"
+      },
+      {
+        "label": "Epilogue",
+        "raw": "Epilogue"
+      },
+      {
+        "label": "PrologueⅡ（建议存档）",
+        "raw": "（→ 虫蛹篇）PrologueⅡ（建议存档）",
+        "type": "nextpoint",
+        "targetHint": "虫蛹篇"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→西馆篇分支）",
+    "block": 1,
+    "start": {
+      "type": "chapterstart",
+      "label": "虫蛹篇 PrologueⅡ开始",
+      "raw": "虫蛹篇 PrologueⅡ开始"
+    },
+    "steps": [
+      {
+        "label": "虫蛹篇 PrologueⅡ开始",
+        "raw": "虫蛹篇 PrologueⅡ开始",
+        "type": "chapterstart"
+      },
+      {
+        "label": "梦美的生活",
+        "raw": "梦美的生活"
+      },
+      {
+        "label": "AnzU",
+        "raw": "AnzU"
+      },
+      {
+        "label": "夜晚的工作",
+        "raw": "夜晚的工作"
+      },
+      {
+        "label": "回家",
+        "raw": "回家"
+      },
+      {
+        "label": "新的菜品",
+        "raw": "新的菜品"
+      },
+      {
+        "label": "休息",
+        "raw": "休息"
+      },
+      {
+        "label": "点心时间",
+        "raw": "点心时间"
+      },
+      {
+        "label": "景气的店铺",
+        "raw": "景气的店铺"
+      },
+      {
+        "label": "青年的邀请",
+        "raw": "青年的邀请"
+      },
+      {
+        "label": "困惑",
+        "raw": "困惑【SAVE7】",
+        "saveLabel": "SAVE7"
+      },
+      {
+        "label": "爽约",
+        "raw": "爽约 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "青年不在的早晨",
+        "raw": "青年不在的早晨"
+      },
+      {
+        "label": "杏子的礼物",
+        "raw": "杏子的礼物"
+      },
+      {
+        "label": "与青年的关系",
+        "raw": "与青年的关系 3/3",
+        "variant": "3/3"
+      },
+      {
+        "label": "长腿叔叔",
+        "raw": "长腿叔叔"
+      },
+      {
+        "label": "工作招募",
+        "raw": "工作招募"
+      },
+      {
+        "label": "贴启事的地方Ⅰ",
+        "raw": "贴启事的地方Ⅰ"
+      },
+      {
+        "label": "异変",
+        "raw": "异変"
+      },
+      {
+        "label": "过去的生活",
+        "raw": "过去的生活"
+      },
+      {
+        "label": "疑惑",
+        "raw": "疑惑"
+      },
+      {
+        "label": "在家里度过",
+        "raw": "在家里度过"
+      },
+      {
+        "label": "袭击",
+        "raw": "袭击"
+      },
+      {
+        "label": "异样的早晨",
+        "raw": "异样的早晨"
+      },
+      {
+        "label": "杏子的请求",
+        "raw": "杏子的请求"
+      },
+      {
+        "label": "面试",
+        "raw": "面试"
+      },
+      {
+        "label": "同居人",
+        "raw": "同居人"
+      },
+      {
+        "label": "打工的同伴",
+        "raw": "打工的同伴 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "彼此的称呼",
+        "raw": "彼此的称呼"
+      },
+      {
+        "label": "小小的抗议",
+        "raw": "小小的抗议 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "清晨的外出",
+        "raw": "清晨的外出"
+      },
+      {
+        "label": "莲的忠告",
+        "raw": "莲的忠告"
+      },
+      {
+        "label": "休息日的安排Ⅲ",
+        "raw": "休息日的安排Ⅲ "
+      },
+      {
+        "label": "新的生活",
+        "raw": "新的生活"
+      },
+      {
+        "label": "冻结时间的兽魔",
+        "raw": "冻结时间的兽魔 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "小巷的噩梦",
+        "raw": "小巷的噩梦"
+      },
+      {
+        "label": "失去的右臂",
+        "raw": "失去的右臂"
+      },
+      {
+        "label": "昏暗的仓库Ⅱ",
+        "raw": "（→ 虫使篇）昏暗的仓库Ⅱ",
+        "type": "nextpoint",
+        "targetHint": "虫使篇"
+      },
+      {
+        "label": "在冰冷的床上Ⅱ",
+        "raw": "在冰冷的床上Ⅱ"
+      },
+      {
+        "label": "训练Ⅰ",
+        "raw": "训练Ⅰ 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "迷茫的夜晚",
+        "raw": "迷茫的夜晚 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "训练Ⅱ",
+        "raw": "训练Ⅱ 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "久疏的休息",
+        "raw": "久疏的休息"
+      },
+      {
+        "label": "治疗伤口",
+        "raw": "治疗伤口"
+      },
+      {
+        "label": "神武的内部",
+        "raw": "神武的内部【SAVE8】",
+        "saveLabel": "SAVE8"
+      },
+      {
+        "label": "作战变更",
+        "raw": "作战变更"
+      },
+      {
+        "label": "记忆的角落",
+        "raw": "记忆的角落"
+      },
+      {
+        "label": "西的宅邸",
+        "raw": "西的宅邸 3/3",
+        "variant": "3/3"
+      },
+      {
+        "label": "BE 4 —— 西的宅邸",
+        "raw": "BE 4 —— 西的宅邸",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→西馆篇分支）",
+    "block": 2,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE8开始",
+      "raw": "SAVE8开始",
+      "saveId": "SAVE8"
+    },
+    "steps": [
+      {
+        "label": "SAVE8开始",
+        "raw": "SAVE8开始",
+        "type": "savestart",
+        "saveId": "SAVE8"
+      },
+      {
+        "label": "潜入神武Ⅰ",
+        "raw": "潜入神武Ⅰ"
+      },
+      {
+        "label": "潜入神武Ⅱ",
+        "raw": "潜入神武Ⅱ"
+      },
+      {
+        "label": "潜入神武Ⅲ",
+        "raw": "潜入神武Ⅲ"
+      },
+      {
+        "label": "将唯捕获",
+        "raw": "将唯捕获"
+      },
+      {
+        "label": "潜入神武Ⅳ",
+        "raw": "潜入神武Ⅳ"
+      },
+      {
+        "label": "被捕的美弥香",
+        "raw": "被捕的美弥香"
+      },
+      {
+        "label": "失去纯洁的唯",
+        "raw": "失去纯洁的唯"
+      },
+      {
+        "label": "后悔与绝望",
+        "raw": "后悔与绝望【SAVE9】",
+        "saveLabel": "SAVE9"
+      },
+      {
+        "label": "莲的回归",
+        "raw": "莲的回归 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "逃亡的尽头",
+        "raw": "逃亡的尽头 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "END 6 —— 逃亡的尽头（2）",
+        "raw": "END 6 —— 逃亡的尽头（2）",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→西馆篇分支）",
+    "block": 3,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE9开始",
+      "raw": "SAVE9开始",
+      "saveId": "SAVE9"
+    },
+    "steps": [
+      {
+        "label": "SAVE9开始",
+        "raw": "SAVE9开始",
+        "type": "savestart",
+        "saveId": "SAVE9"
+      },
+      {
+        "label": "逃亡的帮助",
+        "raw": "逃亡的帮助"
+      },
+      {
+        "label": "莲的回归",
+        "raw": "莲的回归 1/2【SAVE10】",
+        "saveLabel": "SAVE10",
+        "variant": "1/2"
+      },
+      {
+        "label": "逃亡的尽头",
+        "raw": "逃亡的尽头 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "END 5 —— 逃亡的尽头（1）",
+        "raw": "END 5 —— 逃亡的尽头（1）",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→西馆篇分支）",
+    "block": 4,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE10开始",
+      "raw": "SAVE10开始",
+      "saveId": "SAVE10"
+    },
+    "steps": [
+      {
+        "label": "SAVE10开始",
+        "raw": "SAVE10开始",
+        "type": "savestart",
+        "saveId": "SAVE10"
+      },
+      {
+        "label": "尚且不足的觉悟",
+        "raw": "尚且不足的觉悟"
+      },
+      {
+        "label": "END 7 —— 尚且不足的觉悟",
+        "raw": "END 7 —— 尚且不足的觉悟",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→西馆篇分支）",
+    "block": 5,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE7开始",
+      "raw": "SAVE7开始",
+      "saveId": "SAVE7"
+    },
+    "steps": [
+      {
+        "label": "SAVE7开始",
+        "raw": "SAVE7开始",
+        "type": "savestart",
+        "saveId": "SAVE7"
+      },
+      {
+        "label": "约会",
+        "raw": "约会 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "青年不在的早晨",
+        "raw": "青年不在的早晨"
+      },
+      {
+        "label": "招聘兼职",
+        "raw": "招聘兼职"
+      },
+      {
+        "label": "杏子的礼物",
+        "raw": "杏子的礼物"
+      },
+      {
+        "label": "与青年的关系",
+        "raw": "与青年的关系 2/3",
+        "variant": "2/3"
+      },
+      {
+        "label": "温柔的夜晚",
+        "raw": "温柔的夜晚 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "长腿叔叔",
+        "raw": "长腿叔叔"
+      },
+      {
+        "label": "吧台座位",
+        "raw": "吧台座位"
+      },
+      {
+        "label": "工作招募",
+        "raw": "工作招募"
+      },
+      {
+        "label": "贴启事的地方Ⅰ",
+        "raw": "贴启事的地方Ⅰ"
+      },
+      {
+        "label": "接待的第一天",
+        "raw": "接待的第一天"
+      },
+      {
+        "label": "异変",
+        "raw": "异変"
+      },
+      {
+        "label": "疑惑",
+        "raw": "疑惑"
+      },
+      {
+        "label": "在AnzU度过",
+        "raw": "在AnzU度过"
+      },
+      {
+        "label": "袭击",
+        "raw": "袭击"
+      },
+      {
+        "label": "异样的早晨",
+        "raw": "异样的早晨"
+      },
+      {
+        "label": "杏子的请求",
+        "raw": "杏子的请求"
+      },
+      {
+        "label": "面试",
+        "raw": "面试"
+      },
+      {
+        "label": "偶然的重逢",
+        "raw": "偶然的重逢"
+      },
+      {
+        "label": "同居人",
+        "raw": "同居人"
+      },
+      {
+        "label": "打工的同伴",
+        "raw": "打工的同伴 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "彼此的称呼",
+        "raw": "彼此的称呼"
+      },
+      {
+        "label": "小小的抗议",
+        "raw": "小小的抗议 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "清晨的外出",
+        "raw": "清晨的外出"
+      },
+      {
+        "label": "优斗的邀请",
+        "raw": "优斗的邀请"
+      },
+      {
+        "label": "莲的忠告",
+        "raw": "莲的忠告"
+      },
+      {
+        "label": "休息日的安排Ⅰ",
+        "raw": "休息日的安排Ⅰ"
+      },
+      {
+        "label": "冻结时间的兽魔",
+        "raw": "冻结时间的兽魔 1/2【SAVE11*2】",
+        "saveLabel": "SAVE11*2",
+        "variant": "1/2"
+      },
+      {
+        "label": "小巷的噩梦",
+        "raw": "小巷的噩梦"
+      },
+      {
+        "label": "失去的右臂",
+        "raw": "失去的右臂"
+      },
+      {
+        "label": "昏暗的仓库Ⅱ",
+        "raw": "（→ 虫使篇）昏暗的仓库Ⅱ",
+        "type": "nextpoint",
+        "targetHint": "虫使篇"
+      },
+      {
+        "label": "在冰冷的床上Ⅱ",
+        "raw": "在冰冷的床上Ⅱ"
+      },
+      {
+        "label": "训练Ⅰ",
+        "raw": "训练Ⅰ 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "迷茫的夜晚",
+        "raw": "迷茫的夜晚 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "训练Ⅱ",
+        "raw": "训练Ⅱ 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "久疏的休息",
+        "raw": "久疏的休息"
+      },
+      {
+        "label": "治疗伤口",
+        "raw": "治疗伤口"
+      },
+      {
+        "label": "神武的内部",
+        "raw": "神武的内部【SAVE12】",
+        "saveLabel": "SAVE12"
+      },
+      {
+        "label": "独自在仓库等候",
+        "raw": "独自在仓库等候 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "回来的莲",
+        "raw": "回来的莲"
+      },
+      {
+        "label": "被捕的美弥香",
+        "raw": "被捕的美弥香"
+      },
+      {
+        "label": "仓库生活Ⅰ",
+        "raw": "仓库生活Ⅰ"
+      },
+      {
+        "label": "仓库生活Ⅱ",
+        "raw": "仓库生活Ⅱ【SAVE13】",
+        "saveLabel": "SAVE13"
+      },
+      {
+        "label": "仓库生活Ⅲ",
+        "raw": "仓库生活Ⅲ"
+      },
+      {
+        "label": "仓库生活Ⅳ",
+        "raw": "仓库生活Ⅳ 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "逃脱",
+        "raw": "逃脱"
+      },
+      {
+        "label": "END 4 —— 逃脱",
+        "raw": "END 4 —— 逃脱",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→西馆篇分支）",
+    "block": 6,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE13开始",
+      "raw": "SAVE13开始",
+      "saveId": "SAVE13"
+    },
+    "steps": [
+      {
+        "label": "SAVE13开始",
+        "raw": "SAVE13开始",
+        "type": "savestart",
+        "saveId": "SAVE13"
+      },
+      {
+        "label": "被捕的美弥香",
+        "raw": "被捕的美弥香"
+      },
+      {
+        "label": "与莲的交流",
+        "raw": "与莲的交流"
+      },
+      {
+        "label": "仓库生活Ⅲ",
+        "raw": "仓库生活Ⅲ"
+      },
+      {
+        "label": "仓库生活Ⅳ",
+        "raw": "仓库生活Ⅳ 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "梦美的提议",
+        "raw": "梦美的提议"
+      },
+      {
+        "label": "最后的胜利者",
+        "raw": "最后的胜利者 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "END 3 —— 祥和",
+        "raw": "END 3 —— 祥和",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→西馆篇分支）",
+    "block": 7,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE12开始",
+      "raw": "SAVE12开始",
+      "saveId": "SAVE12"
+    },
+    "steps": [
+      {
+        "label": "SAVE12开始",
+        "raw": "SAVE12开始",
+        "type": "savestart",
+        "saveId": "SAVE12"
+      },
+      {
+        "label": "作战变更",
+        "raw": "作战变更"
+      },
+      {
+        "label": "记忆的角落",
+        "raw": "记忆的角落"
+      },
+      {
+        "label": "西的宅邸",
+        "raw": "西的宅邸 2/3",
+        "variant": "2/3"
+      },
+      {
+        "label": "过去的搭档",
+        "raw": "过去的搭档"
+      },
+      {
+        "label": "与西的会面",
+        "raw": "（→ 西馆篇）与西的会面",
+        "type": "nextpoint",
+        "targetHint": "西馆篇"
+      },
+      {
+        "label": "守护之物",
+        "raw": "守护之物"
+      },
+      {
+        "label": "梦醒时的不安",
+        "raw": "梦醒时的不安"
+      },
+      {
+        "label": "混乱的再会",
+        "raw": "混乱的再会"
+      },
+      {
+        "label": "孤独的牢狱",
+        "raw": "孤独的牢狱"
+      },
+      {
+        "label": "逃出的希望",
+        "raw": "逃出的希望"
+      },
+      {
+        "label": "西的请求",
+        "raw": "西的请求【SAVE14】",
+        "saveLabel": "SAVE14"
+      },
+      {
+        "label": "被恐惧吞噬",
+        "raw": "被恐惧吞噬"
+      },
+      {
+        "label": "惨状的经过",
+        "raw": "惨状的经过"
+      },
+      {
+        "label": "被替代的下半身",
+        "raw": "被替代的下半身"
+      },
+      {
+        "label": "看不到的未来",
+        "raw": "看不到的未来"
+      },
+      {
+        "label": "无意义的生命",
+        "raw": "无意义的生命"
+      },
+      {
+        "label": "史郎的本性",
+        "raw": "史郎的本性 2/2【SAVE15】",
+        "saveLabel": "SAVE15",
+        "variant": "2/2"
+      },
+      {
+        "label": "逃走",
+        "raw": "逃走"
+      },
+      {
+        "label": "糟糕的梦醒之晨",
+        "raw": "糟糕的梦醒之晨 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "顶替",
+        "raw": "顶替"
+      },
+      {
+        "label": "背叛之背叛",
+        "raw": "背叛之背叛"
+      },
+      {
+        "label": "END 14 —— 背叛之背叛",
+        "raw": "END 14 —— 背叛之背叛",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→西馆篇分支）",
+    "block": 8,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE15开始",
+      "raw": "SAVE15开始",
+      "saveId": "SAVE15"
+    },
+    "steps": [
+      {
+        "label": "SAVE15开始",
+        "raw": "SAVE15开始",
+        "type": "savestart",
+        "saveId": "SAVE15"
+      },
+      {
+        "label": "颤抖着的梦美",
+        "raw": "颤抖着的梦美"
+      },
+      {
+        "label": "糟糕的梦醒之晨",
+        "raw": "糟糕的梦醒之晨 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "史郎的玩具",
+        "raw": "史郎的玩具 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "产虫的人生Ⅰ",
+        "raw": "产虫的人生Ⅰ"
+      },
+      {
+        "label": "产虫的人生Ⅱ",
+        "raw": "产虫的人生Ⅱ"
+      },
+      {
+        "label": "产虫的人生Ⅲ",
+        "raw": "产虫的人生Ⅲ"
+      },
+      {
+        "label": "产虫的人生Ⅳ",
+        "raw": "产虫的人生Ⅳ"
+      },
+      {
+        "label": "END 15 —— 产虫的人生",
+        "raw": "END 15 —— 产虫的人生",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→西馆篇分支）",
+    "block": 9,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE14开始",
+      "raw": "SAVE14开始",
+      "saveId": "SAVE14"
+    },
+    "steps": [
+      {
+        "label": "SAVE14开始",
+        "raw": "SAVE14开始",
+        "type": "savestart",
+        "saveId": "SAVE14"
+      },
+      {
+        "label": "活下去的意志",
+        "raw": "活下去的意志"
+      },
+      {
+        "label": "迈向永生的第一步",
+        "raw": "迈向永生的第一步"
+      },
+      {
+        "label": "公开宣战",
+        "raw": "公开宣战"
+      },
+      {
+        "label": "索然无味",
+        "raw": "索然无味"
+      },
+      {
+        "label": "史郎的本性",
+        "raw": "史郎的本性 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "被辜负的信赖",
+        "raw": "被辜负的信赖"
+      },
+      {
+        "label": "与凤蝶的对峙",
+        "raw": "与凤蝶的对峙"
+      },
+      {
+        "label": "凤蝶与史郎",
+        "raw": "凤蝶与史郎"
+      },
+      {
+        "label": "觉悟",
+        "raw": "觉悟"
+      },
+      {
+        "label": "斩命的武器",
+        "raw": "斩命的武器"
+      },
+      {
+        "label": "史郎的玩具",
+        "raw": "史郎的玩具 1/2【SAVE16*2】",
+        "saveLabel": "SAVE16*2",
+        "variant": "1/2"
+      },
+      {
+        "label": "帮助的理由",
+        "raw": "帮助的理由"
+      },
+      {
+        "label": "维护",
+        "raw": "维护"
+      },
+      {
+        "label": "史郎的不满",
+        "raw": "史郎的不满"
+      },
+      {
+        "label": "神武的命令",
+        "raw": "神武的命令"
+      },
+      {
+        "label": "身体检查",
+        "raw": "身体检查"
+      },
+      {
+        "label": "尸体所在之处",
+        "raw": "尸体所在之处"
+      },
+      {
+        "label": "能力的可能性",
+        "raw": "能力的可能性"
+      },
+      {
+        "label": "失落的虫使一族",
+        "raw": "失落的虫使一族"
+      },
+      {
+        "label": "难以直视的真实",
+        "raw": "难以直视的真实"
+      },
+      {
+        "label": "于地下扩散的噩梦",
+        "raw": "于地下扩散的噩梦"
+      },
+      {
+        "label": "由莉雅的决裂",
+        "raw": "由莉雅的决裂"
+      },
+      {
+        "label": "余下的工作",
+        "raw": "余下的工作"
+      },
+      {
+        "label": "随性的生活方式",
+        "raw": "随性的生活方式"
+      },
+      {
+        "label": "END 11 —— 随性的生活方式",
+        "raw": "END 11 —— 随性的生活方式",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→西馆篇分支）",
+    "block": 10,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE16开始（1/2）",
+      "raw": "SAVE16开始（1/2）",
+      "saveId": "SAVE16"
+    },
+    "steps": [
+      {
+        "label": "SAVE16开始（1/2）",
+        "raw": "SAVE16开始（1/2）",
+        "type": "savestart",
+        "saveId": "SAVE16",
+        "variant": "1/2"
+      },
+      {
+        "label": "复仇",
+        "raw": "复仇"
+      },
+      {
+        "label": "怨恨者与被怨恨者",
+        "raw": "怨恨者与被怨恨者"
+      },
+      {
+        "label": "神武的命令",
+        "raw": "神武的命令"
+      },
+      {
+        "label": "身体检查",
+        "raw": "身体检查"
+      },
+      {
+        "label": "失落的虫使一族",
+        "raw": "失落的虫使一族"
+      },
+      {
+        "label": "提前布下的陷阱",
+        "raw": "提前布下的陷阱"
+      },
+      {
+        "label": "策略与逆袭",
+        "raw": "策略与逆袭"
+      },
+      {
+        "label": "被击碎的心脏",
+        "raw": "被击碎的心脏"
+      },
+      {
+        "label": "疯狂的实验Ⅰ",
+        "raw": "疯狂的实验Ⅰ"
+      },
+      {
+        "label": "疯狂的实验Ⅱ",
+        "raw": "疯狂的实验Ⅱ"
+      },
+      {
+        "label": "疯狂的实验Ⅲ",
+        "raw": "疯狂的实验Ⅲ"
+      },
+      {
+        "label": "超越死亡的少女",
+        "raw": "超越死亡的少女"
+      },
+      {
+        "label": "END 12 —— 超越死亡的少女",
+        "raw": "END 12 —— 超越死亡的少女",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→西馆篇分支）",
+    "block": 11,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE16开始（2/2）",
+      "raw": "SAVE16开始（2/2）",
+      "saveId": "SAVE16"
+    },
+    "steps": [
+      {
+        "label": "SAVE16开始（2/2）",
+        "raw": "SAVE16开始（2/2）",
+        "type": "savestart",
+        "saveId": "SAVE16",
+        "variant": "2/2"
+      },
+      {
+        "label": "复仇",
+        "raw": "复仇"
+      },
+      {
+        "label": "神武的命令",
+        "raw": "神武的命令"
+      },
+      {
+        "label": "身体检查",
+        "raw": "身体检查"
+      },
+      {
+        "label": "失落的虫使一族",
+        "raw": "失落的虫使一族"
+      },
+      {
+        "label": "梦美的企图",
+        "raw": "梦美的企图"
+      },
+      {
+        "label": "Dr.West的助手",
+        "raw": "Dr.West的助手"
+      },
+      {
+        "label": "END 13 —— Dr. West的助手",
+        "raw": "END 13 —— Dr. West的助手",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→凤蝶篇分支）",
+    "block": 1,
+    "start": {
+      "type": "chapterstart",
+      "label": "虫蛹篇 PrologueⅠ开始",
+      "raw": "虫蛹篇 PrologueⅠ开始"
+    },
+    "steps": [
+      {
+        "label": "虫蛹篇 PrologueⅠ开始",
+        "raw": "虫蛹篇 PrologueⅠ开始",
+        "type": "chapterstart"
+      },
+      {
+        "label": "梦美的生活",
+        "raw": "梦美的生活"
+      },
+      {
+        "label": "AnzU",
+        "raw": "AnzU"
+      },
+      {
+        "label": "夜晚的工作",
+        "raw": "夜晚的工作"
+      },
+      {
+        "label": "回家",
+        "raw": "回家"
+      },
+      {
+        "label": "新的菜品",
+        "raw": "新的菜品"
+      },
+      {
+        "label": "景气的店铺",
+        "raw": "景气的店铺"
+      },
+      {
+        "label": "梦美与杏子",
+        "raw": "梦美与杏子"
+      },
+      {
+        "label": "青年的邀请",
+        "raw": "青年的邀请"
+      },
+      {
+        "label": "优斗与史郎",
+        "raw": "优斗与史郎"
+      },
+      {
+        "label": "困惑",
+        "raw": "困惑"
+      },
+      {
+        "label": "（爽约）",
+        "raw": "＃（爽约 1/2）",
+        "type": "note",
+        "variant": "1/2"
+      },
+      {
+        "label": "约会",
+        "raw": "约会 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "青年不在的早晨",
+        "raw": "青年不在的早晨"
+      },
+      {
+        "label": "杏子的礼物",
+        "raw": "杏子的礼物"
+      },
+      {
+        "label": "与青年的关系",
+        "raw": "与青年的关系 1/3",
+        "variant": "1/3"
+      },
+      {
+        "label": "温柔的夜晚",
+        "raw": "温柔的夜晚 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "长腿叔叔",
+        "raw": "长腿叔叔"
+      },
+      {
+        "label": "吧台座位",
+        "raw": "吧台座位"
+      },
+      {
+        "label": "工作招募",
+        "raw": "工作招募【SAVE17】",
+        "saveLabel": "SAVE17"
+      },
+      {
+        "label": "贴启事的地方Ⅰ",
+        "raw": "贴启事的地方Ⅰ"
+      },
+      {
+        "label": "异変",
+        "raw": "异変"
+      },
+      {
+        "label": "疑惑",
+        "raw": "疑惑"
+      },
+      {
+        "label": "在AnzU度过",
+        "raw": "在AnzU度过"
+      },
+      {
+        "label": "袭击",
+        "raw": "袭击"
+      },
+      {
+        "label": "史郎与凤蝶的工作",
+        "raw": "史郎与凤蝶的工作"
+      },
+      {
+        "label": "异样的早晨",
+        "raw": "异样的早晨"
+      },
+      {
+        "label": "杏子的请求",
+        "raw": "杏子的请求"
+      },
+      {
+        "label": "面试",
+        "raw": "面试【SAVE18】",
+        "saveLabel": "SAVE18"
+      },
+      {
+        "label": "偶然的重逢",
+        "raw": "偶然的重逢"
+      },
+      {
+        "label": "同居人",
+        "raw": "同居人"
+      },
+      {
+        "label": "打工的同伴",
+        "raw": "打工的同伴 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "彼此的称呼",
+        "raw": "彼此的称呼"
+      },
+      {
+        "label": "招待凤蝶",
+        "raw": "招待凤蝶"
+      },
+      {
+        "label": "清晨的外出",
+        "raw": "清晨的外出【SAVE19】",
+        "saveLabel": "SAVE19"
+      },
+      {
+        "label": "优斗的邀请",
+        "raw": "优斗的邀请"
+      },
+      {
+        "label": "凤蝶的邀请",
+        "raw": "凤蝶的邀请 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "莲的忠告",
+        "raw": "莲的忠告【SAVE20】",
+        "saveLabel": "SAVE20"
+      },
+      {
+        "label": "休息日的安排Ⅱ",
+        "raw": "休息日的安排Ⅱ"
+      },
+      {
+        "label": "冻结时间的兽魔",
+        "raw": "冻结时间的兽魔 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "被丢下的孩子",
+        "raw": "被丢下的孩子"
+      },
+      {
+        "label": "逃避现实",
+        "raw": "逃避现实"
+      },
+      {
+        "label": "秘密花园",
+        "raw": "（→ 凤蝶篇）秘密花园",
+        "type": "nextpoint",
+        "targetHint": "凤蝶篇"
+      },
+      {
+        "label": "目送",
+        "raw": "目送"
+      },
+      {
+        "label": "安稳的晚餐时光",
+        "raw": "安稳的晚餐时光【SAVE21】",
+        "saveLabel": "SAVE21"
+      },
+      {
+        "label": "与我的孩子分别",
+        "raw": "与我的孩子分别"
+      },
+      {
+        "label": "上班",
+        "raw": "上班"
+      },
+      {
+        "label": "绕道",
+        "raw": "绕道"
+      },
+      {
+        "label": "与莲的诀别",
+        "raw": "与莲的诀别 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "梦美的幸福",
+        "raw": "梦美的幸福 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "开始扭曲的日常",
+        "raw": "开始扭曲的日常 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "被侵蚀的肉体",
+        "raw": "被侵蚀的肉体 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "手臂的痣",
+        "raw": "手臂的痣"
+      },
+      {
+        "label": "拜访者",
+        "raw": "拜访者"
+      },
+      {
+        "label": "渴求凤蝶",
+        "raw": "渴求凤蝶"
+      },
+      {
+        "label": "END 9 —— 渴求凤蝶",
+        "raw": "END 9 —— 渴求凤蝶",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→凤蝶篇分支）",
+    "block": 2,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE21开始",
+      "raw": "SAVE21开始",
+      "saveId": "SAVE21"
+    },
+    "steps": [
+      {
+        "label": "SAVE21开始",
+        "raw": "SAVE21开始",
+        "type": "savestart",
+        "saveId": "SAVE21"
+      },
+      {
+        "label": "上班",
+        "raw": "上班"
+      },
+      {
+        "label": "异性的快乐",
+        "raw": "异性的快乐"
+      },
+      {
+        "label": "将虫借出",
+        "raw": "将虫借出"
+      },
+      {
+        "label": "与莲的诀别",
+        "raw": "与莲的诀别 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "梦美的幸福",
+        "raw": "梦美的幸福 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "开始扭曲的日常",
+        "raw": "开始扭曲的日常 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "被侵蚀的肉体",
+        "raw": "被侵蚀的肉体 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "手臂的痣",
+        "raw": "手臂的痣"
+      },
+      {
+        "label": "无法抑制的欲望",
+        "raw": "无法抑制的欲望"
+      },
+      {
+        "label": "凤蝶的计划Ⅰ",
+        "raw": "凤蝶的计划Ⅰ"
+      },
+      {
+        "label": "优斗的探望",
+        "raw": "优斗的探望"
+      },
+      {
+        "label": "凤蝶的计划Ⅱ",
+        "raw": "凤蝶的计划Ⅱ"
+      },
+      {
+        "label": "杏子的探望",
+        "raw": "杏子的探望【SAVE22】",
+        "saveLabel": "SAVE22"
+      },
+      {
+        "label": "污秽的报酬",
+        "raw": "污秽的报酬"
+      },
+      {
+        "label": "杏子的末路",
+        "raw": "杏子的末路"
+      },
+      {
+        "label": "END 22 —— AnzU的末路",
+        "raw": "END 22 —— AnzU的末路",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→凤蝶篇分支）",
+    "block": 3,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE22开始",
+      "raw": "SAVE22开始",
+      "saveId": "SAVE22"
+    },
+    "steps": [
+      {
+        "label": "SAVE22开始",
+        "raw": "SAVE22开始",
+        "type": "savestart",
+        "saveId": "SAVE22"
+      },
+      {
+        "label": "失去的容身地",
+        "raw": "失去的容身地"
+      },
+      {
+        "label": "背叛",
+        "raw": "背叛"
+      },
+      {
+        "label": "（被记述的真实）",
+        "raw": "＃（被记述的真实）",
+        "type": "note"
+      },
+      {
+        "label": "怪死事件",
+        "raw": "怪死事件"
+      },
+      {
+        "label": "欲望与复仇Ⅰ",
+        "raw": "欲望与复仇Ⅰ"
+      },
+      {
+        "label": "欲望与复仇Ⅱ",
+        "raw": "欲望与复仇Ⅱ"
+      },
+      {
+        "label": "欲望与复仇Ⅲ",
+        "raw": "欲望与复仇Ⅲ"
+      },
+      {
+        "label": "人与虫间的缝隙",
+        "raw": "人与虫间的缝隙"
+      },
+      {
+        "label": "END 10 —— 人与虫间的缝隙",
+        "raw": "END 10 —— 人与虫间的缝隙",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→梦美篇不断臂分支）",
+    "block": 1,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE20开始",
+      "raw": "SAVE20开始",
+      "saveId": "SAVE20"
+    },
+    "steps": [
+      {
+        "label": "SAVE20开始",
+        "raw": "SAVE20开始",
+        "type": "savestart",
+        "saveId": "SAVE20"
+      },
+      {
+        "label": "休息日的安排Ⅰ",
+        "raw": "休息日的安排Ⅰ"
+      },
+      {
+        "label": "冻结时间的兽魔",
+        "raw": "冻结时间的兽魔 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "被丢下的孩子",
+        "raw": "被丢下的孩子"
+      },
+      {
+        "label": "凌乱不堪的房间",
+        "raw": "凌乱不堪的房间"
+      },
+      {
+        "label": "挡路之人",
+        "raw": "挡路之人"
+      },
+      {
+        "label": "莲给的选项",
+        "raw": "莲给的选项 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "由莉雅的报告",
+        "raw": "由莉雅的报告"
+      },
+      {
+        "label": "梦美的回答",
+        "raw": "梦美的回答"
+      },
+      {
+        "label": "昏暗的仓库Ⅰ",
+        "raw": "（→ 虫使篇） 昏暗的仓库Ⅰ",
+        "type": "nextpoint",
+        "targetHint": "虫使篇"
+      },
+      {
+        "label": "在冰冷的床上Ⅰ",
+        "raw": "在冰冷的床上Ⅰ"
+      },
+      {
+        "label": "训练Ⅰ",
+        "raw": "训练Ⅰ 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "迷茫的夜晚",
+        "raw": "迷茫的夜晚 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "训练Ⅱ",
+        "raw": "训练Ⅱ 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "久疏的休息",
+        "raw": "久疏的休息"
+      },
+      {
+        "label": "治疗伤口",
+        "raw": "治疗伤口"
+      },
+      {
+        "label": "神武的内部",
+        "raw": "神武的内部"
+      },
+      {
+        "label": "独自在仓库等候",
+        "raw": "独自在仓库等候 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "回来的莲",
+        "raw": "回来的莲"
+      },
+      {
+        "label": "被捕的美弥香",
+        "raw": "被捕的美弥香"
+      },
+      {
+        "label": "仓库生活Ⅰ",
+        "raw": "仓库生活Ⅰ"
+      },
+      {
+        "label": "仓库生活Ⅱ",
+        "raw": "仓库生活Ⅱ"
+      },
+      {
+        "label": "发觉到的美弥香",
+        "raw": "发觉到的美弥香"
+      },
+      {
+        "label": "与莲的交流",
+        "raw": "与莲的交流"
+      },
+      {
+        "label": "仓库生活Ⅲ",
+        "raw": "仓库生活Ⅲ"
+      },
+      {
+        "label": "仓库生活Ⅳ",
+        "raw": "仓库生活Ⅳ 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "梦美的提议",
+        "raw": "梦美的提议"
+      },
+      {
+        "label": "最后的胜利者",
+        "raw": "最后的胜利者 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "END 2 —— 取回的生活",
+        "raw": "END 2 —— 取回的生活",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→梦美篇不断臂分支）",
+    "block": 2,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE19开始",
+      "raw": "SAVE19开始",
+      "saveId": "SAVE19"
+    },
+    "steps": [
+      {
+        "label": "SAVE19开始",
+        "raw": "SAVE19开始",
+        "type": "savestart",
+        "saveId": "SAVE19"
+      },
+      {
+        "label": "开朗的凤蝶",
+        "raw": "开朗的凤蝶"
+      },
+      {
+        "label": "凤蝶的邀请",
+        "raw": "凤蝶的邀请 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "凤蝶的电话",
+        "raw": "凤蝶的电话"
+      },
+      {
+        "label": "被虐待的日子",
+        "raw": "被虐待的日子"
+      },
+      {
+        "label": "（回收cg后结束）",
+        "raw": "（回收cg后结束）",
+        "type": "note"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→梦美篇不断臂分支）",
+    "block": 3,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE17开始",
+      "raw": "SAVE17开始",
+      "saveId": "SAVE17"
+    },
+    "steps": [
+      {
+        "label": "SAVE17开始",
+        "raw": "SAVE17开始",
+        "type": "savestart",
+        "saveId": "SAVE17"
+      },
+      {
+        "label": "贴启事的地方Ⅱ",
+        "raw": "贴启事的地方Ⅱ"
+      },
+      {
+        "label": "异変",
+        "raw": "异変"
+      },
+      {
+        "label": "疑惑",
+        "raw": "疑惑"
+      },
+      {
+        "label": "在家里度过",
+        "raw": "在家里度过"
+      },
+      {
+        "label": "袭击",
+        "raw": "袭击"
+      },
+      {
+        "label": "两人的邂逅",
+        "raw": "两人的邂逅【SAVE23】",
+        "saveLabel": "SAVE23"
+      },
+      {
+        "label": "与虫的连接点",
+        "raw": "与虫的连接点"
+      },
+      {
+        "label": "异样的早晨",
+        "raw": "异样的早晨"
+      },
+      {
+        "label": "优斗的兴趣",
+        "raw": "优斗的兴趣"
+      },
+      {
+        "label": "没有人来打工",
+        "raw": "没有人来打工 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "同居人",
+        "raw": "同居人"
+      },
+      {
+        "label": "莲的来访",
+        "raw": "莲的来访"
+      },
+      {
+        "label": "小小的抗议",
+        "raw": "小小的抗议 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "（回收cg后结束）",
+        "raw": "（回收cg后结束）",
+        "type": "note"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→梦美篇不断臂分支）",
+    "block": 4,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE23开始",
+      "raw": "SAVE23开始",
+      "saveId": "SAVE23"
+    },
+    "steps": [
+      {
+        "label": "SAVE23开始",
+        "raw": "SAVE23开始",
+        "type": "savestart",
+        "saveId": "SAVE23"
+      },
+      {
+        "label": "给母亲的信",
+        "raw": "给母亲的信"
+      },
+      {
+        "label": "异样的早晨",
+        "raw": "异样的早晨"
+      },
+      {
+        "label": "没有人来打工",
+        "raw": "没有人来打工 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "（回收cg后结束）",
+        "raw": "（回收cg后结束）",
+        "type": "note"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→梦美篇不断臂分支）",
+    "block": 5,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE11开始（1/2）",
+      "raw": "SAVE11开始（1/2）",
+      "saveId": "SAVE11"
+    },
+    "steps": [
+      {
+        "label": "SAVE11开始（1/2）",
+        "raw": "SAVE11开始（1/2）",
+        "type": "savestart",
+        "saveId": "SAVE11",
+        "variant": "1/2"
+      },
+      {
+        "label": "莲给的选项",
+        "raw": "莲给的选项 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "梦美的回答",
+        "raw": "梦美的回答"
+      },
+      {
+        "label": "昏暗的仓库Ⅰ",
+        "raw": "（→ 虫使篇）昏暗的仓库Ⅰ",
+        "type": "nextpoint",
+        "targetHint": "虫使篇"
+      },
+      {
+        "label": "在冰冷的床上Ⅰ",
+        "raw": "在冰冷的床上Ⅰ"
+      },
+      {
+        "label": "训练Ⅰ",
+        "raw": "训练Ⅰ 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "迷茫的夜晚",
+        "raw": "迷茫的夜晚 1/2【SAVE24】",
+        "saveLabel": "SAVE24",
+        "variant": "1/2"
+      },
+      {
+        "label": "训练Ⅱ",
+        "raw": "训练Ⅱ 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "久疏的休息",
+        "raw": "久疏的休息"
+      },
+      {
+        "label": "治疗伤口",
+        "raw": "治疗伤口"
+      },
+      {
+        "label": "神武的内部",
+        "raw": "神武的内部"
+      },
+      {
+        "label": "作战变更",
+        "raw": "作战变更"
+      },
+      {
+        "label": "记忆的角落",
+        "raw": "记忆的角落"
+      },
+      {
+        "label": "西的宅邸",
+        "raw": "西的宅邸 1/3",
+        "variant": "1/3"
+      },
+      {
+        "label": "反复的凌辱",
+        "raw": "反复的凌辱"
+      },
+      {
+        "label": "END 8 —— 反复的凌辱",
+        "raw": "END 8 —— 反复的凌辱",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→梦美篇不断臂分支）",
+    "block": 6,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE24开始",
+      "raw": "SAVE24开始",
+      "saveId": "SAVE24"
+    },
+    "steps": [
+      {
+        "label": "SAVE24开始",
+        "raw": "SAVE24开始",
+        "type": "savestart",
+        "saveId": "SAVE24"
+      },
+      {
+        "label": "优斗的心意",
+        "raw": "优斗的心意 2/3",
+        "variant": "2/3"
+      },
+      {
+        "label": "训练Ⅱ",
+        "raw": "训练Ⅱ 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "支撑梦美的人",
+        "raw": "支撑梦美的人 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "嫉妒",
+        "raw": "嫉妒"
+      },
+      {
+        "label": "局外人",
+        "raw": "局外人"
+      },
+      {
+        "label": "试炼的开始Ⅰ（建议存档*2）",
+        "raw": "（→ 梦美篇·一）试炼的开始Ⅰ（建议存档*2）",
+        "type": "nextpoint",
+        "targetHint": "梦美篇·一"
+      }
+    ]
+  },
+  {
+    "chapter": "虫蛹篇（→梦美篇断臂分支）",
+    "block": 1,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE11开始（2/2）",
+      "raw": "SAVE11开始（2/2）",
+      "saveId": "SAVE11"
+    },
+    "steps": [
+      {
+        "label": "SAVE11开始（2/2）",
+        "raw": "SAVE11开始（2/2）",
+        "type": "savestart",
+        "saveId": "SAVE11",
+        "variant": "2/2"
+      },
+      {
+        "label": "小巷的噩梦",
+        "raw": "小巷的噩梦"
+      },
+      {
+        "label": "失去的右臂",
+        "raw": "失去的右臂"
+      },
+      {
+        "label": "昏暗的仓库Ⅱ",
+        "raw": "（→ 虫使篇）昏暗的仓库Ⅱ",
+        "type": "nextpoint",
+        "targetHint": "虫使篇"
+      },
+      {
+        "label": "在冰冷的床上Ⅱ",
+        "raw": "在冰冷的床上Ⅱ"
+      },
+      {
+        "label": "训练Ⅰ",
+        "raw": "训练Ⅰ 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "迷茫的夜晚",
+        "raw": "迷茫的夜晚 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "优斗的心意",
+        "raw": "优斗的心意 3/3",
+        "variant": "3/3"
+      },
+      {
+        "label": "训练Ⅱ",
+        "raw": "训练Ⅱ 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "支撑梦美的人",
+        "raw": "支撑梦美的人 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "嫉妒",
+        "raw": "嫉妒"
+      },
+      {
+        "label": "局外人",
+        "raw": "局外人"
+      },
+      {
+        "label": "试炼的开始Ⅱ（建议存档）",
+        "raw": "（→ 梦美篇·一）试炼的开始Ⅱ（建议存档）",
+        "type": "nextpoint",
+        "targetHint": "梦美篇·一"
+      }
+    ]
+  },
+  {
+    "chapter": "梦美篇·一/二（不断臂分支）",
+    "block": 1,
+    "start": {
+      "type": "chapterstart",
+      "label": "（虫使篇） 试炼的开始Ⅰ开始",
+      "raw": "（虫使篇） 试炼的开始Ⅰ开始"
+    },
+    "steps": [
+      {
+        "label": "（虫使篇） 试炼的开始Ⅰ开始",
+        "raw": "（虫使篇） 试炼的开始Ⅰ开始",
+        "type": "chapterstart"
+      },
+      {
+        "label": "虫使之森",
+        "raw": "虫使之森"
+      },
+      {
+        "label": "监视着的莲",
+        "raw": "监视着的莲"
+      },
+      {
+        "label": "讨厌的女人",
+        "raw": "讨厌的女人 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "森林之夜",
+        "raw": "森林之夜"
+      },
+      {
+        "label": "夜至天明",
+        "raw": "夜至天明"
+      },
+      {
+        "label": "开始偏离的道路",
+        "raw": "开始偏离的道路 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "生理现象",
+        "raw": "生理现象【SAVE25】",
+        "saveLabel": "SAVE25"
+      },
+      {
+        "label": "去远点的地方",
+        "raw": "去远点的地方 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "BE 5 —— 去远点的地方",
+        "raw": "BE 5 —— 去远点的地方",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "梦美篇·一/二（不断臂分支）",
+    "block": 2,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE25开始",
+      "raw": "SAVE25开始",
+      "saveId": "SAVE25"
+    },
+    "steps": [
+      {
+        "label": "SAVE25开始",
+        "raw": "SAVE25开始",
+        "type": "savestart",
+        "saveId": "SAVE25"
+      },
+      {
+        "label": "就近寻找隐秘处",
+        "raw": "就近寻找隐秘处 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "尴尬的时间",
+        "raw": "尴尬的时间 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "如临其境的虫息",
+        "raw": "如临其境的虫息"
+      },
+      {
+        "label": "三岔路Ⅲ",
+        "raw": "三岔路Ⅲ"
+      },
+      {
+        "label": "满是孩子的房屋",
+        "raw": "满是孩子的房屋"
+      },
+      {
+        "label": "暴风雨之夜",
+        "raw": "暴风雨之夜"
+      },
+      {
+        "label": "虫茧",
+        "raw": "虫茧 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "敏锐的感觉",
+        "raw": "敏锐的感觉"
+      },
+      {
+        "label": "求喂的虫",
+        "raw": "求喂的虫"
+      },
+      {
+        "label": "茧中",
+        "raw": "茧中"
+      },
+      {
+        "label": "躁动的氛围",
+        "raw": "躁动的氛围【SAVE26】",
+        "saveLabel": "SAVE26"
+      },
+      {
+        "label": "昆虫采集",
+        "raw": "昆虫采集 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "找不到的出口",
+        "raw": "找不到的出口"
+      },
+      {
+        "label": "莲与美弥香",
+        "raw": "莲与美弥香"
+      },
+      {
+        "label": "脱下装束的时刻",
+        "raw": "脱下装束的时刻"
+      },
+      {
+        "label": "背后的暗杀者",
+        "raw": "背后的暗杀者"
+      },
+      {
+        "label": "END 16 —— 背后的暗杀者",
+        "raw": "END 16 —— 背后的暗杀者",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "梦美篇·一/二（不断臂分支）",
+    "block": 3,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE26开始",
+      "raw": "SAVE26开始",
+      "saveId": "SAVE26"
+    },
+    "steps": [
+      {
+        "label": "SAVE26开始",
+        "raw": "SAVE26开始",
+        "type": "savestart",
+        "saveId": "SAVE26"
+      },
+      {
+        "label": "地上的东西",
+        "raw": "地上的东西"
+      },
+      {
+        "label": "被杀掉的孩子们",
+        "raw": "被杀掉的孩子们【SAVE27】",
+        "saveLabel": "SAVE27"
+      },
+      {
+        "label": "脱下装束的时刻",
+        "raw": "脱下装束的时刻【SAVE28】",
+        "saveLabel": "SAVE28"
+      },
+      {
+        "label": "前往结界之外",
+        "raw": "前往结界之外 3/4",
+        "variant": "3/4"
+      },
+      {
+        "label": "优斗之死",
+        "raw": "（→ 梦美篇·二）优斗之死",
+        "type": "nextpoint",
+        "targetHint": "梦美篇·二"
+      },
+      {
+        "label": "追随优斗",
+        "raw": "追随优斗"
+      },
+      {
+        "label": "END 19 —— 追随优斗",
+        "raw": "END 19 —— 追随优斗",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "梦美篇·一/二（不断臂分支）",
+    "block": 4,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE28开始",
+      "raw": "SAVE28开始",
+      "saveId": "SAVE28"
+    },
+    "steps": [
+      {
+        "label": "SAVE28开始",
+        "raw": "SAVE28开始",
+        "type": "savestart",
+        "saveId": "SAVE28"
+      },
+      {
+        "label": "意想不到的再会",
+        "raw": "意想不到的再会"
+      },
+      {
+        "label": "前往结界之外",
+        "raw": "前往结界之外 1/4",
+        "variant": "1/4"
+      },
+      {
+        "label": "与莲的对峙",
+        "raw": "与莲的对峙"
+      },
+      {
+        "label": "莲VS兽魔虫",
+        "raw": "莲VS兽魔虫"
+      },
+      {
+        "label": "暂时的休息",
+        "raw": "暂时的休息 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "想要我的孩子",
+        "raw": "想要我的孩子"
+      },
+      {
+        "label": "救出作战开始",
+        "raw": "救出作战开始"
+      },
+      {
+        "label": "梦美与唯的再会",
+        "raw": "梦美与唯的再会"
+      },
+      {
+        "label": "潜入森林的众人",
+        "raw": "潜入森林的众人"
+      },
+      {
+        "label": "史郎的诱拐",
+        "raw": "史郎的诱拐"
+      },
+      {
+        "label": "救出美弥香Ⅰ",
+        "raw": "救出美弥香Ⅰ 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "救出美弥香Ⅱ",
+        "raw": "救出美弥香Ⅱ 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "救出美弥香Ⅲ",
+        "raw": "救出美弥香Ⅲ"
+      },
+      {
+        "label": "美弥香与唯的再会",
+        "raw": "美弥香与唯的再会"
+      },
+      {
+        "label": "救出美弥香Ⅳ",
+        "raw": "救出美弥香Ⅳ 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "黄泉的礼物",
+        "raw": "黄泉的礼物"
+      },
+      {
+        "label": "最强的虫使",
+        "raw": "最强的虫使 3/4",
+        "variant": "3/4"
+      },
+      {
+        "label": "BE 6 —— 最强的虫使（1）",
+        "raw": "BE 6 —— 最强的虫使（1）",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "梦美篇·一/二（不断臂分支）",
+    "block": 5,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE27开始",
+      "raw": "SAVE27开始",
+      "saveId": "SAVE27"
+    },
+    "steps": [
+      {
+        "label": "SAVE27开始",
+        "raw": "SAVE27开始",
+        "type": "savestart",
+        "saveId": "SAVE27"
+      },
+      {
+        "label": "幸存者",
+        "raw": "幸存者"
+      },
+      {
+        "label": "脱下装束的时刻",
+        "raw": "脱下装束的时刻"
+      },
+      {
+        "label": "被捉的凤蝶",
+        "raw": "被捉的凤蝶"
+      },
+      {
+        "label": "意想不到的再会",
+        "raw": "意想不到的再会【SAVE29】",
+        "saveLabel": "SAVE29"
+      },
+      {
+        "label": "没能牵起的手",
+        "raw": "没能牵起的手"
+      },
+      {
+        "label": "前往结界之外",
+        "raw": "前往结界之外 3/4",
+        "variant": "3/4"
+      },
+      {
+        "label": "优斗之死",
+        "raw": "（→ 梦美篇·二）优斗之死",
+        "type": "nextpoint",
+        "targetHint": "梦美篇·二"
+      },
+      {
+        "label": "融于森林Ⅰ",
+        "raw": "融于森林Ⅰ"
+      },
+      {
+        "label": "融于森林Ⅱ",
+        "raw": "融于森林Ⅱ"
+      },
+      {
+        "label": "融于森林Ⅲ",
+        "raw": "融于森林Ⅲ"
+      },
+      {
+        "label": "融于森林Ⅳ",
+        "raw": "融于森林Ⅳ"
+      },
+      {
+        "label": "融于森林Ⅴ",
+        "raw": "融于森林Ⅴ"
+      },
+      {
+        "label": "融于森林Ⅵ",
+        "raw": "融于森林Ⅵ"
+      },
+      {
+        "label": "融于森林Ⅶ",
+        "raw": "融于森林Ⅶ"
+      },
+      {
+        "label": "END 20 —— 融于森林",
+        "raw": "END 20 —— 融于森林",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "梦美篇·一/二（不断臂分支）",
+    "block": 6,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE29开始",
+      "raw": "SAVE29开始",
+      "saveId": "SAVE29"
+    },
+    "steps": [
+      {
+        "label": "SAVE29开始",
+        "raw": "SAVE29开始",
+        "type": "savestart",
+        "saveId": "SAVE29"
+      },
+      {
+        "label": "与凤蝶一起",
+        "raw": "与凤蝶一起"
+      },
+      {
+        "label": "前往结界之外",
+        "raw": "前往结界之外 1/4",
+        "variant": "1/4"
+      },
+      {
+        "label": "与莲的对峙",
+        "raw": "与莲的对峙"
+      },
+      {
+        "label": "暂时的休息",
+        "raw": "暂时的休息 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "想要我的孩子",
+        "raw": "想要我的孩子"
+      },
+      {
+        "label": "救出作战开始",
+        "raw": "救出作战开始"
+      },
+      {
+        "label": "潜入森林的众人",
+        "raw": "潜入森林的众人"
+      },
+      {
+        "label": "救出美弥香Ⅰ",
+        "raw": "救出美弥香Ⅰ 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "救出美弥香Ⅱ",
+        "raw": "救出美弥香Ⅱ 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "救出美弥香Ⅲ",
+        "raw": "救出美弥香Ⅲ"
+      },
+      {
+        "label": "救出美弥香Ⅳ",
+        "raw": "救出美弥香Ⅳ 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "最强的虫使",
+        "raw": "最强的虫使 1/4",
+        "variant": "1/4"
+      },
+      {
+        "label": "Eplogue",
+        "raw": "Eplogue 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "PrologueⅠ（建议存档）",
+        "raw": "（→ 成虫篇）PrologueⅠ（建议存档）",
+        "type": "nextpoint",
+        "targetHint": "成虫篇"
+      }
+    ]
+  },
+  {
+    "chapter": "梦美篇·一/二（不断臂分支）",
+    "block": 7,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE18开始",
+      "raw": "SAVE18开始",
+      "saveId": "SAVE18"
+    },
+    "steps": [
+      {
+        "label": "SAVE18开始",
+        "raw": "SAVE18开始",
+        "type": "savestart",
+        "saveId": "SAVE18"
+      },
+      {
+        "label": "同居人",
+        "raw": "同居人"
+      },
+      {
+        "label": "打工的同伴",
+        "raw": "打工的同伴 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "彼此的称呼",
+        "raw": "彼此的称呼"
+      },
+      {
+        "label": "小小的抗议",
+        "raw": "小小的抗议 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "清晨的外出",
+        "raw": "清晨的外出"
+      },
+      {
+        "label": "优斗的邀请",
+        "raw": "优斗的邀请"
+      },
+      {
+        "label": "莲的忠告",
+        "raw": "莲的忠告"
+      },
+      {
+        "label": "休息日的安排Ⅰ",
+        "raw": "休息日的安排Ⅰ"
+      },
+      {
+        "label": "冻结时间的兽魔",
+        "raw": "冻结时间的兽魔 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "莲给的选项",
+        "raw": "莲给的选项 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "梦美的回答",
+        "raw": "梦美的回答"
+      },
+      {
+        "label": "昏暗的仓库Ⅰ",
+        "raw": "（→ 虫使篇）昏暗的仓库Ⅰ",
+        "type": "nextpoint",
+        "targetHint": "虫使篇"
+      },
+      {
+        "label": "在冰冷的床上Ⅰ",
+        "raw": "在冰冷的床上Ⅰ"
+      },
+      {
+        "label": "训练Ⅰ",
+        "raw": "训练Ⅰ 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "迷茫的夜晚",
+        "raw": "迷茫的夜晚 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "优斗的心意",
+        "raw": "优斗的心意 1/3",
+        "variant": "1/3"
+      },
+      {
+        "label": "训练Ⅱ",
+        "raw": "训练Ⅱ 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "支撑梦美的人",
+        "raw": "支撑梦美的人 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "嫉妒",
+        "raw": "嫉妒"
+      },
+      {
+        "label": "局外人",
+        "raw": "局外人"
+      },
+      {
+        "label": "试炼的开始Ⅰ",
+        "raw": "（→ 梦美篇·一）试炼的开始Ⅰ",
+        "type": "nextpoint",
+        "targetHint": "梦美篇·一"
+      },
+      {
+        "label": "虫使之森",
+        "raw": "虫使之森"
+      },
+      {
+        "label": "讨厌的女人",
+        "raw": "讨厌的女人 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "森林之夜",
+        "raw": "森林之夜"
+      },
+      {
+        "label": "夜至天明",
+        "raw": "夜至天明"
+      },
+      {
+        "label": "开始偏离的道路",
+        "raw": "开始偏离的道路 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "生理现象",
+        "raw": "生理现象"
+      },
+      {
+        "label": "就近寻找隐秘处",
+        "raw": "就近寻找隐秘处 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "尴尬的时间",
+        "raw": "尴尬的时间 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "如临其境的虫息",
+        "raw": "如临其境的虫息"
+      },
+      {
+        "label": "三岔路Ⅰ",
+        "raw": "三岔路Ⅰ"
+      },
+      {
+        "label": "暴风雨之夜",
+        "raw": "暴风雨之夜"
+      },
+      {
+        "label": "虫茧",
+        "raw": "虫茧 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "敏锐的感觉",
+        "raw": "敏锐的感觉"
+      },
+      {
+        "label": "茧中",
+        "raw": "茧中"
+      },
+      {
+        "label": "躁动的氛围",
+        "raw": "躁动的氛围"
+      },
+      {
+        "label": "地上的东西",
+        "raw": "地上的东西"
+      },
+      {
+        "label": "被杀掉的孩子们",
+        "raw": "被杀掉的孩子们"
+      },
+      {
+        "label": "脱下装束的时刻",
+        "raw": "脱下装束的时刻"
+      },
+      {
+        "label": "意想不到的再会",
+        "raw": "意想不到的再会"
+      },
+      {
+        "label": "与凤蝶一起",
+        "raw": "与凤蝶一起"
+      },
+      {
+        "label": "前往结界之外",
+        "raw": "前往结界之外 1/4",
+        "variant": "1/4"
+      },
+      {
+        "label": "与莲的对峙",
+        "raw": "与莲的对峙"
+      },
+      {
+        "label": "暂时的休息",
+        "raw": "暂时的休息 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "泪与和平",
+        "raw": "泪与和平"
+      },
+      {
+        "label": "END 17 —— 泪与和平",
+        "raw": "END 17 —— 泪与和平",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "梦美篇·一/二（断臂分支）",
+    "block": 1,
+    "start": {
+      "type": "chapterstart",
+      "label": "梦美篇 试炼的开始Ⅱ开始",
+      "raw": "梦美篇 试炼的开始Ⅱ开始"
+    },
+    "steps": [
+      {
+        "label": "梦美篇 试炼的开始Ⅱ开始",
+        "raw": "梦美篇 试炼的开始Ⅱ开始",
+        "type": "chapterstart"
+      },
+      {
+        "label": "虫使之森",
+        "raw": "虫使之森"
+      },
+      {
+        "label": "讨厌的女人",
+        "raw": "讨厌的女人 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "森林之夜",
+        "raw": "森林之夜"
+      },
+      {
+        "label": "夜至天明",
+        "raw": "夜至天明"
+      },
+      {
+        "label": "开始偏离的道路",
+        "raw": "开始偏离的道路 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "生理现象",
+        "raw": "生理现象"
+      },
+      {
+        "label": "（去远点的地方）",
+        "raw": "＃（去远点的地方 2/2）",
+        "type": "note",
+        "variant": "2/2"
+      },
+      {
+        "label": "就近寻找隐秘处",
+        "raw": "就近寻找隐秘处 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "尴尬的时间",
+        "raw": "尴尬的时间 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "如临其境的虫息",
+        "raw": "如临其境的虫息【SAVE30】",
+        "saveLabel": "SAVE30"
+      },
+      {
+        "label": "三岔路Ⅱ",
+        "raw": "三岔路Ⅱ"
+      },
+      {
+        "label": "暴风雨之夜",
+        "raw": "暴风雨之夜"
+      },
+      {
+        "label": "虫茧",
+        "raw": "虫茧 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "悬崖上的树果",
+        "raw": "悬崖上的树果"
+      },
+      {
+        "label": "回忆之湖",
+        "raw": "回忆之湖"
+      },
+      {
+        "label": "躁动的氛围",
+        "raw": "躁动的氛围"
+      },
+      {
+        "label": "昆虫采集",
+        "raw": "昆虫采集 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "找不到的出口",
+        "raw": "找不到的出口"
+      },
+      {
+        "label": "脱下装束的时刻",
+        "raw": "脱下装束的时刻【SAVE31】",
+        "saveLabel": "SAVE31"
+      },
+      {
+        "label": "前往结界之外",
+        "raw": "前往结界之外 4/4",
+        "variant": "4/4"
+      },
+      {
+        "label": "BE 8 —— 前往结界之外",
+        "raw": "BE 8 —— 前往结界之外",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "梦美篇·一/二（断臂分支）",
+    "block": 2,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE31开始",
+      "raw": "SAVE31开始",
+      "saveId": "SAVE31"
+    },
+    "steps": [
+      {
+        "label": "SAVE31开始",
+        "raw": "SAVE31开始",
+        "type": "savestart",
+        "saveId": "SAVE31"
+      },
+      {
+        "label": "意想不到的再会",
+        "raw": "意想不到的再会"
+      },
+      {
+        "label": "与凤蝶一起",
+        "raw": "与凤蝶一起"
+      },
+      {
+        "label": "前往结界之外",
+        "raw": "前往结界之外 2/4",
+        "variant": "2/4"
+      },
+      {
+        "label": "迫切的选择",
+        "raw": "迫切的选择【SAVE32】",
+        "saveLabel": "SAVE32"
+      },
+      {
+        "label": "梦美的结论",
+        "raw": "（→ 梦美篇·二）梦美的结论【SAVE33*2】",
+        "type": "nextpoint",
+        "saveLabel": "SAVE33*2",
+        "targetHint": "梦美篇·二"
+      },
+      {
+        "label": "向出口前进",
+        "raw": "向出口前进"
+      },
+      {
+        "label": "被凌辱的凤蝶",
+        "raw": "被凌辱的凤蝶"
+      },
+      {
+        "label": "没能逃走的梦美",
+        "raw": "没能逃走的梦美"
+      },
+      {
+        "label": "END 18 —— 没能逃走的梦美",
+        "raw": "END 18 —— 没能逃走的梦美",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "梦美篇·一/二（断臂分支）",
+    "block": 3,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE33开始（1/2）",
+      "raw": "SAVE33开始（1/2）",
+      "saveId": "SAVE33"
+    },
+    "steps": [
+      {
+        "label": "SAVE33开始（1/2）",
+        "raw": "SAVE33开始（1/2）",
+        "type": "savestart",
+        "saveId": "SAVE33",
+        "variant": "1/2"
+      },
+      {
+        "label": "援护莲",
+        "raw": "援护莲【SAVE34】",
+        "saveLabel": "SAVE34"
+      },
+      {
+        "label": "意识到的两人",
+        "raw": "意识到的两人"
+      },
+      {
+        "label": "战斗结束Ⅱ",
+        "raw": "战斗结束Ⅱ"
+      },
+      {
+        "label": "森林时光的终结",
+        "raw": "森林时光的终结"
+      },
+      {
+        "label": "凌辱唯Ⅰ",
+        "raw": "凌辱唯Ⅰ"
+      },
+      {
+        "label": "凌辱美弥香Ⅰ",
+        "raw": "凌辱美弥香Ⅰ"
+      },
+      {
+        "label": "凌辱唯Ⅱ",
+        "raw": "凌辱唯Ⅱ"
+      },
+      {
+        "label": "凌辱唯Ⅲ",
+        "raw": "凌辱唯Ⅲ"
+      },
+      {
+        "label": "凌辱美弥香Ⅱ",
+        "raw": "凌辱美弥香Ⅱ"
+      },
+      {
+        "label": "美弥香与唯的末路Ⅰ",
+        "raw": "美弥香与唯的末路Ⅰ"
+      },
+      {
+        "label": "美弥香与唯的末路Ⅱ",
+        "raw": "美弥香与唯的末路Ⅱ"
+      },
+      {
+        "label": "美弥香与唯的末路Ⅲ",
+        "raw": "美弥香与唯的末路Ⅲ"
+      },
+      {
+        "label": "END 24 —— 美弥香与唯的末路",
+        "raw": "END 24 —— 美弥香与唯的末路",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "梦美篇·一/二（断臂分支）",
+    "block": 4,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE34开始",
+      "raw": "SAVE34开始",
+      "saveId": "SAVE34"
+    },
+    "steps": [
+      {
+        "label": "SAVE34开始",
+        "raw": "SAVE34开始",
+        "type": "savestart",
+        "saveId": "SAVE34"
+      },
+      {
+        "label": "梦美VS唯",
+        "raw": "梦美VS唯"
+      },
+      {
+        "label": "战斗结束Ⅰ",
+        "raw": "战斗结束Ⅰ"
+      },
+      {
+        "label": "森林时光的终结",
+        "raw": "森林时光的终结"
+      },
+      {
+        "label": "凌辱美弥香Ⅰ",
+        "raw": "凌辱美弥香Ⅰ"
+      },
+      {
+        "label": "凌辱美弥香Ⅱ",
+        "raw": "凌辱美弥香Ⅱ"
+      },
+      {
+        "label": "凌辱美弥香Ⅲ",
+        "raw": "凌辱美弥香Ⅲ"
+      },
+      {
+        "label": "END 23 —— 肉便器·美弥香",
+        "raw": "END 23 —— 肉便器·美弥香",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "梦美篇·一/二（断臂分支）",
+    "block": 5,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE33开始（2/2）",
+      "raw": "SAVE33开始（2/2）",
+      "saveId": "SAVE33"
+    },
+    "steps": [
+      {
+        "label": "SAVE33开始（2/2）",
+        "raw": "SAVE33开始（2/2）",
+        "type": "savestart",
+        "saveId": "SAVE33",
+        "variant": "2/2"
+      },
+      {
+        "label": "援护由莉雅一行人",
+        "raw": "援护由莉雅一行人"
+      },
+      {
+        "label": "忠告",
+        "raw": "忠告"
+      },
+      {
+        "label": "疾刃的寒光",
+        "raw": "疾刃的寒光"
+      },
+      {
+        "label": "由莉雅的末路",
+        "raw": "由莉雅的末路"
+      },
+      {
+        "label": "祈愿幸福",
+        "raw": "祈愿幸福"
+      },
+      {
+        "label": "战斗结束Ⅲ",
+        "raw": "战斗结束Ⅲ"
+      },
+      {
+        "label": "成为虫使之时",
+        "raw": "成为虫使之时"
+      },
+      {
+        "label": "优斗给予的回忆",
+        "raw": "优斗给予的回忆"
+      },
+      {
+        "label": "阴差阳错的邂逅",
+        "raw": "阴差阳错的邂逅"
+      },
+      {
+        "label": "在广阔的晴空下",
+        "raw": "在广阔的晴空下"
+      },
+      {
+        "label": "END 21 —— 在广阔的晴空下",
+        "raw": "END 21 —— 在广阔的晴空下",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "梦美篇·一/二（断臂分支）",
+    "block": 6,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE32开始",
+      "raw": "SAVE32开始",
+      "saveId": "SAVE32"
+    },
+    "steps": [
+      {
+        "label": "SAVE32开始",
+        "raw": "SAVE32开始",
+        "type": "savestart",
+        "saveId": "SAVE32"
+      },
+      {
+        "label": "美弥香的所在处",
+        "raw": "美弥香的所在处"
+      },
+      {
+        "label": "救出美弥香Ⅰ",
+        "raw": "救出美弥香Ⅰ 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "救出美弥香Ⅱ",
+        "raw": "救出美弥香Ⅱ 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "救出美弥香Ⅲ",
+        "raw": "救出美弥香Ⅲ"
+      },
+      {
+        "label": "救出美弥香Ⅳ",
+        "raw": "救出美弥香Ⅳ 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "最强的虫使",
+        "raw": "最强的虫使 4/4",
+        "variant": "4/4"
+      },
+      {
+        "label": "BE 7 —— 最强的虫使（2）",
+        "raw": "BE 7 —— 最强的虫使（2）",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "梦美篇·一/二（断臂分支）",
+    "block": 7,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE30开始",
+      "raw": "SAVE30开始",
+      "saveId": "SAVE30"
+    },
+    "steps": [
+      {
+        "label": "SAVE30开始",
+        "raw": "SAVE30开始",
+        "type": "savestart",
+        "saveId": "SAVE30"
+      },
+      {
+        "label": "三岔路Ⅲ",
+        "raw": "三岔路Ⅲ"
+      },
+      {
+        "label": "满是孩子的房屋",
+        "raw": "满是孩子的房屋"
+      },
+      {
+        "label": "暴风雨之夜",
+        "raw": "暴风雨之夜"
+      },
+      {
+        "label": "虫茧",
+        "raw": "虫茧 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "悬崖上的树果",
+        "raw": "悬崖上的树果"
+      },
+      {
+        "label": "茧中",
+        "raw": "茧中"
+      },
+      {
+        "label": "躁动的氛围",
+        "raw": "躁动的氛围"
+      },
+      {
+        "label": "地上的东西",
+        "raw": "地上的东西"
+      },
+      {
+        "label": "被杀掉的孩子们",
+        "raw": "被杀掉的孩子们"
+      },
+      {
+        "label": "幸存者",
+        "raw": "幸存者"
+      },
+      {
+        "label": "脱下装束的时刻",
+        "raw": "脱下装束的时刻"
+      },
+      {
+        "label": "意想不到的再会",
+        "raw": "意想不到的再会"
+      },
+      {
+        "label": "与凤蝶一起",
+        "raw": "与凤蝶一起"
+      },
+      {
+        "label": "前往结界之外",
+        "raw": "前往结界之外 2/4",
+        "variant": "2/4"
+      },
+      {
+        "label": "迫切的选择",
+        "raw": "迫切的选择"
+      },
+      {
+        "label": "美弥香的所在处",
+        "raw": "美弥香的所在处"
+      },
+      {
+        "label": "救出美弥香Ⅰ",
+        "raw": "救出美弥香Ⅰ 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "救出美弥香Ⅱ",
+        "raw": "救出美弥香Ⅱ 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "救出美弥香Ⅲ",
+        "raw": "救出美弥香Ⅲ"
+      },
+      {
+        "label": "救出美弥香Ⅳ",
+        "raw": "救出美弥香Ⅳ 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "最强的虫使",
+        "raw": "最强的虫使 2/4",
+        "variant": "2/4"
+      },
+      {
+        "label": "Epilogue",
+        "raw": "Epilogue 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "PrologueⅡ（建议存档）",
+        "raw": "（→ 成虫篇）PrologueⅡ（建议存档）",
+        "type": "nextpoint",
+        "targetHint": "成虫篇"
+      }
+    ]
+  },
+  {
+    "chapter": "成虫篇（不断臂分支）",
+    "block": 1,
+    "start": {
+      "type": "chapterstart",
+      "label": "成虫篇 PrologueⅠ开始",
+      "raw": "成虫篇 PrologueⅠ开始"
+    },
+    "steps": [
+      {
+        "label": "成虫篇 PrologueⅠ开始",
+        "raw": "成虫篇 PrologueⅠ开始",
+        "type": "chapterstart"
+      },
+      {
+        "label": "梦美的生活",
+        "raw": "梦美的生活"
+      },
+      {
+        "label": "出勤前",
+        "raw": "出勤前 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "Y&Y",
+        "raw": "Y&Y"
+      },
+      {
+        "label": "咖啡外卖",
+        "raw": "咖啡外卖"
+      },
+      {
+        "label": "与遥的再会",
+        "raw": "与遥的再会"
+      },
+      {
+        "label": "回家",
+        "raw": "回家 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "给虫虫取名的那天",
+        "raw": "给虫虫取名的那天"
+      },
+      {
+        "label": "早晨的电话",
+        "raw": "早晨的电话【SAVE35】",
+        "saveLabel": "SAVE35"
+      },
+      {
+        "label": "奇妙的联系",
+        "raw": "奇妙的联系"
+      },
+      {
+        "label": "绫佳与虫",
+        "raw": "绫佳与虫"
+      },
+      {
+        "label": "过去的黑幕",
+        "raw": "过去的黑幕 2/3",
+        "variant": "2/3"
+      },
+      {
+        "label": "休息日的计划",
+        "raw": "休息日的计划"
+      },
+      {
+        "label": "外出购物",
+        "raw": "外出购物"
+      },
+      {
+        "label": "隐秘的实验场",
+        "raw": "隐秘的实验场"
+      },
+      {
+        "label": "不安的夜晚",
+        "raw": "不安的夜晚"
+      },
+      {
+        "label": "早晨的骚动",
+        "raw": "早晨的骚动 1/3【SAVE36】",
+        "saveLabel": "SAVE36",
+        "variant": "1/3"
+      },
+      {
+        "label": "在家里",
+        "raw": "在家里"
+      },
+      {
+        "label": "未归的绫佳",
+        "raw": "未归的绫佳"
+      },
+      {
+        "label": "命运的分歧点",
+        "raw": "命运的分歧点 4/5",
+        "variant": "4/5"
+      },
+      {
+        "label": "绫佳的消息",
+        "raw": "绫佳的消息"
+      },
+      {
+        "label": "END 25 —— 梦美与绫佳的末路",
+        "raw": "END 25 —— 梦美与绫佳的末路",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "成虫篇（不断臂分支）",
+    "block": 2,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE36开始",
+      "raw": "SAVE36开始",
+      "saveId": "SAVE36"
+    },
+    "steps": [
+      {
+        "label": "SAVE36开始",
+        "raw": "SAVE36开始",
+        "type": "savestart",
+        "saveId": "SAVE36"
+      },
+      {
+        "label": "寻找遥Ⅰ",
+        "raw": "寻找遥Ⅰ"
+      },
+      {
+        "label": "母女相见Ⅰ",
+        "raw": "母女相见Ⅰ"
+      },
+      {
+        "label": "杏子的电话Ⅰ",
+        "raw": "杏子的电话Ⅰ"
+      },
+      {
+        "label": "命运的分歧点",
+        "raw": "命运的分歧点 1/5",
+        "variant": "1/5"
+      },
+      {
+        "label": "凤蝶的电话",
+        "raw": "凤蝶的电话"
+      },
+      {
+        "label": "亲友Ⅱ",
+        "raw": "亲友Ⅱ"
+      },
+      {
+        "label": "回家路上",
+        "raw": "回家路上"
+      },
+      {
+        "label": "绫佳的造访",
+        "raw": "绫佳的造访"
+      },
+      {
+        "label": "散步路上",
+        "raw": "散步路上 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "绫佳与遥",
+        "raw": "绫佳与遥"
+      },
+      {
+        "label": "15年的了结",
+        "raw": "15年的了结 1/3",
+        "variant": "1/3"
+      },
+      {
+        "label": "END 27 —— 15年的了结-1",
+        "raw": "END 27 —— 15年的了结-1",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "成虫篇（不断臂分支）",
+    "block": 3,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE35开始",
+      "raw": "SAVE35开始",
+      "saveId": "SAVE35"
+    },
+    "steps": [
+      {
+        "label": "SAVE35开始",
+        "raw": "SAVE35开始",
+        "type": "savestart",
+        "saveId": "SAVE35"
+      },
+      {
+        "label": "过去的黑幕",
+        "raw": "过去的黑幕 3/3",
+        "variant": "3/3"
+      },
+      {
+        "label": "休息日的计划",
+        "raw": "休息日的计划"
+      },
+      {
+        "label": "亲友Ⅰ",
+        "raw": "亲友Ⅰ 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "早晨的骚动",
+        "raw": "早晨的骚动 2/3",
+        "variant": "2/3"
+      },
+      {
+        "label": "久违的约会",
+        "raw": "久违的约会 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "命运的分歧点",
+        "raw": "命运的分歧点 1/5",
+        "variant": "1/5"
+      },
+      {
+        "label": "回家路上",
+        "raw": "回家路上"
+      },
+      {
+        "label": "绫佳的造访",
+        "raw": "绫佳的造访"
+      },
+      {
+        "label": "散步路上",
+        "raw": "散步路上 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "永远的污秽",
+        "raw": "永远的污秽"
+      },
+      {
+        "label": "15年的了结",
+        "raw": "15年的了结 3/3",
+        "variant": "3/3"
+      },
+      {
+        "label": "END 29 —— 粉碎的幸福",
+        "raw": "END 29 —— 粉碎的幸福",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "成虫篇（断臂分支）",
+    "block": 1,
+    "start": {
+      "type": "chapterstart",
+      "label": "成虫篇 PrologueⅡ开始",
+      "raw": "成虫篇 PrologueⅡ开始"
+    },
+    "steps": [
+      {
+        "label": "成虫篇 PrologueⅡ开始",
+        "raw": "成虫篇 PrologueⅡ开始",
+        "type": "chapterstart"
+      },
+      {
+        "label": "梦美的生活",
+        "raw": "梦美的生活"
+      },
+      {
+        "label": "出勤前",
+        "raw": "出勤前 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "Y&Y",
+        "raw": "Y&Y"
+      },
+      {
+        "label": "咖啡外卖",
+        "raw": "咖啡外卖【SAVE37】",
+        "saveLabel": "SAVE37"
+      },
+      {
+        "label": "与遥的再会",
+        "raw": "与遥的再会"
+      },
+      {
+        "label": "回家",
+        "raw": "回家 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "沉睡着的虫",
+        "raw": "沉睡着的虫"
+      },
+      {
+        "label": "早晨的电话",
+        "raw": "早晨的电话"
+      },
+      {
+        "label": "奇妙的联系",
+        "raw": "奇妙的联系"
+      },
+      {
+        "label": "过去的黑幕",
+        "raw": "过去的黑幕 2/3",
+        "variant": "2/3"
+      },
+      {
+        "label": "休息日的计划",
+        "raw": "休息日的计划"
+      },
+      {
+        "label": "外出购物",
+        "raw": "外出购物"
+      },
+      {
+        "label": "不安的夜晚",
+        "raw": "不安的夜晚"
+      },
+      {
+        "label": "早晨的骚动",
+        "raw": "早晨的骚动 1/3【SAVE38】",
+        "saveLabel": "SAVE38",
+        "variant": "1/3"
+      },
+      {
+        "label": "久违的约会",
+        "raw": "久违的约会 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "命运的分歧点",
+        "raw": "命运的分歧点 3/5",
+        "variant": "3/5"
+      },
+      {
+        "label": "寻找遥Ⅱ",
+        "raw": "寻找遥Ⅱ"
+      },
+      {
+        "label": "（逃回日常）",
+        "raw": "#（逃回日常）"
+      },
+      {
+        "label": "小巷的气息",
+        "raw": "小巷的气息【SAVE39】",
+        "saveLabel": "SAVE39"
+      },
+      {
+        "label": "明天的约定",
+        "raw": "明天的约定"
+      },
+      {
+        "label": "回家路上",
+        "raw": "回家路上"
+      },
+      {
+        "label": "（夜晚的电话）",
+        "raw": "#（夜晚的电话）"
+      },
+      {
+        "label": "被侵犯的遥",
+        "raw": "被侵犯的遥"
+      },
+      {
+        "label": "无尽的凌辱",
+        "raw": "无尽的凌辱"
+      },
+      {
+        "label": "梦美与遥的末路",
+        "raw": "梦美与遥的末路"
+      },
+      {
+        "label": "END 26 —— 梦美与遥的末路",
+        "raw": "END 26 —— 梦美与遥的末路",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "成虫篇（断臂分支）",
+    "block": 2,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE39开始",
+      "raw": "SAVE39开始",
+      "saveId": "SAVE39"
+    },
+    "steps": [
+      {
+        "label": "SAVE39开始",
+        "raw": "SAVE39开始",
+        "type": "savestart",
+        "saveId": "SAVE39"
+      },
+      {
+        "label": "母女相见Ⅱ",
+        "raw": "母女相见Ⅱ"
+      },
+      {
+        "label": "回家路上",
+        "raw": "回家路上"
+      },
+      {
+        "label": "杏子的电话Ⅱ",
+        "raw": "杏子的电话Ⅱ"
+      },
+      {
+        "label": "绫佳的造访",
+        "raw": "绫佳的造访"
+      },
+      {
+        "label": "散步路上",
+        "raw": "散步路上 1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "15年的了结",
+        "raw": "15年的了结 2/3",
+        "variant": "2/3"
+      },
+      {
+        "label": "END 28 —— 15年的了结-2",
+        "raw": "END 28 —— 15年的了结-2",
+        "type": "ending"
+      }
+    ]
+  },
+  {
+    "chapter": "成虫篇（断臂分支）",
+    "block": 3,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE38开始",
+      "raw": "SAVE38开始",
+      "saveId": "SAVE38"
+    },
+    "steps": [
+      {
+        "label": "SAVE38开始",
+        "raw": "SAVE38开始",
+        "type": "savestart",
+        "saveId": "SAVE38"
+      },
+      {
+        "label": "寻找遥Ⅰ",
+        "raw": "寻找遥Ⅰ"
+      },
+      {
+        "label": "母女相见Ⅰ",
+        "raw": "母女相见Ⅰ"
+      },
+      {
+        "label": "杏子的电话Ⅰ",
+        "raw": "杏子的电话Ⅰ"
+      },
+      {
+        "label": "命运的分歧点",
+        "raw": "命运的分歧点 2/5",
+        "variant": "2/5"
+      },
+      {
+        "label": "（回收cg后结束）",
+        "raw": "（回收cg后结束）",
+        "type": "note"
+      }
+    ]
+  },
+  {
+    "chapter": "成虫篇（断臂分支）",
+    "block": 4,
+    "start": {
+      "type": "savestart",
+      "label": "SAVE37开始（需先解锁全部结局）",
+      "raw": "SAVE37开始（需先解锁全部结局）",
+      "saveId": "SAVE37"
+    },
+    "steps": [
+      {
+        "label": "SAVE37开始（需先解锁全部结局）",
+        "raw": "SAVE37开始（需先解锁全部结局）",
+        "type": "savestart",
+        "saveId": "SAVE37"
+      },
+      {
+        "label": "令人怀念的朋友们",
+        "raw": "令人怀念的朋友们"
+      },
+      {
+        "label": "开始转动的齿轮",
+        "raw": "开始转动的齿轮"
+      },
+      {
+        "label": "回家",
+        "raw": "回家 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "早晨的电话",
+        "raw": "早晨的电话"
+      },
+      {
+        "label": "过去的黑幕",
+        "raw": "过去的黑幕 1/3",
+        "variant": "1/3"
+      },
+      {
+        "label": "休息日的计划",
+        "raw": "休息日的计划"
+      },
+      {
+        "label": "亲友Ⅰ",
+        "raw": "亲友Ⅰ1/2",
+        "variant": "1/2"
+      },
+      {
+        "label": "早晨的骚动",
+        "raw": "早晨的骚动 3/3",
+        "variant": "3/3"
+      },
+      {
+        "label": "久违的约会",
+        "raw": "久违的约会 2/2",
+        "variant": "2/2"
+      },
+      {
+        "label": "命运的分歧点",
+        "raw": "命运的分歧点 5/5",
+        "variant": "5/5"
+      },
+      {
+        "label": "虫姫Ⅰ",
+        "raw": "虫姫Ⅰ"
+      },
+      {
+        "label": "虫姫Ⅱ",
+        "raw": "虫姫Ⅱ"
+      },
+      {
+        "label": "虫姫Ⅲ",
+        "raw": "虫姫Ⅲ"
+      },
+      {
+        "label": "虫姫Ⅳ",
+        "raw": "虫姫Ⅳ"
+      },
+      {
+        "label": "虫姫Ⅴ",
+        "raw": "虫姫Ⅴ"
+      },
+      {
+        "label": "虫姫Ⅵ",
+        "raw": "虫姫Ⅵ"
+      },
+      {
+        "label": "梦美的守护者",
+        "raw": "梦美的守护者"
+      },
+      {
+        "label": "虫姫Ⅶ",
+        "raw": "虫姫Ⅶ"
+      },
+      {
+        "label": "虫姫Ⅷ",
+        "raw": "虫姫Ⅷ"
+      },
+      {
+        "label": "虫姬的镇魂歌",
+        "raw": "虫姬的镇魂歌"
+      },
+      {
+        "label": "END 30 —— 虫姬的镇魂歌",
+        "raw": "END 30 —— 虫姬的镇魂歌",
+        "type": "ending"
+      }
+    ]
+  }
+];
