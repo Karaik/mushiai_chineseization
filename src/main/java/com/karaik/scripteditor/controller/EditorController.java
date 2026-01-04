@@ -277,7 +277,7 @@ public class EditorController {
     private void updateTitle() {
         if (primaryStage != null) {
             String fileName = (currentFile != null) ? currentFile.getName() : "请选择文件";
-            primaryStage.setTitle((modified ? "*" : "") + fileName + " - 虫爱少女汉化文本编辑器(仅汉化组内部使用，禁止外传)");
+            primaryStage.setTitle((modified ? "*" : "") + fileName + " - 虫爱少女汉化文本编辑器");
         }
     }
 
