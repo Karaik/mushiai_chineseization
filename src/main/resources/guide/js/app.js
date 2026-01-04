@@ -143,7 +143,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     const csvData = parseCSVString(csvContent);
     hoverTitle.innerText = "汉化感言";
-    hoverDesc.innerText = "Select Node";
 
     // --- 核心：连线重绘函数 ---
     function drawLines() {
@@ -159,9 +158,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 line.setAttribute('y1', sNode.y + '%');
                 line.setAttribute('x2', eNode.x + '%');
                 line.setAttribute('y2', eNode.y + '%');
-                line.setAttribute('stroke', '#4e8dbf');
-                line.setAttribute('stroke-width', '1.5');
-                line.setAttribute('opacity', '0.4');
+                line.setAttribute('stroke', '#6fb6e8');
+                line.setAttribute('stroke-width', '2');
+                line.setAttribute('opacity', '0.65');
                 linesLayer.appendChild(line);
             }
         });
