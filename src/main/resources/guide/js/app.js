@@ -291,6 +291,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         setTimeout(() => { isDragging = false; }, 0);
     }
 
+    function positionAvatar() {
+        if (viewDialogue.classList.contains('hidden')) return;
+        if (charStand.style.display === 'none') return;
+        const boxRect = dialogBox.getBoundingClientRect();
+        const tagRect = dialogName.getBoundingClientRect();
+        const centerX = tagRect.left - boxRect.left + tagRect.width / 2;
+        const topY = tagRect.top - boxRect.top;
+        charStand.style.left = `${centerX}px`;
+        charStand.style.top = `${topY}px`;
+    }
+
+    window.addEventListener('resize', () => {
+        if (!viewDialogue.classList.contains('hidden')) {
+            positionAvatar();
+        }
+    });
+
     // --- AVG 系统 ---
     function enterDialogueMode(node, name) {
         let rawContent = node.runtimeContent;
@@ -305,6 +322,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         dialogName.innerText = name;
 
         charStand.innerHTML = '';
+        charStand.style.display = 'none';
         if (node.runtimeAvatar && node.runtimeAvatar.trim() !== '') {
             const img = document.createElement('img');
             img.src = `images/head/${node.runtimeAvatar}`;
@@ -312,18 +330,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             img.style.display = 'block';
             img.onerror = function() { this.style.display = 'none'; };
             charStand.appendChild(img);
+            charStand.style.display = 'block';
         }
 
-        viewMap.classList.add('hidden');
-        bgOverlay.classList.add('active');
+        nodesLayer.classList.add('dialogue-active');
+        if (node.id === 'shit' || name === '💩') {
+            document.body.classList.add('easter-active');
+        }
         viewDialogue.classList.remove('hidden');
+        requestAnimationFrame(positionAvatar);
         showNextLine();
     }
 
     function exitDialogueMode() {
         viewDialogue.classList.add('hidden');
-        bgOverlay.classList.remove('active');
-        viewMap.classList.remove('hidden');
+        nodesLayer.classList.remove('dialogue-active');
         currentDialogLines = [];
         currentLineIndex = 0;
         charStand.innerHTML = '';
