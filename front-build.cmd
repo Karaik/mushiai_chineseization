@@ -11,7 +11,11 @@ if not exist "%GUIDE%" (
 
 pushd "%GUIDE%"
 
-if not exist "node_modules" (
+set "NEED_INSTALL="
+if not exist "node_modules" set "NEED_INSTALL=1"
+if not exist "node_modules\.bin\vite.cmd" set "NEED_INSTALL=1"
+if not exist "node_modules\sharp" set "NEED_INSTALL=1"
+if defined NEED_INSTALL (
   echo Installing dependencies...
   call npm install
   if errorlevel 1 goto :error
