@@ -23,7 +23,7 @@ body::before {
     z-index: -2;
 }
 body.easter-active::before {
-    background-image: url('../images/chart_back8_1.png');
+    background-image: url('../images/egg.png');
 }
 
 body::after {
@@ -289,6 +289,44 @@ body::after {
     justify-content: flex-end;
     align-items: center;
     padding-bottom: 50px;
+}
+
+.dialogue-art {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 320px;
+    max-width: 55vw;
+    max-height: 55vh;
+    transform: translate(-50%, -60%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 210;
+    cursor: zoom-in;
+    pointer-events: auto;
+    transition: transform 0.2s ease, width 0.2s ease, max-height 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dialogue-art img {
+    width: 100%;
+    height: auto;
+    max-height: 55vh;
+    object-fit: contain;
+    border: 1px solid rgba(100, 200, 255, 0.4);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.dialogue-art.zoomed {
+    width: 80vw;
+    max-height: 85vh;
+    transform: translate(-50%, -50%);
+    cursor: zoom-out;
+}
+
+.dialogue-art.zoomed img {
+    max-height: 85vh;
 }
 
 /* 立绘固定方框 */
