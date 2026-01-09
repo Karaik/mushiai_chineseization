@@ -1,4 +1,4 @@
-/* =========================================
+﻿/* =========================================
    1. 基础设定 & 背景
    ========================================= */
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -177,7 +177,7 @@ body.force-landscape .stage-map {
 .role-btn {
     width: 100%;
     height: 32px;
-    background: url('../images/ta_chart_button.png') no-repeat center center;
+    background: url('../images/ta_chart_button.webp') no-repeat center center;
     background-size: 100% 100%;
     color: #8cbbe6;
     display: flex;
@@ -225,7 +225,7 @@ body.force-landscape .stage-map {
     width: 500px;
     height: 100px;
     flex-shrink: 0;
-    background: url('../images/ta_chart_meswin1.png') no-repeat center center;
+    background: url('../images/ta_chart_meswin1.webp') no-repeat center center;
     background-size: contain;
     text-align: center;
     padding-top: 18px;
@@ -262,7 +262,7 @@ body.force-landscape .stage-map {
 .map-grid-bg {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: url('../images/ta_chart_center1.png') no-repeat center center;
+    background: url('../images/ta_chart_center1.webp') no-repeat center center;
     background-size: cover;
     opacity: 0.6;
     filter: brightness(1.45) contrast(1.1) saturate(1.15);
@@ -286,7 +286,7 @@ body.force-landscape .stage-map {
     height: 42px;
 
     transform: translate(-50%, -50%);
-    background: url('../images/ta_chart_button.png') no-repeat center center;
+    background: url('../images/ta_chart_button.webp') no-repeat center center;
     background-size: 100% 100%;
     color: #8cbbe6;
     display: flex;
@@ -415,7 +415,7 @@ body.force-landscape .stage-map {
     position: relative;
     width: 800px;
     height: 180px;
-    background: url('../images/ta_xtg_meswin01.png') no-repeat center center;
+    background: url('../images/ta_xtg_meswin01.webp') no-repeat center center;
     background-size: 100% 100%;
     padding: 35px 110px;
     display: flex;
@@ -429,7 +429,7 @@ body.force-landscape .stage-map {
     position: absolute;
     top: -20px; left: 20px;
     width: 160px; height: 50px;
-    background: url('../images/ta_xtg_meswin02.png') no-repeat center center;
+    background: url('../images/ta_xtg_meswin02.webp') no-repeat center center;
     background-size: contain;
     display: flex; align-items: center; justify-content: center;
     color: #fff; font-weight: bold; font-size: 16px;

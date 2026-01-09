@@ -29,34 +29,41 @@ async function ensureWebp(inputPath, outputPath, options) {
   }
 }
 
-async function convertBackgrounds() {
-  const backgrounds = [
-    { name: 'ev45a.png', quality: 78 },
-    { name: 'egg.png', quality: 78 },
-    { name: 'chart_back8_1.png', quality: 78 }
-  ];
-
-  for (const bg of backgrounds) {
-    const inputPath = path.join(imagesDir, bg.name);
-    const outputPath = inputPath.replace(/\.png$/i, '.webp');
-    await ensureWebp(inputPath, outputPath, { quality: bg.quality });
-  }
-}
-
-async function convertAvatars() {
+async function listImageFiles(dir) {
   let entries = [];
   try {
-    entries = await fs.readdir(headDir);
+    entries = await fs.readdir(dir, { withFileTypes: true });
   } catch (err) {
-    console.warn(`[optimize-images] Missing head directory: ${err.message}`);
-    return;
+    console.warn(`[optimize-images] Missing directory: ${err.message}`);
+    return [];
   }
 
+  const results = [];
   for (const entry of entries) {
-    if (!/\.(png|jpg|jpeg)$/i.test(entry)) continue;
-    const inputPath = path.join(headDir, entry);
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      const nested = await listImageFiles(fullPath);
+      results.push(...nested);
+      continue;
+    }
+    if (!/\.(png|jpg|jpeg)$/i.test(entry.name)) continue;
+    results.push(fullPath);
+  }
+  return results;
+}
+
+function isHeadImage(filePath) {
+  const normalized = path.resolve(filePath);
+  const headRoot = path.resolve(headDir) + path.sep;
+  return normalized.startsWith(headRoot);
+}
+
+async function convertAllImages() {
+  const files = await listImageFiles(imagesDir);
+  for (const inputPath of files) {
     const outputPath = inputPath.replace(/\.(png|jpg|jpeg)$/i, '.webp');
-    await ensureWebp(inputPath, outputPath, { quality: 80 });
+    const options = isHeadImage(inputPath) ? { quality: 80 } : { lossless: true };
+    await ensureWebp(inputPath, outputPath, options);
   }
 }
 
@@ -84,7 +91,7 @@ async function updateCsvForWebp() {
   } catch {
     headEntries = [];
   }
-  const webpSet = new Set(headEntries.filter(name => name.toLowerCase().endsWith('.webp')));
+  const webpSet = new Set(headEntries.filter(name => name.toLowerCase().endsWith('.webp')).map(name => name.toLowerCase()));
 
   const lines = csvText.split(/\r?\n/);
   if (lines.length === 0) return;
@@ -111,12 +118,13 @@ async function updateCsvForWebp() {
 
     let avatar = normalizeAvatarName(avatarRaw);
     if (avatar) {
-      const match = avatar.match(/^(.*)\.(png|jpg|jpeg)$/i);
-      if (match) {
-        const candidate = `${match[1]}.webp`;
-        if (webpSet.has(candidate)) {
-          avatar = candidate;
-        }
+      const match = avatar.match(/^(.*)\.(png|jpg|jpeg|webp)$/i);
+      const base = match ? match[1] : avatar;
+      const candidate = `${base}.webp`;
+      if (webpSet.has(candidate.toLowerCase())) {
+        avatar = candidate;
+      } else {
+        avatar = '';
       }
     }
 
@@ -126,8 +134,7 @@ async function updateCsvForWebp() {
   await fs.writeFile(csvPath, output.join('\n'), 'utf8');
 }
 
-await convertBackgrounds();
-await convertAvatars();
+await convertAllImages();
 await updateCsvForWebp();
 
 console.log('[optimize-images] Done');

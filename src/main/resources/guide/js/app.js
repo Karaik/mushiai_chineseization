@@ -16,7 +16,7 @@ const ROLES = [
 ];
 
 const NODES = [
-        { id: 'shit', label: '💩💩💩', roles: ['shit'], x: 52, y: 38 },
+        { id: 'egg', label: '🎉🎉🎉', roles: ['egg'], x: 52, y: 38 },
         { id: '鳥谷真琴厨', roles: ['supervisor', 'proof'], x: 27.03, y: 12.65 },
         { id: 'DevSeeD', roles: ['coder'], x: 74.95, y: 11.05 },
         { id: '喵喵酱', roles: ['supervisor', 'trans', 'proof', 'polish', 'test'], x: 32, y: 28 },
@@ -385,11 +385,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- AVG 系统 ---
     function enterDialogueMode(node, name) {
-        const isEaster = node.id === 'shit';
+        const isEaster = node.id === 'egg';
         let rawContent = node.runtimeContent;
         if (!rawContent) {
              // 彩蛋默认文本
-             if (node.id === 'shit') rawContent = "💩💩💩💩💩";
+             if (node.id === 'egg') rawContent = "🎉🎉🎉🎉🎉";
              else rawContent = "暂无内容...@p请配置文本。";
         }
 
@@ -404,18 +404,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         charStand.innerHTML = '';
         charStand.style.display = 'none';
-        if (node.runtimeAvatar && node.runtimeAvatar.trim() !== '') {
+        const avatarRaw = node.runtimeAvatar ? node.runtimeAvatar.trim() : '';
+        const avatarKey = avatarRaw !== '' ? avatarRaw : '默认头像.webp';
+        const avatarUrl = avatarMap.get(avatarKey) || `images/head/${avatarKey}`;
+        if (avatarKey) {
             const img = document.createElement('img');
-            const avatarKey = node.runtimeAvatar.trim();
-            const avatarUrl = avatarMap.get(avatarKey);
-            if (avatarUrl) {
-                img.src = avatarUrl;
-                img.alt = name;
-                img.style.display = 'block';
-                img.onerror = function() { this.style.display = 'none'; };
-                charStand.appendChild(img);
-                charStand.style.display = 'block';
-            }
+            img.src = avatarUrl;
+            img.alt = name;
+            img.style.display = 'block';
+            img.onerror = function() { this.style.display = 'none'; };
+            charStand.appendChild(img);
+            charStand.style.display = 'block';
         }
 
         if (isEaster) {
