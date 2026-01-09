@@ -1,0 +1,16 @@
+{
+  "name": "guide-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/optimize-images.mjs && vite build && node scripts/postbuild.mjs",
+    "preview": "vite preview --strictPort"
+  },
+  "devDependencies": {
+    "html-minifier-terser": "^7.2.0",
+    "sharp": "^0.33.5",
+    "vite": "^5.4.0",
+    "vite-plugin-singlefile": "^0.13.5"
+  }
+}

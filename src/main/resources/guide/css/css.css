@@ -15,22 +15,22 @@ body::before {
     content: "";
     position: fixed;
     inset: 0;
-    background: url('../images/ev45a.png') no-repeat center center fixed;
+    background: url('../images/ev45a.webp') no-repeat center center fixed;
     background-size: cover;
-    filter: blur(0.1px) brightness(0.6) saturate(0.1);// 模糊度；亮度；
+    filter: blur(0.1px) brightness(0.6) saturate(0.1); /* 模糊度；亮度； */
     transform: scale(1.03);
     transform-origin: center;
     z-index: -2;
 }
 body.easter-active::before {
-    background-image: url('../images/egg.png');
+    background-image: url('../images/egg.webp');
 }
 
 body::after {
     content: "";
     position: fixed;
     inset: 0;
-    background: rgba(86, 111, 149, 0.55);// 背景rgb
+    background: rgba(86, 111, 149, 0.55); /* 背景rgb */
     z-index: -1;
 }
 
