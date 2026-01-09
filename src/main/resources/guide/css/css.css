@@ -75,6 +75,32 @@ body::after {
     font-weight: bold;
     letter-spacing: 2px;
 }
+.open-source-badge {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 4px 10px;
+    border: 1px solid rgba(100, 200, 255, 0.6);
+    border-radius: 999px;
+    background: rgba(10, 25, 40, 0.55);
+    color: #b8e6ff;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-decoration: none;
+    box-shadow: 0 0 6px rgba(100, 200, 255, 0.2);
+    transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.open-source-badge--sidebar {
+    margin-top: 0;
+    align-self: stretch;
+    text-align: center;
+    font-size: 11px;
+    padding: 6px 8px;
+}
+.open-source-badge:hover {
+    color: #fff;
+    border-color: #64d2ff;
+    box-shadow: 0 0 10px rgba(100, 200, 255, 0.45);
+}
 .logo-area small {
     font-size: 16px;
     color: #ccc;
@@ -106,6 +132,18 @@ body::after {
 .role-sidebar {
     width: 140px;
     margin-top: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: calc(100% - 80px);
+}
+.sidebar-footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.role-list {
     display: flex;
     flex-direction: column;
     gap: 8px;

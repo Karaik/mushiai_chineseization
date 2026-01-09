@@ -47,14 +47,14 @@
 *   ✅ 内置 **GB2312** 编码严格校验，防止生僻字导致游戏乱码
 *   ✅ 原生 JavaFX 界面，跨平台支持（仅 jar 包跨平台，压缩包内为环境自包含的 win10/11 工具，解压即用）
 
-📦 **下载方式**：请直接前往 [Releases](占位占位占位) 页面下载打包好的可执行文件。
+📦 **下载方式**：请直接前往 [Releases](https://github.com/Karaik/mushiai_chineseization/releases) 页面下载打包好的可执行文件。
 
 ---
 
 ## 🌸 汉化人员名单
 
 > ✨ **在线可视化名单**：
-> 本项目 Pages 已部署了可视化汉化名单，欢迎点击 [此处](占位占位占位) 查看完整展示。（里面有彩蛋，和发布的补丁里的彩蛋是有区别的哦）
+> 本项目 Pages 已部署了可视化汉化名单，欢迎点击 [此处](https://karaik.github.io/mushiai_chineseization/) 查看完整展示。（里面有彩蛋，和发布的补丁里的彩蛋是有区别的哦）
 
 能参与此作品的汉化实属本人的荣幸，汉化组和前汉化组的各位真的非常辛苦了！
 
@@ -113,5 +113,5 @@ yuugiri、兔耳茶、琉璃、2l模仿47哥、借光、溪蒼、ty清雲、长�
 
 ## 🔗 相关链接
 
-*   [针对 SystemNNN 引擎的文本导出和导入工具 (By: DevSeeD)](占位占位占位)
-*   [可视化汉化感言](占位占位占位)
+*   [针对 SystemNNN 引擎的文本导出和导入工具 (By: DevSeeD)](https://github.com/YuriSizuku/GalgameReverse/blob/343289692a434426c8c08fa0e14816544f7f52c5/project/systemnnn/src/systemnnn_patch.c)
+*   [可视化汉化人员名单](https://karaik.github.io/mushiai_chineseization/)
