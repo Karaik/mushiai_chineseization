@@ -10,6 +10,11 @@ body {
     position: relative;
     min-height: 100vh;
 }
+body.force-landscape {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
 
 body::before {
     content: "";
@@ -56,6 +61,16 @@ body::after {
     flex-direction: column;
     position: relative;
     z-index: 100;
+}
+body.force-landscape .container {
+    max-width: none;
+    width: 100vh;
+    height: 100vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: rotate(90deg) translateY(-100%);
+    transform-origin: top left;
 }
 
 /* 顶部标题栏 */
@@ -126,6 +141,9 @@ body::after {
     gap: 20px;
     height: calc(100vh - 80px);
     overflow: hidden;
+}
+body.force-landscape .stage-map {
+    height: calc(100vw - 80px);
 }
 
 /* 左侧菜单 */
@@ -281,6 +299,7 @@ body::after {
     letter-spacing: 1px;
 
     cursor: grab;
+    touch-action: none;
     transition: box-shadow 0.3s, color 0.3s, filter 0.3s;
     user-select: none;
     text-shadow: 1px 1px 2px #000;

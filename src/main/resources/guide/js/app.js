@@ -81,6 +81,17 @@ const LINKS = [
 
 // CSV 数据
 document.addEventListener('DOMContentLoaded', async () => {
+    const isMobileUa = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+    if (isMobileUa) {
+        alert('请在电脑端访问，体验更佳哦~');
+        const viewport = document.querySelector('meta[name="viewport"]');
+        if (viewport) {
+            viewport.setAttribute('content', 'width=1280, initial-scale=1.0');
+        }
+        document.body.classList.add('force-desktop');
+        document.body.classList.add('force-landscape');
+    }
+
     // DOM 元素引用
     const viewMap = document.getElementById('viewMap');
     const viewDialogue = document.getElementById('viewDialogue');
@@ -89,6 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const linesLayer = document.getElementById('linesLayer');
     const nodesLayer = document.getElementById('nodesLayer');
     const chartMapArea = document.querySelector('.chart-map');
+    const container = document.querySelector('.container');
 
     const hoverRoles = document.getElementById('hoverRoles');
     const hoverTitle = document.getElementById('hoverTitle');
@@ -102,6 +114,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let currentDialogLines = [];
     let currentLineIndex = 0;
+    const supportsPointer = 'PointerEvent' in window;
 
     // --- CSV 解析 ---
     function parseCSVString(csvText) {
@@ -174,6 +187,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     let isDragging = false;
     let activeDragNode = null;
 
+    function getOffsetToContainer(el) {
+        let x = 0;
+        let y = 0;
+        let current = el;
+        while (current && current !== container) {
+            x += current.offsetLeft || 0;
+            y += current.offsetTop || 0;
+            current = current.offsetParent;
+        }
+        return { x, y };
+    }
+
+    function getDragPoint(clientX, clientY) {
+        if (!document.body.classList.contains('force-landscape')) {
+            const rect = chartMapArea.getBoundingClientRect();
+            return { x: clientX - rect.left, y: clientY - rect.top };
+        }
+        const rect = container.getBoundingClientRect();
+        const sx = clientX - rect.left;
+        const sy = clientY - rect.top;
+        const containerHeight = container.offsetHeight;
+        const localX = sy;
+        const localY = containerHeight - sx;
+        const offset = getOffsetToContainer(chartMapArea);
+        return { x: localX - offset.x, y: localY - offset.y };
+    }
+
     NODES.forEach(node => {
         const btn = document.createElement('div');
         btn.className = 'node-btn';
@@ -210,13 +250,39 @@ document.addEventListener('DOMContentLoaded', async () => {
             btn.classList.remove('hovering');
         });
 
-        // 鼠标按下：准备拖拽
-        btn.addEventListener('mousedown', (e) => {
-            isDragging = false;
-            activeDragNode = { node, btn, startX: e.clientX, startY: e.clientY };
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
-        });
+        // 鼠标/触摸按下：准备拖拽
+        if (supportsPointer) {
+            btn.addEventListener('pointerdown', (e) => {
+                if (e.pointerType === 'mouse' && e.button !== 0) return;
+                isDragging = false;
+                const start = getDragPoint(e.clientX, e.clientY);
+                activeDragNode = {
+                    node,
+                    btn,
+                    startX: start.x,
+                    startY: start.y,
+                    pointerId: e.pointerId,
+                    pointerType: e.pointerType
+                };
+                if (btn.setPointerCapture) {
+                    try {
+                        btn.setPointerCapture(e.pointerId);
+                    } catch (_) {}
+                }
+                document.addEventListener('pointermove', onPointerMove);
+                document.addEventListener('pointerup', onPointerUp);
+                document.addEventListener('pointercancel', onPointerUp);
+            });
+        } else {
+            btn.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return;
+                isDragging = false;
+                const start = getDragPoint(e.clientX, e.clientY);
+                activeDragNode = { node, btn, startX: start.x, startY: start.y, pointerId: null, pointerType: 'mouse' };
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
+        }
 
         // 点击事件 (如果是拖拽则不触发)
         btn.addEventListener('click', (e) => {
@@ -232,20 +298,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     drawLines();
 
     // 拖拽处理
-    function onMouseMove(e) {
+    function handleDragMove(clientX, clientY) {
         if (!activeDragNode) return;
-        const dx = e.clientX - activeDragNode.startX;
-        const dy = e.clientY - activeDragNode.startY;
+        const point = getDragPoint(clientX, clientY);
+        const dx = point.x - activeDragNode.startX;
+        const dy = point.y - activeDragNode.startY;
         // 移动超过3像素才算拖拽，防止误触点击
         if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
             isDragging = true;
         }
 
         if (isDragging) {
-            const rect = chartMapArea.getBoundingClientRect();
+            const baseWidth = chartMapArea.offsetWidth;
+            const baseHeight = chartMapArea.offsetHeight;
+            if (!baseWidth || !baseHeight) return;
             // 像素转百分比
-            let newX = ((e.clientX - rect.left) / rect.width) * 100;
-            let newY = ((e.clientY - rect.top) / rect.height) * 100;
+            let newX = (point.x / baseWidth) * 100;
+            let newY = (point.y / baseHeight) * 100;
             // 限制边界
             newX = Math.max(0, Math.min(100, newX));
             newY = Math.max(0, Math.min(100, newY));
@@ -259,6 +328,29 @@ document.addEventListener('DOMContentLoaded', async () => {
             // 重绘连线
             drawLines();
         }
+    }
+
+    function onPointerMove(e) {
+        if (!activeDragNode) return;
+        if (activeDragNode.pointerId !== null && e.pointerId !== activeDragNode.pointerId) return;
+        if (activeDragNode.pointerType === 'touch' && isDragging) {
+            e.preventDefault();
+        }
+        handleDragMove(e.clientX, e.clientY);
+    }
+
+    function onPointerUp(e) {
+        if (!activeDragNode) return;
+        if (activeDragNode.pointerId !== null && e.pointerId !== activeDragNode.pointerId) return;
+        activeDragNode = null;
+        document.removeEventListener('pointermove', onPointerMove);
+        document.removeEventListener('pointerup', onPointerUp);
+        document.removeEventListener('pointercancel', onPointerUp);
+        setTimeout(() => { isDragging = false; }, 0);
+    }
+
+    function onMouseMove(e) {
+        handleDragMove(e.clientX, e.clientY);
     }
 
     function onMouseUp() {
