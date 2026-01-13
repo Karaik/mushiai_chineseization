@@ -168,6 +168,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         btn.className = `role-btn ${role.style || ''}`;
         btn.innerText = role.label;
         btn.addEventListener('click', () => {
+            const isActive = btn.classList.contains('active');
+            if (isActive && role.id !== 'all') {
+                roleMenu.firstElementChild?.click();
+                return;
+            }
+            if (isActive && role.id === 'all') {
+                return;
+            }
             document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.querySelectorAll('.node-btn').forEach(nodeBtn => {
