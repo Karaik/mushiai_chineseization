@@ -230,6 +230,30 @@ body.force-landscape .stage-map {
     position: relative;
 }
 
+.completion-panel {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    width: 200px;
+    height: 90px;
+    background: url('../images/ta_chart_comp.webp') no-repeat center center;
+    background-size: contain;
+    z-index: 5;
+    pointer-events: none;
+}
+.completion-value {
+    position: absolute;
+    right: 22%;
+    font-size: 20px;
+    font-weight: bold;
+    color: #bfeaff;
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.85);
+    line-height: 1;
+    transform: translateY(-50%);
+}
+.completion-value-top { top: 47%; }
+.completion-value-bottom { top: 72%; }
+
 .hover-info-panel {
     width: 500px;
     height: 100px;
@@ -313,6 +337,18 @@ body.force-landscape .stage-map {
     user-select: none;
     text-shadow: 1px 1px 2px #000;
     z-index: 10;
+}
+.node-btn.node-complete::after {
+    content: "";
+    position: absolute;
+    top: -14px;
+    left: 2px;
+    width: 30px;
+    height: 30px;
+    background: url('../images/ta_compmark.webp') no-repeat center center;
+    background-size: contain;
+    pointer-events: none;
+    z-index: 2;
 }
 
 .node-btn:active { cursor: grabbing; z-index: 20; scale: 1.1; }
