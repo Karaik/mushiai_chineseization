@@ -30,6 +30,15 @@ body::before {
 body.easter-active::before {
     background-image: url('../images/egg.webp');
 }
+body.force-landscape::before {
+    inset: auto;
+    width: 100vh;
+    height: 100vw;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(90deg) scale(1.03);
+    transform-origin: center;
+}
 
 body::after {
     content: "";
