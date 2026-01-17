@@ -171,7 +171,8 @@ function handleRoleChange(roleId) {
 }
 
 function handleMouseEnter(node) {
-  if (!isDragging.value) {
+  // 如果正在对话中，不更新 hover 信息
+  if (!isDragging.value && !isDialogueActive.value) {
     const lookupKey = node.label || node.id;
     hoverInfo.title = lookupKey;
     hoverInfo.desc = node.runtimeEp || '测试ep文本';
@@ -189,7 +190,8 @@ function handleMouseEnter(node) {
 }
 
 function handleMouseLeave() {
-  if (!isDragging.value) {
+  // 如果正在对话中，不重置 hover 信息
+  if (!isDragging.value && !isDialogueActive.value) {
     hoverInfo.roles = '甜心汉化组&蟲爱少女填坑组';
     hoverInfo.title = '汉化感言';
     hoverInfo.desc = '请点击对应汉化人员节点查看汉化感言哦~';
@@ -293,6 +295,18 @@ function handleClick(node) {
       nodeId: node.id
     };
 
+    // 设置 episode 信息并在对话期间保持
+    hoverInfo.title = lookupKey;
+    hoverInfo.desc = node.runtimeEp || '测试ep文本';
+    const roleLabels = node.roles
+      .filter(r => r !== 'special' && r !== 'egg')
+      .map(rId => {
+        const r = ROLES.find(item => item.id === rId);
+        return r ? r.label : '';
+      })
+      .filter(l => l).join(' / ');
+    hoverInfo.roles = roleLabels || (node.roles.includes('special') ? '特别致谢' : '');
+
     isEasterEgg.value = node.id === 'egg';
     isDialogueActive.value = true;
 
@@ -321,6 +335,12 @@ function handleDialogueClose() {
   isDialogueActive.value = false;
   isEasterEgg.value = false;
   currentDialogue.value = null;
+
+  // 重置 episode 信息为默认状态
+  hoverInfo.roles = '甜心汉化组&蟲爱少女填坑组';
+  hoverInfo.title = '汉化感言';
+  hoverInfo.desc = '请点击对应汉化人员节点查看汉化感言哦~';
+
   // 注意：原始代码中不移除 easter-active 类，背景会永久保持彩蛋图片
   // document.body.classList.remove('easter-active');
 }

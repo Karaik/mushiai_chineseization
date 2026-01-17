@@ -37,3 +37,4 @@ build/
 mvnw
 mvnw.cmd
 **/node_modules/**
+.claude
