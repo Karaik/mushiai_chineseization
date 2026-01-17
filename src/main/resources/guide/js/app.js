@@ -111,10 +111,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const charStand = document.getElementById('charStand');
     const dialogArt = document.getElementById('dialogArt');
     const dialogArtImg = document.getElementById('dialogArtImg');
+    const completionValueTop = document.getElementById('completionValueTop');
+    const completionValueBottom = document.getElementById('completionValueBottom');
 
     let currentDialogLines = [];
     let currentLineIndex = 0;
+    let activeNode = null;
     const supportsPointer = 'PointerEvent' in window;
+    const nodeElements = new Map();
+    const completedNodes = new Set();
+    const totalNodes = NODES.length;
 
     // --- CSV 解析 ---
     function parseCSVString(csvText) {
@@ -162,6 +168,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         btn.className = `role-btn ${role.style || ''}`;
         btn.innerText = role.label;
         btn.addEventListener('click', () => {
+            const isActive = btn.classList.contains('active');
+            if (isActive && role.id !== 'all') {
+                roleMenu.firstElementChild?.click();
+                return;
+            }
+            if (isActive && role.id === 'all') {
+                return;
+            }
             document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.querySelectorAll('.node-btn').forEach(nodeBtn => {
@@ -229,6 +243,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         btn.style.top = node.y + '%';
         btn.dataset.roles = JSON.stringify(node.roles);
         if(node.roles.includes('special')) btn.classList.add('node-special');
+        nodeElements.set(node.id, btn);
 
         // Hover
         btn.addEventListener('mouseenter', () => {
@@ -296,6 +311,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 初始绘制连线
     drawLines();
+    updateCompletion();
 
     // 拖拽处理
     function handleDragMove(clientX, clientY) {
@@ -385,6 +401,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- AVG 系统 ---
     function enterDialogueMode(node, name) {
+        activeNode = node;
         const isEaster = node.id === 'egg';
         let rawContent = node.runtimeContent;
         if (!rawContent) {
@@ -442,10 +459,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         dialogArt.classList.remove('zoomed');
         dialogArtImg.removeAttribute('src');
         dialogArtImg.alt = '';
+        activeNode = null;
     }
 
     function showNextLine() {
         if (currentLineIndex >= currentDialogLines.length) {
+            if (activeNode) {
+                markNodeComplete(activeNode);
+            }
             exitDialogueMode();
             return;
         }
@@ -455,4 +476,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     dialogBox.addEventListener('click', (e) => { e.stopPropagation(); showNextLine(); });
     viewDialogue.addEventListener('click', () => { showNextLine(); });
+
+    function updateCompletion() {
+        const percent = Math.floor((completedNodes.size / totalNodes) * 100);
+        if (completionValueTop) completionValueTop.textContent = String(percent);
+        if (completionValueBottom) completionValueBottom.textContent = String(percent);
+    }
+
+    function markNodeComplete(node) {
+        if (!node || completedNodes.has(node.id)) return;
+        completedNodes.add(node.id);
+        const btn = nodeElements.get(node.id);
+        if (btn) {
+            btn.classList.add('node-complete');
+        }
+        updateCompletion();
+    }
 });
