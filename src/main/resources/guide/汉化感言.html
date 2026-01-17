@@ -1,67 +1,12 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>汉化感言 - 甜心汉化组&蟲爱少女填坑组</title>
-    <link rel="stylesheet" href="css/css.css">
 </head>
 <body>
-
-<!-- 遮罩层 -->
-<div class="bg-overlay"></div>
-
-<main class="container">
-    <header class="top-bar">
-        <div class="logo-area">
-            <h1>甜心汉化组&蟲爱少女填坑组 <small>汉化感言</small></h1>
-        </div>
-    </header>
-
-    <!-- 视图 A: 地图模式 -->
-    <section id="viewMap" class="stage-map fade-in">
-        <aside class="role-sidebar">
-            <div class="sidebar-header">STAFF ROLL</div>
-            <div id="roleMenu" class="role-list"></div>
-            <div class="sidebar-footer">
-                <a class="open-source-badge open-source-badge--sidebar" href="https://github.com/Karaik/mushiai_chineseization" target="_blank" rel="noopener noreferrer">本项目已开源</a>
-            </div>
-        </aside>
-
-        <div class="map-content">
-            <div class="hover-info-panel">
-                <!-- 职位显示区域 -->
-                <div class="episode-roles" id="hoverRoles">甜心汉化组&蟲爱少女填坑组</div>
-                <h2 class="episode-title" id="hoverTitle"></h2>
-                <p class="episode-desc" id="hoverDesc">请点击对应汉化人员节点查看汉化感言哦~</p>
-            </div>
-            <div class="completion-panel" id="completionPanel">
-                <span class="completion-value completion-value-top" id="completionValueTop">0</span>
-                <span class="completion-value completion-value-bottom" id="completionValueBottom">0</span>
-            </div>
-
-            <div class="chart-map">
-                <div class="map-grid-bg"></div>
-                <svg class="connections" id="linesLayer" width="100%" height="100%"></svg>
-                <div id="nodesLayer" class="nodes-container">
-                    <!-- 视图 B: 对话模式（仅覆盖 nodes-container） -->
-                    <section id="viewDialogue" class="stage-dialogue hidden">
-                        <div class="dialogue-art hidden" id="dialogArt">
-            <img id="dialogArtImg" alt="">
-        </div>
-        <div class="dialogue-box" id="dialogBox">
-                            <div class="character-stand" id="charStand"></div>
-                            <div class="name-tag" id="dialogName">???</div>
-                            <div class="text-content" id="dialogText"></div>
-                            <div class="dialog-arrow">▼</div>
-                        </div>
-                    </section>
-                </div>
-            </div>
-        </div>
-    </section>
-</main>
-
-<script type="module" src="js/app.js"></script>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
 </body>
 </html>
