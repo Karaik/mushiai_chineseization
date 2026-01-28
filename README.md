@@ -113,5 +113,5 @@ yuugiri、兔耳茶、琉璃、2l模仿47哥、借光、溪蒼、ty清雲、长�
 
 ## 🔗 相关链接
 
-*   [针对 SystemNNN 引擎的文本导出和导入工具 (By: DevSeeD)](https://github.com/YuriSizuku/GalgameReverse/blob/343289692a434426c8c08fa0e14816544f7f52c5/project/systemnnn/src/systemnnn_patch.c)
+*   [针对 SystemNNN 引擎的文本导出和导入工具 (By: DevSeeD)](https://github.com/YuriSizuku/GalgameReverse/blob/343289692a434426c8c08fa0e14816544f7f52c5/project/systemnnn/src/systemnnn_spt.py)
 *   [可视化汉化人员名单](https://karaik.github.io/mushiai_chineseization/)

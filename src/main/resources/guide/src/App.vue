@@ -170,22 +170,36 @@ function handleRoleChange(roleId) {
   activeRole.value = roleId;
 }
 
+// 更新 hover 信息的公共函数
+function updateHoverInfo(node) {
+  const lookupKey = node.label || node.id;
+  hoverInfo.title = lookupKey;
+  hoverInfo.desc = node.runtimeEp || '测试ep文本';
+
+  const roleLabels = node.roles
+    .filter(r => r !== 'special' && r !== 'egg')
+    .map(rId => {
+      const r = ROLES.find(item => item.id === rId);
+      return r ? r.label : '';
+    })
+    .filter(l => l).join(' / ');
+
+  // 彩蛋节点显示特殊文本
+  if (node.roles.includes('egg')) {
+    hoverInfo.roles = '？？？？？？？？？？？？？？';
+  } else if (roleLabels) {
+    hoverInfo.roles = roleLabels;
+  } else if (node.roles.includes('special')) {
+    hoverInfo.roles = '特别致谢';
+  } else {
+    hoverInfo.roles = '';
+  }
+}
+
 function handleMouseEnter(node) {
   // 如果正在对话中，不更新 hover 信息
   if (!isDragging.value && !isDialogueActive.value) {
-    const lookupKey = node.label || node.id;
-    hoverInfo.title = lookupKey;
-    hoverInfo.desc = node.runtimeEp || '测试ep文本';
-
-    const roleLabels = node.roles
-      .filter(r => r !== 'special' && r !== 'egg')
-      .map(rId => {
-        const r = ROLES.find(item => item.id === rId);
-        return r ? r.label : '';
-      })
-      .filter(l => l).join(' / ');
-
-    hoverInfo.roles = roleLabels || (node.roles.includes('special') ? '特别致谢' : '');
+    updateHoverInfo(node);
   }
 }
 
@@ -206,13 +220,14 @@ function handlePointerDown(e, node) {
   const chartMap = document.querySelector('.chart-map');
   if (!chartMap) return;
 
-  const rect = chartMap.getBoundingClientRect();
+  const start = getDragPoint(e.clientX, e.clientY, chartMap);
 
   activeDragNode.value = {
     node,
-    startX: e.clientX - rect.left,
-    startY: e.clientY - rect.top,
+    startX: start.x,
+    startY: start.y,
     pointerId: e.pointerId,
+    pointerType: e.pointerType,
     chartMap
   };
 
@@ -223,17 +238,54 @@ function handlePointerDown(e, node) {
   e.target.setPointerCapture?.(e.pointerId);
 }
 
+// 获取拖拽点坐标 - 处理横屏模式
+function getDragPoint(clientX, clientY, chartMap) {
+  if (!document.body.classList.contains('force-landscape')) {
+    const rect = chartMap.getBoundingClientRect();
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  }
+
+  // 横屏模式：需要坐标转换
+  const container = document.querySelector('.container');
+  const rect = container.getBoundingClientRect();
+  const sx = clientX - rect.left;
+  const sy = clientY - rect.top;
+  const containerHeight = container.offsetHeight;
+  const localX = sy;
+  const localY = containerHeight - sx;
+
+  // 使用 offsetLeft/offsetTop 计算偏移（与原始代码一致）
+  const offset = getOffsetToContainer(chartMap, container);
+  return { x: localX - offset.x, y: localY - offset.y };
+}
+
+// 计算元素相对于 container 的偏移
+function getOffsetToContainer(el, container) {
+  let x = 0;
+  let y = 0;
+  let current = el;
+  while (current && current !== container) {
+    x += current.offsetLeft || 0;
+    y += current.offsetTop || 0;
+    current = current.offsetParent;
+  }
+  return { x, y };
+}
+
 function handlePointerMove(e) {
   if (!activeDragNode.value) return;
   if (activeDragNode.value.pointerId !== null && e.pointerId !== activeDragNode.value.pointerId) return;
 
-  const chartMap = activeDragNode.value.chartMap;
-  const rect = chartMap.getBoundingClientRect();
-  const currentX = e.clientX - rect.left;
-  const currentY = e.clientY - rect.top;
+  // 触摸拖拽时阻止默认行为（防止页面滚动）
+  if (activeDragNode.value.pointerType === 'touch' && isDragging.value) {
+    e.preventDefault();
+  }
 
-  const dx = currentX - activeDragNode.value.startX;
-  const dy = currentY - activeDragNode.value.startY;
+  const chartMap = activeDragNode.value.chartMap;
+  const point = getDragPoint(e.clientX, e.clientY, chartMap);
+
+  const dx = point.x - activeDragNode.value.startX;
+  const dy = point.y - activeDragNode.value.startY;
 
   // 移动超过3像素才算拖拽
   if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
@@ -246,8 +298,8 @@ function handlePointerMove(e) {
 
     if (!baseWidth || !baseHeight) return;
 
-    let newX = (currentX / baseWidth) * 100;
-    let newY = (currentY / baseHeight) * 100;
+    let newX = (point.x / baseWidth) * 100;
+    let newY = (point.y / baseHeight) * 100;
 
     // 限制边界
     newX = Math.max(0, Math.min(100, newX));
@@ -255,9 +307,6 @@ function handlePointerMove(e) {
 
     activeDragNode.value.node.x = newX;
     activeDragNode.value.node.y = newY;
-
-    activeDragNode.value.startX = currentX;
-    activeDragNode.value.startY = currentY;
   }
 }
 
@@ -296,16 +345,7 @@ function handleClick(node) {
     };
 
     // 设置 episode 信息并在对话期间保持
-    hoverInfo.title = lookupKey;
-    hoverInfo.desc = node.runtimeEp || '测试ep文本';
-    const roleLabels = node.roles
-      .filter(r => r !== 'special' && r !== 'egg')
-      .map(rId => {
-        const r = ROLES.find(item => item.id === rId);
-        return r ? r.label : '';
-      })
-      .filter(l => l).join(' / ');
-    hoverInfo.roles = roleLabels || (node.roles.includes('special') ? '特别致谢' : '');
+    updateHoverInfo(node);
 
     isEasterEgg.value = node.id === 'egg';
     isDialogueActive.value = true;
