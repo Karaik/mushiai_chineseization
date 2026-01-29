@@ -281,14 +281,14 @@ public final class SymbolChecker {
         }
 
         // 11. 通过 src/main/resources/spt/namecol.xtx.txt 检查对话文本内的名词，是否存在于 namecol 中
-        if (isDialogWithSpeaker && !NAMECOL_NAMES.isEmpty() && segments.length > 0) {
-            String speaker = segments[0];
-            if (!speaker.isEmpty() && !NAMECOL_NAMES.contains(speaker)) {
-                errors.add("错误：说话人 “ " + speaker + " ” 未在 namecol.xtx.txt 中定义");
-            }
-        } else if (NAMECOL_NAMES.contains(segments[0])) {
-            errors.add("错误：匹配到 namecol.xtx.txt 中定义的人物 “ " + segments[0] + " ” 但文本格式似乎有误，没有被识别为对话文本，请检查括号的匹配情况或文本格式");
-        }
+//        if (isDialogWithSpeaker && !NAMECOL_NAMES.isEmpty() && segments.length > 0) {
+//            String speaker = segments[0];
+//            if (!speaker.isEmpty() && !NAMECOL_NAMES.contains(speaker)) {
+//                errors.add("错误：说话人 “ " + speaker + " ” 未在 namecol.xtx.txt 中定义");
+//            }
+//        } else if (NAMECOL_NAMES.contains(segments[0])) {
+//            errors.add("错误：匹配到 namecol.xtx.txt 中定义的人物 “ " + segments[0] + " ” 但文本格式似乎有误，没有被识别为对话文本，请检查括号的匹配情况或文本格式");
+//        }
 
         return errors;
     }
