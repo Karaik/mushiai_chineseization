@@ -115,9 +115,13 @@ function positionAvatar() {
     const centerX = tagRect.left - boxRect.left + tagRect.width / 2;
     const topY = tagRect.top - boxRect.top;
 
+    // 手机端时，头像往上挪更多（减去更多像素）
+    const isMobile = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+    const offsetY = isMobile ? -80 : 0; // 手机端往上挪 80px
+
     avatarStyle.value = {
       left: `${centerX}px`,
-      top: `${topY}px`,
+      top: `${topY + offsetY}px`,
       display: 'block'
     };
   });
